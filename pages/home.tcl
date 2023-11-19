@@ -1,4 +1,4 @@
-set ::skin_version 0.02
+set ::skin_version 0.03
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -32,13 +32,23 @@ add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"
 add_icon_label_button fav1 $::skin_home_pages $::skin(button_x_fav) $::start_button_y 360 100 $::skin(icon_fav) {$::fav_label_fav1} {skin_load fav1}; set_button fav1 icon_font [skin_font awesome_light 28]
 add_icon_label_button fav2 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 120] 360 100 $::skin(icon_fav) {$::fav_label_fav2} {skin_load fav2}; set_button fav2 icon_font [skin_font awesome_light 28]
 add_icon_label_button fav3 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 240] 360 100 $::skin(icon_fav) {$::fav_label_fav3} {skin_load fav3}; set_button fav3 icon_font [skin_font awesome_light 28]
+add_icon_label_button fav4 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 360] 360 100 $::skin(icon_fav) {$::fav_label_fav4} {skin_load fav4}; set_button fav4 icon_font [skin_font awesome_light 28]
+add_icon_label_button fav5 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 480] 360 100 $::skin(icon_fav) {$::fav_label_fav5} {skin_load fav5}; set_button fav5 icon_font [skin_font awesome_light 28]
 
 add_icon_button fav1_edit $::skin_home_pages 1990 $::start_button_y 100 100 {$::skin(icon_edit)} {edit fav1}
 add_icon_button fav2_edit $::skin_home_pages 1990 [expr $::start_button_y + 120] 100 100 {$::skin(icon_edit)} {edit fav2}
 add_icon_button fav3_edit $::skin_home_pages 1990 [expr $::start_button_y + 240] 100 100 {$::skin(icon_edit)} {edit fav3}
+add_icon_button fav4_edit $::skin_home_pages 1990 [expr $::start_button_y + 360] 100 100 {$::skin(icon_edit)} {edit fav4}
+add_icon_button fav5_edit $::skin_home_pages 1990 [expr $::start_button_y + 480] 100 100 {$::skin(icon_edit)} {edit fav5}
 set_button fav1_edit font [skin_font awesome_light 28]
 set_button fav2_edit font [skin_font awesome_light 28]
 set_button fav3_edit font [skin_font awesome_light 28]
+set_button fav4_edit font [skin_font awesome_light 28]
+set_button fav5_edit font [skin_font awesome_light 28]
+
+set_favs_showing
+
+
 
 ### machine
 
@@ -214,7 +224,7 @@ add_de1_widget "off espresso flush water" graph 30 520 {
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10  12}  -hide 0;
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font 14] -min 0.0 -max 6 -subdivisions 2 -majorticks {0  1  2  3  4  5  6} -hide 0;
     $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin 2000] -height [rescale_y_skin 1050] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1050] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph
 
 setup_home_espresso_graph
 
@@ -251,7 +261,7 @@ add_de1_widget "steam" graph 60 500 {
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -subdivisions 1
     $widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
     $widget grid configure -color $::skin_grid_colour -dashes {4 12} -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin 1900] -height [rescale_y_skin 1050] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags steam_graph
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1050] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags steam_graph
 
 set {} {
 add_de1_widget "off" graph 1130 350 {
@@ -294,6 +304,18 @@ set_button fav3_x_button state hidden
 add_icon_button fav3_tick_button off 1870 [expr $::start_button_y + 240] 100 100 {$::skin(icon_tick)} {skin_save fav3}
 set_button fav3_tick_button label_fill $::skin_green
 set_button fav3_tick_button state hidden
+add_icon_button fav4_x_button off 1970 [expr $::start_button_y + 360] 100 100 {$::skin(icon_x)} {cancel fav4}
+set_button fav4_x_button label_fill $::skin_red
+set_button fav4_x_button state hidden
+add_icon_button fav4_tick_button off 1870 [expr $::start_button_y + 360] 100 100 {$::skin(icon_tick)} {skin_save fav4}
+set_button fav4_tick_button label_fill $::skin_green
+set_button fav4_tick_button state hidden
+add_icon_button fav5_x_button off 1970 [expr $::start_button_y + 480] 100 100 {$::skin(icon_x)} {cancel fav5}
+set_button fav5_x_button label_fill $::skin_red
+set_button fav5_x_button state hidden
+add_icon_button fav5_tick_button off 1870 [expr $::start_button_y + 480] 100 100 {$::skin(icon_tick)} {skin_save fav5}
+set_button fav5_tick_button label_fill $::skin_green
+set_button fav5_tick_button state hidden
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav1_entry_button) $widget
@@ -313,6 +335,17 @@ add_de1_widget "off" entry 1720 -1001 {
 	#bind $widget <Leave>  {set ::skin(fav_label_fav3) $::fav_label_favv3; hide_android_keyboard}
     } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav3_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav3
 
+add_de1_widget "off" entry 1720 -1001 {
+	set ::globals(fav4_entry_button) $widget
+	#bind $widget <Return> {set ::skin(fav_label_fav4) $::fav_label_fav4; hide_android_keyboard}
+	#bind $widget <Leave>  {set ::skin(fav_label_fav4) $::fav_label_fav4; hide_android_keyboard}
+    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav4_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav4
+
+add_de1_widget "off" entry 1720 -1001 {
+	set ::globals(fav5_entry_button) $widget
+	#bind $widget <Return> {set ::skin(fav_label_fav5) $::fav_label_fav5; hide_android_keyboard}
+	#bind $widget <Leave>  {set ::skin(fav_label_fav5) $::fav_label_fav5; hide_android_keyboard}
+    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav5_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav5
 
 dui add dtext off 2500 [expr $::start_button_y + 30] -tags fav1_auto_load_l1 -text [translate "auto"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
 dui add dtext off 2500 [expr $::start_button_y + 60] -tags fav1_auto_load_l2 -text [translate "load"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
@@ -331,7 +364,17 @@ dui add dtext off 2500 [expr $::start_button_y + 300] -tags fav3_auto_load_l2 -t
 dui add dtext off 2500 [expr $::start_button_y + 285] -tags fav3_auto_load_l3 -text $::skin(icon_strike) -font [skin_font D-font 60] -fill $::skin_selected_colour -anchor center
 add_clear_button fav3_auto_load_button off 2450 [expr $::start_button_y + 240] 100 100 {} {set_auto_load fav3}
 
-foreach k {fav1 fav2 fav3} {
+dui add dtext off 2500 [expr $::start_button_y + 390] -tags fav4_auto_load_l1 -text [translate "auto"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 2500 [expr $::start_button_y + 420] -tags fav4_auto_load_l2 -text [translate "load"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 2500 [expr $::start_button_y + 405] -tags fav4_auto_load_l3 -text $::skin(icon_strike) -font [skin_font D-font 60] -fill $::skin_selected_colour -anchor center
+add_clear_button fav4_auto_load_button off 2450 [expr $::start_button_y + 360] 100 100 {} {set_auto_load fav4}
+
+dui add dtext off 2500 [expr $::start_button_y + 510] -tags fav5_auto_load_l1 -text [translate "auto"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 2500 [expr $::start_button_y + 540] -tags fav5_auto_load_l2 -text [translate "load"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 2500 [expr $::start_button_y + 525] -tags fav5_auto_load_l3 -text $::skin(icon_strike) -font [skin_font D-font 60] -fill $::skin_selected_colour -anchor center
+add_clear_button fav5_auto_load_button off 2450 [expr $::start_button_y + 480] 100 100 {} {set_auto_load fav5}
+
+foreach k {fav1 fav2 fav3 fav4 fav5} {
     dui item config off ${k}_auto_load_l1 -initial_state hidden -state hidden
     dui item config off ${k}_auto_load_l2 -initial_state hidden -state hidden
     dui item config off ${k}_auto_load_l3 -initial_state hidden -state hidden
@@ -347,6 +390,8 @@ add_colour_button wf_americano off $::beverage_type_x 860 260 100 {americano} {w
 add_colour_button wf_espresso off $::beverage_type_x 980 260 100 {espresso} {workflow espresso}
 add_colour_button wf_none off $::beverage_type_x 1100 260 100 {none} {workflow none}
 set_button wf_none label_fill $::skin_selected_colour
+
+add_colour_button favs_number off $::beverage_type_x 1400 320 100 {show $::skin(favs_to_show) favs} {toggle_favs_to_show}
 
 ########### Workflow Settings ########
 

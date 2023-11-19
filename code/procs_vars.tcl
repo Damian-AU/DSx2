@@ -67,13 +67,15 @@ set ::skin(button_x_machine) 2060
 set ::skin(button_y_machine) 1270
 set ::skin(button_x_scale) 2060
 set ::skin(button_y_scale) 860
-set ::beverage_type_x 1680
+set ::beverage_type_x 1600
 set ::skin(steam_calc) 1
 set ::skin(pre_tare) 0
 set ::skin(tare_if_negative_scale_reading) 1
 set ::fav_label_fav1 $::skin(fav_label_fav1)
 set ::fav_label_fav2 $::skin(fav_label_fav2)
 set ::fav_label_fav3 $::skin(fav_label_fav3)
+set ::fav_label_fav4 $::skin(fav_label_fav4)
+set ::fav_label_fav5 $::skin(fav_label_fav5)
 
 proc skin_load_font {name fn pcsize {androidsize {}} } {
     if {$::android == 1} {
@@ -437,19 +439,54 @@ proc steam_stop_label {} {
     }
 }
 
+proc toggle_favs_to_show {} {
+    set ::skin(favs_to_show) [expr $::skin(favs_to_show) + 1]
+    if {$::skin(favs_to_show) == 6} {
+        set ::skin(favs_to_show) 2
+    }
+    rest_fav_buttons
+}
+
+proc set_favs_showing {} {
+    set_button fav3 state normal
+    set_button fav3_edit state normal
+    set_button fav4 state normal
+    set_button fav4_edit state normal
+    set_button fav5 state normal
+    set_button fav5_edit state normal
+    if {$::skin(favs_to_show) == 2} {
+        set_button fav3 state hidden
+        set_button fav3_edit state hidden
+        set_button fav4 state hidden
+        set_button fav4_edit state hidden
+        set_button fav5 state hidden
+        set_button fav5_edit state hidden
+    }
+    if {$::skin(favs_to_show) == 3} {
+        set_button fav4 state hidden
+        set_button fav4_edit state hidden
+        set_button fav5 state hidden
+        set_button fav5_edit state hidden
+    }
+    if {$::skin(favs_to_show) == 4} {
+        set_button fav5 state hidden
+        set_button fav5_edit state hidden
+    }
+}
+
 proc rest_fav_buttons {} {
-    foreach k {fav1 fav2 fav3} {
+    foreach k {fav1 fav2 fav3 fav4 fav5} {
         dui item config off ${k}_auto_load_l1 -initial_state hidden -state hidden
         dui item config off ${k}_auto_load_l2 -initial_state hidden -state hidden
         dui item config off ${k}_auto_load_l3 -initial_state hidden -state hidden
         dui item config off ${k}_auto_load_l1 -fill $::skin_text_colour
         dui item config off ${k}_auto_load_l2 -fill $::skin_text_colour
-       #dui item config off ${k}_auto_load_l3 -initial_state normal -state normal
         set_button ${k}_auto_load_button state hidden
         set_button ${k}_edit state normal
         set_button ${k}_x_button state hidden
         set_button ${k}_tick_button state hidden
         dui item moveto off ${k}_entry 2070 -1001
+        set_favs_showing
     }
 }
 
@@ -472,7 +509,7 @@ proc edit {option} {
     set_button ${option}_edit state hidden
     set_button ${option}_x_button state normal
     set_button ${option}_tick_button state normal
-    dui item moveto off ${option}_entry 2070 [expr $::start_button_y + 380]
+    dui item moveto off ${option}_entry $::beverage_type_x 1250
 
 }
 
@@ -483,7 +520,7 @@ proc cancel {option} {
 }
 
 proc set_auto_load {key} {
-    foreach k {fav1 fav2 fav3} {
+    foreach k {fav1 fav2 fav3 fav4 fav5} {
         dui item config off ${k}_auto_load_l1 -fill $::skin_text_colour
         dui item config off ${k}_auto_load_l2 -fill $::skin_text_colour
         #dui item config off ${k}_auto_load_l3 -initial_state normal -state normal
@@ -810,7 +847,7 @@ proc set_fav_colour {fav} {
 }
 
 proc clear_fav_colour {} {
-    foreach key {fav1 fav2 fav3} {
+    foreach key {fav1 fav2 fav3 fav4 fav5} {
         set_button $key icon_fill $::skin_button_label_colour
         set_button $key icon_font [skin_font awesome_light 28]
     }

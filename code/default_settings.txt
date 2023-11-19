@@ -96,3 +96,6 @@ heading {DSx2}
 fav_label_fav1 {white coffee}
 fav_label_fav2 {black coffee}
 fav_label_fav3 {espresso}
+fav_label_fav4 {clean}
+fav_label_fav5 {extra}
+favs_to_show 3
