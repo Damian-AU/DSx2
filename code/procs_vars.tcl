@@ -1460,6 +1460,7 @@ proc skin_power {} {
     set ::skin_sleep_timer_on 1
     skin_power_off_timer
     page_show skin_power;
+    skin_save skin
 }
 
 proc skin_power_off_timer {} {
