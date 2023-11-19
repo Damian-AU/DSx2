@@ -1,0 +1,98 @@
+
+font_name {Inter-Regular}
+font_name_bold {PD-Bold-Bold}
+font_awesome {Font Awesome 5 Pro-Regular-400}
+font_awesome_light {Font Awesome 5 Pro-Light-300}
+
+icons icomoon
+
+icon_edit \uf304
+icon_tick \uf00c
+icon_index C
+icon_steam_timer B
+icon_bean A
+icon_cup \Ue910
+icon_espresso E
+icon_flush F
+icon_steam S
+icon_water W
+icon_jug J
+icon_milk M
+icon_minus -
+icon_plus +
+icon_strike 9
+icon_fav \Uf005
+icon_timer \uf2f2
+icon_scale X
+icon_decent Z
+
+icon_D_espresso \Ue000
+icon_D_flush \Ue001
+icon_D_steam \Ue002
+
+icon_D_water \Ue004
+icon_D_cup \Ue005
+icon_power \Uf011
+icon_bluetooth L
+
+icon_settings \Uf013
+icon_++ \Ue905
+icon_+ \Ue908
+icon_- \Ue907
+icon_-- \Ue906
+icon_sleep \Uf186
+icon_x \Uf00d
+icon_time \Uf017
+
+icon_arrow_left 4
+icon_arrow_right 5
+icon_arrow_up 2
+icon_arrow_down \Uf175
+icon_arrow_left_up 3
+icon_arrow_right_up 1
+
+icon_skip \Ue902
+icon_stop \Ue903
+
+glt1 4
+glt2 4
+glt3 4
+glt4 4
+glt5 4
+glb1 2
+glb2 2
+glb3 2
+glb4 2
+glb5 2
+
+zoomed_y_axis_scale_default 12
+zoomed_y_axis_max 10
+zoomed_y_axis_min 0
+zoomed_y2_axis_max 6
+zoomed_y2_axis_min 0
+
+pressure 10
+temperature 10
+flow 10
+weight 10
+resistance 0
+
+steps 10
+steam_pressure 10
+steam_temperature 10
+steam_flow 10
+
+jug_g 225
+jug_s 159
+jug_m 226
+jug_l 288
+milk_g 200
+milk_s 45
+jug_size m
+show_heading 1
+auto_load_fav none
+heading {DSx2}
+
+fav_label_fav1 {white coffee}
+fav_label_fav2 {black coffee}
+fav_label_fav3 {espresso}

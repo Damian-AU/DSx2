@@ -1,0 +1,26 @@
+#add_arrow fav_arrow1 off 2300 300 right_up
+#add_arrow fav_arrow2 off 2300 300 left_up
+#add_arrow fav_arrow3 off 2300 300 up
+#add_arrow fav_arrow4 off 2300 300 down
+
+
+
+proc show_manual {manual} {
+    if {$manual == "fav_manual"} {
+        hide_graph
+        set_arrow fav_info normal
+        after 5000 {set_arrow fav_info hidden; set_arrow wf_info normal; after 5000 {set_arrow wf_info hidden}}
+
+
+    }
+}
+
+add_arrow fav_info off 1950 350 right {
+[translate "You can save the current espresso, steam, water, flush and workflow settings to these favourites buttons."]\r
+[translate "To edit the button label and for save options, tap on the pencil icon to the right of the favoutrite button."]
+}
+
+add_arrow wf_info off 1400 800 right {
+[translate "You can use these buttons to change the of the Espresso, Steam, water and Flush buttons to suit your beverage type workflow"]\r
+[translate "The workflow can be saved to favourites ."]
+}
