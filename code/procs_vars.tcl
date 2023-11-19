@@ -4,11 +4,12 @@ set ::user(button_label_colour) #fff
 set ::user(text_colour) #2b6084
 set ::user(selected_colour) #fe7e00
 set ::user(machine_not_ready) #DA515E
-set ::user(machine_ready)  #0CA581
-set ::user(green)  #0CA581
+set ::user(machine_ready) #0CA581
+set ::user(green) #0CA581
 set ::user(blue) #49a2e8
 set ::user(red) #DA515E
 set ::user(brown) #A1663A
+set ::user(grey) #7C7C7C
 set ::user(yellow) #eae83d
 set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
@@ -28,6 +29,7 @@ set ::skin_green $::user(green)
 set ::skin_blue $::user(blue)
 set ::skin_red $::user(red)
 set ::skin_brown $::user(brown)
+set ::skin_grey $::user(grey)
 set ::skin_yellow $::user(yellow)
 set ::skin(help_colour) #fc2ff5
 set ::skin_x_axis_colour $::user(x_axis)
@@ -1373,7 +1375,7 @@ proc toggle_graph {curve} {
                 dui item config $::skin_home_pages ${curve}_icon -fill $::skin_yellow -outline $::skin_yellow
             }
             if {$curve == "steps"} {
-                dui item config $::skin_home_pages ${curve}_icon -fill $::skin_dark_white -outline $::skin_dark_white
+                dui item config $::skin_home_pages ${curve}_icon -fill $::skin_grey -outline $::skin_grey
             }
             $::home_espresso_graph axis configure y -max $::skin(zoomed_y_axis_max) -min $::skin(zoomed_y_axis_min)
         }

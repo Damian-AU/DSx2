@@ -14,5 +14,6 @@ brown #A1663A
 yellow #eae83d
 x_axis #E8E8E8
 y_axis #E8E8E8
+grey #7C7C7C
 
 ###
