@@ -1,4 +1,4 @@
-set ::skin_version 0.04
+set ::skin_version 0.05
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour

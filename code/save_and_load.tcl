@@ -93,6 +93,12 @@ proc skin_save {key} {
         if {$key == "fav3"} {
             set ::skin(fav_label_fav3) $::fav_label_fav3
         }
+        if {$key == "fav4"} {
+            set ::skin(fav_label_fav4) $::fav_label_fav4
+        }
+        if {$key == "fav5"} {
+            set ::skin(fav_label_fav5) $::fav_label_fav5
+        }
         set data {}
         append data "app {\n"
         set vars [fav_settings_vars]
