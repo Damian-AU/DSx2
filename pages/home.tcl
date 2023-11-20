@@ -1,4 +1,4 @@
-set ::skin_version 0.03
+set ::skin_version 0.04
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -319,32 +319,32 @@ set_button fav5_tick_button state hidden
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav1_entry_button) $widget
-	#bind $widget <Return> {set ::skin(fav_label_fav1) $::fav_label_fav1; hide_android_keyboard}
-	#bind $widget <Leave>  {set ::skin(fav_label_fav1) $::fav_label_fav1; hide_android_keyboard}
+	bind $widget <Return> {hide_android_keyboard}
+	bind $widget <Leave>  {hide_android_keyboard}
     } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav1_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav1
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav2_entry_button) $widget
-	#bind $widget <Return> {set ::skin(fav_label_fav2) $::fav_label_fav2; hide_android_keyboard}
-	#bind $widget <Leave>  {set ::skin(fav_label_fav2) $::fav_label_fav2; hide_android_keyboard}
+	bind $widget <Return> {hide_android_keyboard}
+	bind $widget <Leave>  {hide_android_keyboard}
     } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav2_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav2
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav3_entry_button) $widget
-	#bind $widget <Return> {set ::skin(fav_label_fav3) $::fav_label_fav3; hide_android_keyboard}
-	#bind $widget <Leave>  {set ::skin(fav_label_fav3) $::fav_label_favv3; hide_android_keyboard}
+	bind $widget <Return> {hide_android_keyboard}
+	bind $widget <Leave>  {hide_android_keyboard}
     } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav3_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav3
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav4_entry_button) $widget
-	#bind $widget <Return> {set ::skin(fav_label_fav4) $::fav_label_fav4; hide_android_keyboard}
-	#bind $widget <Leave>  {set ::skin(fav_label_fav4) $::fav_label_fav4; hide_android_keyboard}
+	bind $widget <Return> {hide_android_keyboard}
+	bind $widget <Leave>  {hide_android_keyboard}
     } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav4_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav4
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav5_entry_button) $widget
-	#bind $widget <Return> {set ::skin(fav_label_fav5) $::fav_label_fav5; hide_android_keyboard}
-	#bind $widget <Leave>  {set ::skin(fav_label_fav5) $::fav_label_fav5; hide_android_keyboard}
+	bind $widget <Return> {hide_android_keyboard}
+	bind $widget <Leave>  {hide_android_keyboard}
     } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav5_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav5
 
 dui add dtext off 2500 [expr $::start_button_y + 30] -tags fav1_auto_load_l1 -text [translate "auto"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
