@@ -1,4 +1,4 @@
-set ::skin_version 0.05
+set ::skin_version 0.06
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -9,7 +9,9 @@ dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_forgroun
 dui add variable $::skin_home_pages 1020 0 -font [skin_font font 40] -fill $::skin_button_label_colour -tags heading -anchor n -textvariable {$::skin_heading}
 
 dui add variable $::skin_home_pages 2540 4 -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor ne -textvariable {[skin_clock]}
-dui add variable $::skin_home_pages 2230 8 -font [skin_font awesome 12] -fill $::skin_button_label_colour -tags wifi_icon -anchor ne -textvariable {\uf1eb [wifi_status]}
+dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome 14] -fill $::skin_button_label_colour -tags wifi_icon -anchor ne -textvariable {\uf1eb [wifi_status]}
+dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light 18] -fill $::skin_button_label_colour -tags battery_icon -anchor ne -textvariable {[skin_battery_status]}
+
 
 add_clear_button heading off 0 10 2560 100 {} {header_settings}
 add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; skin_save skin}; set_button close_heading_settings state hidden
@@ -54,7 +56,7 @@ set_favs_showing
 
 dui add variable $::skin_home_pages 2410 [expr $::skin(button_y_machine) + 92] -font [skin_font D-font 264] -fill $::skin_forground_colour -tags decent_icon -anchor e -textvariable {D}
 dui add variable $::skin_home_pages 2330 [expr $::skin(button_y_machine) - 36] -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor w -textvariable {[skin_group_head_heater_temperature_text]}
-dui add variable $::skin_home_pages 2426 [expr $::skin(button_y_machine) + 80] -font [skin_font font 15] -fill $::skin_text_colour  -anchor w -textvariable {[skin_steamtemp_text]}
+dui add variable $::skin_home_pages 2426 [expr $::skin(button_y_machine) + 60] -font [skin_font font 15] -fill $::skin_text_colour  -anchor w -textvariable {[skin_steamtemp_text]}
 dui add variable $::skin_home_pages 2090 [expr $::skin(button_y_machine) + 160] -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor w -textvariable {[skin_low_water]}
 
 dui add variable espresso 2358 [expr $::skin(button_y_machine) + 28] -font [skin_font D-font 52] -fill $::skin_brown  -anchor n -textvariable {e}
@@ -70,7 +72,12 @@ dui add variable "steam" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_
 dui add variable "flush" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font 40] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_flush_timer]}
 
 add_clear_button settings_button off 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {set ::settings(active_settings_tab) settings_3; show_settings}
-add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
+add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 40] 350 300 {} {skin_start idle}
+
+# extend timers
+add_colour_button flush_extend flush [expr $::skin(button_x_machine) - 20] [expr $::skin(button_y_machine) - 220] 100 100 {+5s} {flush_extend}
+add_colour_button steam_extend steam [expr $::skin(button_x_machine) - 20] [expr $::skin(button_y_machine) - 220] 100 100 {+5s} {steam_extend}
+
 
 ### scale
 
@@ -90,6 +97,8 @@ dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 130]
 dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 100] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 104] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_3
 dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 276] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 280] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_4
 
+add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
+
 ### DYE
 #add_colour_button dye_past $::skin_home_pages $::skin(button_x_scale) [expr $::skin(button_y_scale) - 200] 100 100 {DYE} {}
 
@@ -99,19 +108,19 @@ add_round_button sleep_button $::skin_home_pages $::skin(button_x_power) $::skin
 
 ### ghc buttons ###
 
-add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) {espresso} {skin_start espresso}
-dui add variable off [expr $::skin(button_x_espresso) + 170] [expr $::skin(button_y_espresso) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags espresso_data_line_1 -anchor n -justify center -width 340 -textvariable {$::settings(profile_title)\r[skin_dose] [translate " : "] [skin_saw]g\r([skin_extraction_ratio])}
+add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) {[translate "espresso"]} {skin_start espresso}
+dui add variable off [expr $::skin(button_x_espresso) + 170] [expr $::skin(button_y_espresso) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags espresso_data_line_1 -anchor n -justify center -width 340 -textvariable {$::settings(profile_title)\r[skin_dose] [translate " : "] [skin_saw]g\r[skin_extraction_ratio]}
 add_clear_button espresso off $::skin(button_x_espresso) [expr $::skin(button_y_espresso) + 100] 340 180 {} {show_skin_set espresso}
 
-add_icon_label_button steam_start off $::skin(button_x_steam) $::skin(button_y_steam) 340 100 $::skin(icon_steam) {steam} {skin_start steam}
+add_icon_label_button steam_start off $::skin(button_x_steam) $::skin(button_y_steam) 340 100 $::skin(icon_steam) {[translate "steam"]} {skin_start steam}
 dui add variable off [expr $::skin(button_x_steam) + 170] [expr $::skin(button_y_steam) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags steam_data_line_1 -anchor n -justify center -width 340 -textvariable {[skin_steam_settings_info]\r[skin_steam_text $::settings(steam_timeout)]}
 add_clear_button steam off $::skin(button_x_steam) [expr $::skin(button_y_steam) + 100] 340 180 {} {show_skin_set steam}
 
-add_icon_label_button water_start off $::skin(button_x_water) $::skin(button_y_water) 340 100 $::skin(icon_water) {water} {skin_start water}
+add_icon_label_button water_start off $::skin(button_x_water) $::skin(button_y_water) 340 100 $::skin(icon_water) {[translate "water"]} {skin_start water}
 dui add variable off [expr $::skin(button_x_water) + 170] [expr $::skin(button_y_water) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags water_data_line_1 -anchor n -justify center -width 340 -textvariable {[skin_water_settings_info]}
 add_clear_button water off $::skin(button_x_water) [expr $::skin(button_y_water) + 100] 340 180 {} {show_skin_set water}
 
-add_icon_label_button flush_start off $::skin(button_x_flush) $::skin(button_y_flush) 340 100 $::skin(icon_flush) {flush} {skin_start flush}
+add_icon_label_button flush_start off $::skin(button_x_flush) $::skin(button_y_flush) 340 100 $::skin(icon_flush) {[translate "flush"]} {skin_start flush}
 dui add variable off [expr $::skin(button_x_flush) + 170] [expr $::skin(button_y_flush) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags flush_data_line_1 -anchor n -justify center -width 340 -textvariable {[round_to_integer $::settings(flush_seconds)]s}
 add_clear_button flush off $::skin(button_x_flush) [expr $::skin(button_y_flush) + 100] 340 180 {} {show_skin_set flush}
 
@@ -126,14 +135,15 @@ dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 400] [expr 
 dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 100] [expr 50 + $::skin(button_y_espresso)] [expr $::skin(button_x_espresso) + 104] [expr $::skin(button_y_espresso) + 150] -tags stop_espresso_stop_s2 -width 0 -fill $::skin_background_colour
 
 add_icon_label_button stop_steam steam $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_steam)} {[steam_stop_label]} {skin_start idle}; set_button stop_steam icon_fill $::skin_selected_colour
-#dui add variable "steam" 1030 [expr $::skin(button_y_espresso) + 200] -font [skin_font font 40] -fill $::skin_text_colour -anchor center -textvariable {[skin_steam_timer]}
 
 add_icon_label_button stop_flush flush $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_flush)} {[translate "stop"]} {skin_start idle}; set_button stop_flush icon_fill $::skin_selected_colour
-#dui add variable "flush" 1030 [expr $::skin(button_y_espresso) + 200] -font [skin_font font 40] -fill $::skin_text_colour -anchor center -textvariable {[skin_flush_timer]}
 
 add_icon_label_button stop_water water $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_water)} {[translate "stop"]} {skin_start idle}; set_button stop_water icon_fill $::skin_selected_colour
 
 add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
+
+
+
 
 
 ### sleep power page
@@ -168,6 +178,8 @@ blt::vector create skin_pressure_goal skin_flow_goal skin_temperature_goal skin_
 blt::vector create skin_steam_temperature
 }
 
+dui add variable "espresso" 1950 [expr $::skin(graph_key_y) + 12] -font [skin_font font 14] -fill $::skin_text_colour -anchor e -textvariable {[skin_espresso_elapsed_timer]s}
+
 dui add canvas_item oval "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags pressure_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags flow_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 446 + 80] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 446 + 42 + 80] [expr $::skin(graph_key_y) + 18] -outline $::skin_brown -fill $::skin_brown -tags weight_icon
@@ -175,8 +187,8 @@ dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) +
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 976 + 160] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 976 + 42 + 160] [expr $::skin(graph_key_y) + 18] -outline $::skin_yellow -fill $::skin_yellow -tags resistance_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 1196 + 200] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 1196 + 42 + 200] [expr $::skin(graph_key_y) + 18] -outline $::::skin_grey -fill $::::skin_grey -tags steps_icon
 dui add variable "off flush water" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Pressure"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags flow_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Flow rate (in)"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags weight_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Scale rate (out)"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags flow_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Flow rate"] ([translate "in"])}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags weight_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Scale rate"] ([translate "out"])}
 dui add variable "off flush water" [expr $::skin(graph_key_x) + 744 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags temperature_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Temperature"]}
 dui add variable "off flush water" [expr $::skin(graph_key_x) + 996 + 38 + 160] [expr $::skin(graph_key_y) + 12] -tags resistance_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
 dui add variable "off flush water" [expr $::skin(graph_key_x) + 1216 + 38 + 200] [expr $::skin(graph_key_y) + 12] -tags steps_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Steps"]}
@@ -321,31 +333,31 @@ add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav1_entry_button) $widget
 	bind $widget <Return> {hide_android_keyboard}
 	bind $widget <Leave>  {hide_android_keyboard}
-    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav1_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav1
+    } -width 10 -font [skin_font font 20]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav1_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav1
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav2_entry_button) $widget
 	bind $widget <Return> {hide_android_keyboard}
 	bind $widget <Leave>  {hide_android_keyboard}
-    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav2_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav2
+    } -width 10 -font [skin_font font 20]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav2_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav2
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav3_entry_button) $widget
 	bind $widget <Return> {hide_android_keyboard}
 	bind $widget <Leave>  {hide_android_keyboard}
-    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav3_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav3
+    } -width 10 -font [skin_font font 20]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav3_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav3
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav4_entry_button) $widget
 	bind $widget <Return> {hide_android_keyboard}
 	bind $widget <Leave>  {hide_android_keyboard}
-    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav4_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav4
+    } -width 10 -font [skin_font font 20]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav4_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav4
 
 add_de1_widget "off" entry 1720 -1001 {
 	set ::globals(fav5_entry_button) $widget
 	bind $widget <Return> {hide_android_keyboard}
 	bind $widget <Leave>  {hide_android_keyboard}
-    } -width 10 -font [skin_font font 24]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav5_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav5
+    } -width 10 -font [skin_font font 20]  -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags fav5_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable ::fav_label_fav5
 
 dui add dtext off 2500 [expr $::start_button_y + 30] -tags fav1_auto_load_l1 -text [translate "auto"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
 dui add dtext off 2500 [expr $::start_button_y + 60] -tags fav1_auto_load_l2 -text [translate "load"] -width 100 -font [skin_font font 18] -fill $::skin_text_colour -anchor center
@@ -384,14 +396,14 @@ foreach k {fav1 fav2 fav3 fav4 fav5} {
 ### Beverage type ###
 ###############################
 dui add dtext off $::beverage_type_x 570 -text [translate "Beverage type"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
-add_colour_button wf_latte off $::beverage_type_x 620 260 100 {latte/cap} {workflow latte}
-add_colour_button wf_long off $::beverage_type_x 740 260 100 {long black} {workflow long}
-add_colour_button wf_americano off $::beverage_type_x 860 260 100 {americano} {workflow americano}
-add_colour_button wf_espresso off $::beverage_type_x 980 260 100 {espresso} {workflow espresso}
-add_colour_button wf_none off $::beverage_type_x 1100 260 100 {none} {workflow none}
+add_colour_button wf_latte off $::beverage_type_x 620 260 100 {[translate "latte/cap"]} {workflow latte}
+add_colour_button wf_long off $::beverage_type_x 740 260 100 {[translate "long black"]} {workflow long}
+add_colour_button wf_americano off $::beverage_type_x 860 260 100 {[translate "americano"]} {workflow americano}
+add_colour_button wf_espresso off $::beverage_type_x 980 260 100 {[translate "espresso"]} {workflow espresso}
+add_colour_button wf_none off $::beverage_type_x 1100 260 100 {[translate "none"]} {workflow none}
 set_button wf_none label_fill $::skin_selected_colour
 
-add_colour_button favs_number off $::beverage_type_x 1400 320 100 {show $::skin(favs_to_show) favs} {toggle_favs_to_show}
+add_colour_button favs_number off $::beverage_type_x 1350 260 100 {[translate "show"] $::skin(favs_to_show) favs} {toggle_favs_to_show}
 
 ########### Workflow Settings ########
 
@@ -493,9 +505,9 @@ add_colour_button wf_steam_timer_plus off 1350 820 100 100 {\Uf107} {adjust stea
 dui add variable off 1340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_steam_timer_setting -anchor center -textvariable {[round_to_integer $::settings(steam_timeout)]s}
 
 dui add dtext off 180 1180 -tags wf_heading_steam_calibrate -text [translate "Calibrate steam timer by weight"] -font [skin_font font_bold 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1390 -tags wf_milk_weight_text_line_1 -text [translate "1: Place the empty jug on the scale, tap the pencil next to the respective jug button to set the weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1440 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1490 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1400 -tags wf_milk_weight_text_line_1 -width 1400 -text [translate "1: Place the empty jug on the scale, tap the pencil next to the respective jug button to set the weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1470 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1520 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
 
 add_icon_label_button wf_steam_jug_milk off 180 1230 280 100 {$::skin(icon_milk)} {[round_to_integer $::skin(milk_g)]g} {set ::skin(milk_g) [round_to_integer $::de1(scale_sensor_weight)]}
 add_icon_button wf_steam_cal_time_minus off 600 1230 100 100 {$::skin(icon_minus)} {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) - 1]]; if {$::skin(milk_s) < 5} {set ::skin(milk_s) 5}}; set_button wf_steam_cal_time_minus font [skin_font D-font 34]
@@ -569,9 +581,18 @@ profile_has_changed_set_colors
 proc skins_page_change_due_to_de1_state_change { textstate } {
 	page_change_due_to_de1_state_change $textstate
 	if {$textstate == "Idle"} {
+        if {$::flush_timer_backup > 0} {
+            set ::settings(flush_seconds) $::flush_timer_backup
+            set ::flush_timer_backup 0
+        }
+        if {$::steam_timer_backup > 0} {
+            set ::settings(steam_timeout) $::steam_timer_backup
+            set ::steam_timer_backup 0
+        }
         show_graph
         set_next_page off off;
     } elseif {$textstate == "Steam"} {
+        set ::steam_timer_backup $::settings(steam_timeout)
         set_next_page off off;
         page_show steam
     } elseif {$textstate == "Espresso"} {
@@ -583,6 +604,7 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         set_next_page off off;
         page_show water
     } elseif {$textstate == "HotWaterRinse"} {
+        set ::flush_timer_backup $::settings(flush_seconds)
         show_graph
         set_next_page off off;
         page_show flush

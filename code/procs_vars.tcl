@@ -11,6 +11,7 @@ set ::user(red) #DA515E
 set ::user(brown) #A1663A
 set ::user(grey) #7C7C7C
 set ::user(yellow) #eae83d
+set ::user(orange) #fe7e00
 set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
 
@@ -31,6 +32,7 @@ set ::skin_red $::user(red)
 set ::skin_brown $::user(brown)
 set ::skin_grey $::user(grey)
 set ::skin_yellow $::user(yellow)
+set ::skin_orange $::user(orange)
 set ::skin(help_colour) #fc2ff5
 set ::skin_x_axis_colour $::user(x_axis)
 set ::skin_y_axis_colour $::user(y_axis)
@@ -76,6 +78,8 @@ set ::fav_label_fav2 $::skin(fav_label_fav2)
 set ::fav_label_fav3 $::skin(fav_label_fav3)
 set ::fav_label_fav4 $::skin(fav_label_fav4)
 set ::fav_label_fav5 $::skin(fav_label_fav5)
+
+set ::skin(auto_tare_negative_reading) 1
 
 proc skin_load_font {name fn pcsize {androidsize {}} } {
     if {$::android == 1} {
@@ -180,13 +184,17 @@ proc skin_saw {} {
 }
 
 proc skin_extraction_ratio {} {
-    if {$::settings(settings_profile_type) == "settings_2c"} {
-        set y [round_to_one_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
+    if {$::settings(grinder_dose_weight) > 1} {
+        if {$::settings(settings_profile_type) == "settings_2c"} {
+            set y [round_to_one_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
+        } else {
+            set y [round_to_one_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
+        }
+        set d "1:"
+        return ($d$y)
     } else {
-        set y [round_to_one_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
+        return ""
     }
-    set d "1:"
-    return $d$y
 }
 
 proc goto_profile_wizard {} {
@@ -404,6 +412,7 @@ proc hide_graph {} {
     dui item moveto off heading_entry 450 -1001
     .can itemconfigure main_graph -state hidden
     dui item config off main_graph -initial_state hidden
+    set_button auto_tare state normal
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
         dui item config $pages ${key}_icon -initial_state hidden -state hidden
@@ -416,6 +425,7 @@ proc hide_graph {} {
 proc show_graph {} {
     .can itemconfigure main_graph -state normal
     dui item config off main_graph -initial_state normal
+    set_button auto_tare state hidden
     hide_skin_set
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
@@ -433,9 +443,10 @@ proc do_nothing {} {
 proc steam_stop_label {} {
     if {[de1_substate_text] == "puffing"} {
         return [translate "purge"]
+        set_button steam_extend state hidden
     } else {
         return [translate "stop"]
-
+        set_button steam_extend state normal
     }
 }
 
@@ -509,7 +520,7 @@ proc edit {option} {
     set_button ${option}_edit state hidden
     set_button ${option}_x_button state normal
     set_button ${option}_tick_button state normal
-    dui item moveto off ${option}_entry $::beverage_type_x 1250
+    dui item moveto off ${option}_entry [expr $::beverage_type_x + 0] 350
 
 }
 
@@ -771,6 +782,7 @@ proc skin_steam_time_calc {} {
                 set ::settings(steam_timeout) $::skin(steam_calc)
                 save_settings
                 de1_send_steam_hotwater_settings
+                borg toast [translate "Steam timer set"]
             }
         }
     } else {
@@ -787,6 +799,7 @@ proc skin_steam_time_calc {} {
             set ::settings(steam_timeout) $::skin(steam_calc)
             save_settings
             de1_send_steam_hotwater_settings
+            borg toast [translate "Steam timer set"]
         }
     }
 }
@@ -1076,11 +1089,57 @@ proc hide_header_settings {} {
 
 proc wifi_status {} {
     if {[borg networkinfo] == "wifi"} {
-        dui item config $::skin_home_pages wifi_icon -fill #00dd00
+        dui item config $::skin_home_pages wifi_icon -fill $::skin_green
     } else {
         dui item config $::skin_home_pages wifi_icon -fill $::skin_button_label_colour
     }
 }
+
+proc skin_battery_status {} {
+    if {[battery_state] == "charging" || [battery_state] == "charged"} {
+        dui item config $::skin_home_pages battery_icon -fill $::skin_green
+        return \uf376
+    } elseif {[battery_percent] < 20} {
+        dui item config $::skin_home_pages battery_icon -fill $::skin_red
+        return \uf244
+    } elseif {[battery_percent] < 50} {
+        dui item config $::skin_home_pages battery_icon -fill $::skin_red
+        return \ue0b1
+    } elseif {[battery_percent] < 70} {
+        dui item config $::skin_home_pages battery_icon -fill $::skin_orange
+        return \uf242
+    } elseif {[battery_percent] < 80} {
+        dui item config $::skin_home_pages battery_icon -fill $::skin_green
+        return \uf241
+    } else {
+    dui item config $::skin_home_pages battery_icon -fill $::skin_green
+    return \uf240
+    }
+}
+
+set ::flush_timer_backup 0
+proc flush_extend {} {
+    set ::settings(flush_seconds) [expr $::settings(flush_seconds) + 5]
+    de1_send_steam_hotwater_settings
+}
+
+set ::steam_timer_backup 0
+proc steam_extend {} {
+    set ::settings(steam_timeout) [expr $::settings(steam_timeout) + 5]
+    de1_send_steam_hotwater_settings
+}
+
+proc skin_espresso_elapsed_timer {} {
+    set pit [espresso_preinfusion_timer]
+    set pt [espresso_pour_timer]
+    set tt [espresso_elapsed_timer]
+    if {$pit >= 1} {
+        return "$pit+$pt = $tt"
+    } else {
+        return "$tt"
+    }
+}
+
 
 proc cancel_auto_stop {} {
     if {$::android != 1 } {
@@ -1160,6 +1219,7 @@ proc workflow {option} {
 proc set_scale_weight_to_dose {} {
     set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::de1(scale_sensor_weight)]]
     skin_save settings
+    borg toast [translate "Bean weight set"]
 }
 
 proc adjust {var value} {
@@ -1561,8 +1621,24 @@ dui add variable "plugin_message" 360 600 -font [skin_font font_bold 20] -fill $
 add_clear_button plugin_message plugin_message 0 0 2560 1600 {} {app_exit}
 
 proc skin_negative_scale_tare {} {
-    if {$::de1(scale_sensor_weight) < 0} {
+    if {$::de1(scale_sensor_weight) < 0 && $::skin(auto_tare_negative_reading) == 1} {
         scale_tare
+    }
+}
+
+proc toggle_auto_tare {} {
+    if {$::skin(auto_tare_negative_reading) == 1} {
+        set ::skin(auto_tare_negative_reading) 0
+    } else {
+        set ::skin(auto_tare_negative_reading) 1
+    }
+}
+
+proc auto_tare_button_colour {} {
+    if {$::skin(auto_tare_negative_reading) == 1} {
+        set_button auto_tare label_fill $::skin_selected_colour
+    } else {
+        set_button auto_tare label_fill $::skin_button_label_colour
     }
 }
 
@@ -1676,9 +1752,13 @@ set {} {
         }
 }
 
+
+
+### flush timer DYE
 ###################################################
 proc skin_loop {} {
     #PD_backup_live_graph
+    auto_tare_button_colour
     skin_negative_scale_tare
     restore_live_graphs
     check_fav
