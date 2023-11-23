@@ -407,8 +407,9 @@ proc set_arrow {arrow value} {
     dui item config $pages ${arrow}_info -initial_state $value -state $value
 }
 
-
+set ::graph_hidden 0
 proc hide_graph {} {
+    set ::graph_hidden 1
     dui item moveto off heading_entry 450 -1001
     .can itemconfigure main_graph -state hidden
     dui item config off main_graph -initial_state hidden
@@ -423,6 +424,7 @@ proc hide_graph {} {
 }
 
 proc show_graph {} {
+    set ::graph_hidden 0
     .can itemconfigure main_graph -state normal
     dui item config off main_graph -initial_state normal
     set_button auto_tare state hidden
@@ -589,7 +591,7 @@ proc hide_skin_set {} {
 }
 
 proc wf_profile_button_list {} {
-    return {select_profile wf_save_saw_tick_button wf_save_saw_x_button wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
+    return {edit_profile select_profile wf_save_saw_tick_button wf_save_saw_x_button wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
 }
 
 proc show_espresso_settings {} {
@@ -944,7 +946,7 @@ proc start_button_ready {} {
 }
 
 proc skin_start {option} {
-    if {[ghc_required]} {
+    if {[ghc_required] || $::graph_hidden == 1} {
         show_skin_set $option
     } else {
         if {$option == "water"} {

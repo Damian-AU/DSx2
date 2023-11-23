@@ -1,4 +1,4 @@
-set ::skin_version 0.06
+set ::skin_version 0.07
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -57,7 +57,7 @@ set_favs_showing
 dui add variable $::skin_home_pages 2410 [expr $::skin(button_y_machine) + 92] -font [skin_font D-font 264] -fill $::skin_forground_colour -tags decent_icon -anchor e -textvariable {D}
 dui add variable $::skin_home_pages 2330 [expr $::skin(button_y_machine) - 36] -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor w -textvariable {[skin_group_head_heater_temperature_text]}
 dui add variable $::skin_home_pages 2426 [expr $::skin(button_y_machine) + 60] -font [skin_font font 15] -fill $::skin_text_colour  -anchor w -textvariable {[skin_steamtemp_text]}
-dui add variable $::skin_home_pages 2090 [expr $::skin(button_y_machine) + 160] -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor w -textvariable {[skin_low_water]}
+dui add variable $::skin_home_pages 2090 [expr $::skin(button_y_machine) + 186] -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor w -textvariable {[skin_low_water]}
 
 dui add variable espresso 2358 [expr $::skin(button_y_machine) + 28] -font [skin_font D-font 52] -fill $::skin_brown  -anchor n -textvariable {e}
 dui add variable "espresso water" 2366 [expr $::skin(button_y_machine) + 60] -font [skin_font D-font 52] -fill $::skin_blue  -anchor n -textvariable {c}
@@ -105,6 +105,7 @@ add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::sk
 ### sleep
 
 add_round_button sleep_button $::skin_home_pages $::skin(button_x_power) $::skin(button_y_power) 110 110 {$::skin(icon_power)} {skin_power}; set_button sleep_button font [skin_font awesome 34]
+add_clear_button sleep_power_putton off 10 10 220 200 {} {skin_power}
 
 ### ghc buttons ###
 
@@ -178,7 +179,8 @@ blt::vector create skin_pressure_goal skin_flow_goal skin_temperature_goal skin_
 blt::vector create skin_steam_temperature
 }
 
-dui add variable "espresso" 1950 [expr $::skin(graph_key_y) + 12] -font [skin_font font 14] -fill $::skin_text_colour -anchor e -textvariable {[skin_espresso_elapsed_timer]s}
+set ::key_font_size 14
+#dui add variable "espresso" 1950 [expr $::skin(graph_key_y) + 12] -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor e -textvariable {[skin_espresso_elapsed_timer]s}
 
 dui add canvas_item oval "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags pressure_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags flow_icon
@@ -186,18 +188,18 @@ dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) +
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 724 + 120] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 724 + 42 + 120] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -tags temperature_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 976 + 160] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 976 + 42 + 160] [expr $::skin(graph_key_y) + 18] -outline $::skin_yellow -fill $::skin_yellow -tags resistance_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 1196 + 200] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 1196 + 42 + 200] [expr $::skin(graph_key_y) + 18] -outline $::::skin_grey -fill $::::skin_grey -tags steps_icon
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Pressure"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags flow_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Flow rate"] ([translate "in"])}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags weight_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Scale rate"] ([translate "out"])}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 744 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags temperature_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Temperature"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 996 + 38 + 160] [expr $::skin(graph_key_y) + 12] -tags resistance_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 1216 + 38 + 200] [expr $::skin(graph_key_y) + 12] -tags steps_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Steps"]}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_data -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags flow_data -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags weight_data -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(scale_weight_rate)]]g/s}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 744 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags temperature_data -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[group_head_heater_temperature_text]}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 996 + 38 + 160] [expr $::skin(graph_key_y) + 12] -tags resistance_data -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 1216 + 38 + 200] [expr $::skin(graph_key_y) + 12] -tags steps_data -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {Steps}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Pressure"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags flow_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Flow rate"] ([translate "in"])}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags weight_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Scale rate"] ([translate "out"])}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 744 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags temperature_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Temperature"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 996 + 38 + 160] [expr $::skin(graph_key_y) + 12] -tags resistance_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 1216 + 38 + 200] [expr $::skin(graph_key_y) + 12] -tags steps_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Steps"]}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags flow_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags weight_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(scale_weight_rate)]]g/s}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 744 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags temperature_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[group_head_heater_temperature_text]}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 996 + 38 + 160] [expr $::skin(graph_key_y) + 12] -tags resistance_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 1216 + 38 + 200] [expr $::skin(graph_key_y) + 12] -tags steps_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {Steps}
 dui add dbutton "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) - 50] \
     -bwidth 210 -bheight 110 -tags pressure_key_button \
     -command {toggle_graph pressure}
@@ -243,9 +245,9 @@ setup_home_espresso_graph
 dui add canvas_item oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon
 dui add canvas_item oval steam [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon
 dui add canvas_item oval steam [expr $::skin(graph_key_x) + 446 + 80] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 446 + 42 + 80] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -tags steam_steam_temperature_icon
-dui add variable "steam" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags steam_steam_pressure_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
-dui add variable "steam" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags steam_steam_flow_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
-dui add variable "steam" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text -font [skin_font font 14] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[steamtemp_text]}
+dui add variable "steam" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags steam_steam_pressure_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
+dui add variable "steam" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags steam_steam_flow_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
+dui add variable "steam" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[steamtemp_text]}
 
 dui add dbutton steam $::skin(graph_key_x) [expr $::skin(graph_key_y) - 50] \
     -bwidth 210 -bheight 110 -initial_state normal -tags steam_steam_pressure_button \
@@ -432,6 +434,7 @@ add_clear_button wf_close off 150 440 1490 100 {[translate "tap here to close"]}
 ### espresso
 dui add dtext off 340 570 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button select_profile off 230 620 220 100 {[translate "select"]} {set ::settings(active_settings_tab) settings_1; show_settings}
+add_colour_button edit_profile off 230 820 220 100 {[translate "edit"]} {goto_profile_wizard}
 
 # Dose
 dui add dtext off 840 570 -tags wf_heading_bean_weight -text [translate "Bean weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
@@ -456,7 +459,14 @@ add_icon_button wf_save_saw_tick_button off 1350 960 100 100 {$::skin(icon_tick)
 set_button wf_save_saw_tick_button label_fill $::skin_background_colour
 set_button wf_save_saw_tick_button state hidden
 
+### profile notes
+#dui add dtext off 230 1050 -tags wf_heading_profile_notes -text [translate "Profile Notes"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw
+#dui add variable off 230 1110 -fill $::skin_text_colour  -font [skin_font font 18] -tags wf_profile_notes -anchor nw -justify left -width 1230 -textvariable {$::settings(profile_notes)}
+
+
 hide_espresso_settings
+
+
 
 ### steam
 dui add dtext off 340 570 -tags wf_heading_steam_heater -text [translate "Steam heater"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center

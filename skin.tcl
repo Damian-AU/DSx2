@@ -36,7 +36,7 @@ proc D_join_files_in_dir {dir} {
     }
 }
 D_join_files_in_dir code
-D_join_files_in_dir pages
+D_join_files_in_dir pages/$::skin(theme)
 D_join_files_in_dir plugins
 D_join_files_in_dir manuals
 

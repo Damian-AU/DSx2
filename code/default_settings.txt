@@ -100,3 +100,6 @@ fav_label_fav4 {clean}
 fav_label_fav5 {extra}
 favs_to_show 3
 workflow none
+legend_font_size 16
+
+theme Damian
