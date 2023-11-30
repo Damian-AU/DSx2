@@ -1,4 +1,4 @@
-set ::skin_version 0.07
+set ::skin_version 0.08
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -19,7 +19,6 @@ add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settin
 ## settings
 add_colour_button edit_heading_button off 100 620 340 100 {[translate "toggle heading"]} {toggle_heading}; set_button edit_heading_button state hidden
 
-#dui add entry off 450 -1001 {bind $widget <Leave> set ::skin_heading $::skin(heading)} -textvariable ::skin(heading) -tags heading_entry -bg $::skin_forground_colour -width 32 -font_size 15
 add_de1_widget "off" entry 450 -1001 {
 	set ::globals(edit_heading_button) $widget
 	bind $widget <Return> {set ::skin(heading) $::skin_heading; hide_android_keyboard}
@@ -99,9 +98,6 @@ dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 276]
 
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
 
-### DYE
-#add_colour_button dye_past $::skin_home_pages $::skin(button_x_scale) [expr $::skin(button_y_scale) - 200] 100 100 {DYE} {}
-
 ### sleep
 
 add_round_button sleep_button $::skin_home_pages $::skin(button_x_power) $::skin(button_y_power) 110 110 {$::skin(icon_power)} {skin_power}; set_button sleep_button font [skin_font awesome 34]
@@ -142,10 +138,6 @@ add_icon_label_button stop_flush flush $::skin(button_x_espresso) [expr 50 + $::
 add_icon_label_button stop_water water $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_water)} {[translate "stop"]} {skin_start idle}; set_button stop_water icon_fill $::skin_selected_colour
 
 add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
-
-
-
-
 
 ### sleep power page
 
@@ -219,10 +211,44 @@ dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 1224 + 2
     -bwidth 210 -bheight 110 -tags steps_key_button \
     -command {toggle_graph steps}
 
-add_de1_widget "off espresso flush water" graph 30 520 {
+proc button1 {method args} {
+    set rc [__button1 $method {*}$args]
+    if {$method eq "configure"} {
+        label1 configure -text [__button1 cget -height]
+    }
+    return $rc
+}
+
+set ::main_graph_height [rescale_y_skin 1010]
+add_de1_widget "off flush water" graph 30 520 {
     set ::home_espresso_graph $widget
     bind $widget [platform_button_press] {
-
+        #page_show graphs_page
+        if {$::main_graph_height == [rescale_y_skin 1010]} {
+            set ::main_graph_height [rescale_y_skin 850]
+            $::home_espresso_graph configure -height [rescale_y_skin 850]
+            .can itemconfigure graph_a -state normal
+            .can itemconfigure graph_b -state normal
+            .can itemconfigure graph_c -state normal
+            .can itemconfigure graph_d -state normal
+            dui item config off graph_a -initial_state normal
+            dui item config off graph_b -initial_state normal
+            dui item config off graph_c -initial_state normal
+            dui item config off graph_d -initial_state normal
+            dui item config off live_graph_data -initial_state hidden -state hidden
+        } else {
+            set ::main_graph_height [rescale_y_skin 1010]
+            $::home_espresso_graph configure -height [rescale_y_skin 1010]
+            .can itemconfigure graph_a -state hidden
+            .can itemconfigure graph_b -state hidden
+            .can itemconfigure graph_c -state hidden
+            .can itemconfigure graph_d -state hidden
+            dui item config off graph_a -initial_state hidden
+            dui item config off graph_b -initial_state hidden
+            dui item config off graph_c -initial_state hidden
+            dui item config off graph_d -initial_state hidden
+            dui item config off live_graph_data -initial_state normal -state normal
+        }
     }
     $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
     $widget element create home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0  -dashes {2 2};
@@ -236,11 +262,33 @@ add_de1_widget "off espresso flush water" graph 30 520 {
 
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 14] -min 0.0;
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10  12}  -hide 0;
-    #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font 14] -min 0.0 -max 6 -subdivisions 2 -majorticks {0  1  2  3  4  5  6} -hide 0;
     $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1050] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph
 
 setup_home_espresso_graph
+
+add_de1_variable "off" 1950 1550 -font [skin_font font 15] -fill $::skin_forground_colour -anchor e -tags live_graph_data -textvariable {[skin_graph_info]}
+
+add_de1_widget "espresso" graph 30 520 {
+    set ::home_espresso_graph_espresso $widget
+    bind $widget [platform_button_press] {
+    }
+    $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
+    $widget element create home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0  -dashes {2 2};
+    $widget element create home_temperature_goal -xdata espresso_elapsed -ydata skin_espresso_temperature_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
+    $widget element create home_pressure -xdata espresso_elapsed -ydata espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_flow  -xdata espresso_elapsed -ydata espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_weight  -xdata espresso_elapsed -ydata espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_temperature -xdata espresso_elapsed -ydata skin_espresso_temperature_basket -symbol none -label ""  -linewidth [rescale_x_skin 9] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_resistance  -xdata espresso_elapsed -ydata espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0
+    $widget element create home_steps -xdata espresso_elapsed -ydata espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color $::skin_grey  -pixels 0 ;
+
+    $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 14] -min 0.0;
+    $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10  12}  -hide 0;
+    $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph_espresso
+
+add_de1_variable "espresso" 1950 1550 -font [skin_font font 15] -fill $::skin_forground_colour -anchor e -textvariable {[skin_graph_info]}
 
 dui add canvas_item oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon
 dui add canvas_item oval steam [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon
@@ -259,6 +307,7 @@ dui add dbutton steam [expr $::skin(graph_key_x) + 474 + 80] [expr $::skin(graph
     -bwidth 210 -bheight 110 -initial_state normal -tags steam_steam_temperarture_button \
     -command {toggle_graph steam_temperature}
 
+
 # Steam graph
 add_de1_widget "steam" graph 60 500 {
     set ::home_steam_graph $widget
@@ -275,27 +324,9 @@ add_de1_widget "steam" graph 60 500 {
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -subdivisions 1
     $widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
     $widget grid configure -color $::skin_grid_colour -dashes {4 12} -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1050] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags steam_graph
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags steam_graph
 
-set {} {
-add_de1_widget "off" graph 1130 350 {
-    set ::PD_home_steam_graph_1 $widget
-    bind $widget [platform_button_press] {
-        PD_hide_steam_graph;
-        #say [translate {zoom}] $::settings(sound_button_in);
-        #set_next_page off off_steam_zoomed;
-        #set_next_page steam steam_steam_zoomed;
-        #page_show $::de1(current_context);
-    }
-    $widget element create home_steam_pressure -xdata steam_elapsed -ydata steam_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_green -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
-    $widget element create home_steam_flow -xdata steam_elapsed -ydata steam_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
-    $widget element create home_steam_temperature -xdata steam_elapsed -ydata steam_temperature100th -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_red  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
-    $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 16] -min 0.0
-    $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 16] -min 0.0 -subdivisions 1
-    $widget axis configure y2 -color $::skin_red -tickfont [skin_font font 16] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
-    $widget grid configure -color $::skin_grid_colour -dashes {5 5} -linewidth 1
-} -plotbackground $::skin(bg_colour) -initial_state hidden -width [rescale_x_skin 1350] -height [rescale_y_skin 740] -borderwidth 1 -background $::skin(bg_colour) -plotrelief flat
-}
+
 #######################################################
 
 ### fav edit pages ###
@@ -397,29 +428,29 @@ foreach k {fav1 fav2 fav3 fav4 fav5} {
 
 ### Beverage type ###
 ###############################
-dui add dtext off $::beverage_type_x 570 -text [translate "Beverage type"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
-add_colour_button wf_latte off $::beverage_type_x 620 260 100 {[translate "latte/cap"]} {workflow latte}
-add_colour_button wf_long off $::beverage_type_x 740 260 100 {[translate "long black"]} {workflow long}
-add_colour_button wf_americano off $::beverage_type_x 860 260 100 {[translate "americano"]} {workflow americano}
-add_colour_button wf_espresso off $::beverage_type_x 980 260 100 {[translate "espresso"]} {workflow espresso}
-add_colour_button wf_none off $::beverage_type_x 1100 260 100 {[translate "none"]} {workflow none}
+dui add dtext off [expr $::beverage_type_x + 120] 580 -text [translate "Workflow"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button wf_latte off $::beverage_type_x 620 240 100 {[translate "latte/cap"]} {workflow latte}
+add_colour_button wf_long off $::beverage_type_x 740 240 100 {[translate "long black"]} {workflow long}
+add_colour_button wf_americano off $::beverage_type_x 860 240 100 {[translate "americano"]} {workflow americano}
+add_colour_button wf_espresso off $::beverage_type_x 980 240 100 {[translate "espresso"]} {workflow espresso}
+add_colour_button wf_none off $::beverage_type_x 1100 240 100 {[translate "none"]} {workflow none}
 set_button wf_none label_fill $::skin_selected_colour
 
-add_colour_button favs_number off $::beverage_type_x 1350 260 100 {[translate "show"] $::skin(favs_to_show) favs} {toggle_favs_to_show}
+add_colour_button favs_number off $::beverage_type_x 1350 260 100 {[translate "show"] $::skin(favs_to_show) favs} {toggle_favs_to_show}; set_button favs_number state hidden
 
 ########### Workflow Settings ########
 
 ### index
-dui add dtext off [expr $::skin(button_x_espresso) + 170] 470 -tags espresso_index -text $::skin(icon_index) -font [skin_font D-font 60] -fill $::skin_forground_colour -anchor s -initial_state hidden
-dui add dtext off [expr $::skin(button_x_steam) + 170] 470 -tags steam_index -text $::skin(icon_index) -font [skin_font D-font 60] -fill $::skin_forground_colour -anchor s -initial_state hidden
-dui add dtext off [expr $::skin(button_x_flush) + 170] 470 -tags flush_index -text $::skin(icon_index) -font [skin_font D-font 60] -fill $::skin_forground_colour -anchor s -initial_state hidden
-dui add dtext off [expr $::skin(button_x_water) + 170] 470 -tags water_index -text $::skin(icon_index) -font [skin_font D-font 60] -fill $::skin_forground_colour -anchor s -initial_state hidden
+dui add dtext off [expr $::skin(button_x_espresso) + 170] 500 -tags espresso_index -text $::skin(icon_index) -font [skin_font D-font 30] -fill $::skin_forground_colour -anchor s -initial_state hidden
+dui add dtext off [expr $::skin(button_x_steam) + 170] 500 -tags steam_index -text $::skin(icon_index) -font [skin_font D-font 30] -fill $::skin_forground_colour -anchor s -initial_state hidden
+dui add dtext off [expr $::skin(button_x_flush) + 170] 500 -tags flush_index -text $::skin(icon_index) -font [skin_font D-font 30] -fill $::skin_forground_colour -anchor s -initial_state hidden
+dui add dtext off [expr $::skin(button_x_water) + 170] 500 -tags water_index -text $::skin(icon_index) -font [skin_font D-font 30] -fill $::skin_forground_colour -anchor s -initial_state hidden
 
-dui add canvas_item arc off 1540 462 1640 510 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags index_shape_1 -initial_state hidden
-dui add canvas_item arc off 1540 472 1632 510 -outline $::skin_background_colour -fill $::skin_background_colour -tags index_shape_2 -initial_state hidden
-dui add canvas_item arc off 150 462 250 510 -start 90 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags index_shape_3 -initial_state hidden
-dui add canvas_item arc off 158 472 250 510 -start 90 -outline $::skin_background_colour -fill $::skin_background_colour -tags index_shape_4 -initial_state hidden
-dui add canvas_item rect off 200 460 1590 470 -width 0 -fill $::skin_forground_colour -tags index_shape_5 -initial_state hidden
+dui add canvas_item arc off 1540 492 1640 540 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags index_shape_1 -initial_state hidden
+dui add canvas_item arc off 1540 500 1634 540 -outline $::skin_background_colour -fill $::skin_background_colour -tags index_shape_2 -initial_state hidden
+dui add canvas_item arc off 150 492 250 540 -start 90 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags index_shape_3 -initial_state hidden
+dui add canvas_item arc off 156 500 250 540 -start 90 -outline $::skin_background_colour -fill $::skin_background_colour -tags index_shape_4 -initial_state hidden
+dui add canvas_item rect off 200 490 1590 498 -width 0 -fill $::skin_forground_colour -tags index_shape_5 -initial_state hidden
 
 
 add_clear_button espresso_index_button off $::skin(button_x_espresso) $::skin(button_y_steam) 340 380  {} {show_graph}; set_button espresso_index_button state hidden
@@ -429,15 +460,15 @@ add_clear_button water_index_button off $::skin(button_x_water) $::skin(button_y
 
 
 ### close button
-add_clear_button wf_close off 150 440 1490 100 {[translate "tap here to close"]} {show_graph}; set_button wf_close state hidden; set_button wf_close font [skin_font font 16]
+add_clear_button wf_close off 150 450 1490 130 {[translate "tap here to close"]} {show_graph}; set_button wf_close state hidden; set_button wf_close font [skin_font font 16]
 
 ### espresso
-dui add dtext off 340 570 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 340 580 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button select_profile off 230 620 220 100 {[translate "select"]} {set ::settings(active_settings_tab) settings_1; show_settings}
 add_colour_button edit_profile off 230 820 220 100 {[translate "edit"]} {goto_profile_wizard}
 
 # Dose
-dui add dtext off 840 570 -tags wf_heading_bean_weight -text [translate "Bean weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 840 580 -tags wf_heading_bean_weight -text [translate "Bean weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_dose_minus off 730 620 100 100 {\Uf106} {adjust dose 1}; set_button wf_dose_minus font [skin_font awesome_light 34]
 add_colour_button wf_dose_plus off 730 820 100 100 {\Uf107} {adjust dose -1}; set_button wf_dose_plus font [skin_font awesome_light 34]
 add_colour_button wf_dose_minus_10 off 850 620 100 100 {\Uf106} {adjust dose 0.1}; set_button wf_dose_minus_10 font [skin_font awesome_light 34]
@@ -445,7 +476,7 @@ add_colour_button wf_dose_plus_10 off 850 820 100 100 {\Uf107} {adjust dose -0.1
 dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_beans -anchor center -textvariable {[round_to_one_digits $::settings(grinder_dose_weight)]g}
 
 # Espresso SAW
-dui add dtext off 1340 570 -tags wf_heading_espresso_weight -text [translate "Espresso weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 1340 580 -tags wf_heading_espresso_weight -text [translate "Espresso weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_espresso_minus_10 off 1230 620 100 100 {\Uf106} {adjust saw 10}; set_button wf_espresso_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_espresso_plus_10 off 1230 820 100 100 {\Uf107} {adjust saw -10}; set_button wf_espresso_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_espresso_minus off 1350 620 100 100 {\Uf106} {adjust saw 1}; set_button wf_espresso_minus font [skin_font awesome_light 34]
@@ -469,11 +500,11 @@ hide_espresso_settings
 
 
 ### steam
-dui add dtext off 340 570 -tags wf_heading_steam_heater -text [translate "Steam heater"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 340 580 -tags wf_heading_steam_heater -text [translate "Steam heater"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_steam_off_bg off 230 620 220 100 {} {}
 add_clear_button wf_steam_off off 230 620 110 100 {[translate "off"]} {toggle_steam_heater}; set_button wf_steam_off font [skin_font font_bold 18]
 add_clear_button wf_steam_on off 340 620 110 100 {[translate "on"]} {toggle_steam_heater}; set_button wf_steam_on font [skin_font font_bold 18]
-dui add dtext off 840 570 -tags wf_heading_milk_jug -text [translate "Milk jug"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -initial_state hidden
+dui add dtext off 840 580 -tags wf_heading_milk_jug -text [translate "Milk jug"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -initial_state hidden
 
 add_icon_label_button wf_steam_jug_s off 710 620 280 100 {$::skin(icon_jug)} {small} {set_jug s}
 add_icon_button jug_s_edit off 610 620 100 100 {$::skin(icon_edit)} {show_jug jug_s}
@@ -507,7 +538,7 @@ add_icon_button jug_l_tick_button off 510 860 100 100 {$::skin(icon_tick)} {skin
 set_button jug_l_tick_button label_fill $::skin_green
 
 
-dui add dtext off 1340 570 -tags wf_heading_steam_timer -text [translate "Steam timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 1340 580 -tags wf_heading_steam_timer -text [translate "Steam timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_steam_timer_minus_10 off 1230 620 100 100 {\Uf106} {adjust steam 10}; set_button wf_steam_timer_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_steam_timer_plus_10 off 1230 820 100 100 {\Uf107} {adjust steam -10}; set_button wf_steam_timer_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_steam_timer_minus off 1350 620 100 100 {\Uf106} {adjust steam 1}; set_button wf_steam_timer_minus font [skin_font awesome_light 34]
@@ -527,14 +558,14 @@ add_icon_button wf_steam_cal_time_plus off 975 1230 100 100 {$::skin(icon_plus)}
 hide_steam_settings
 
 ### flush
-dui add dtext off 340 570 -tags wf_heading_flush_flow -text [translate "Flow rate"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 340 580 -tags wf_heading_flush_flow -text [translate "Flow rate"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_flush_flow_minus_10 off 230 620 100 100 {\Uf106} {adjust flush_flow 1}; set_button wf_flush_flow_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_flush_flow_plus_10 off 230 820 100 100 {\Uf107} {adjust flush_flow -1}; set_button wf_flush_flow_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_flush_flow_minus off 350 620 100 100 {\Uf106} {adjust flush_flow 0.1}; set_button wf_flush_flow_minus font [skin_font awesome_light 34]
 add_colour_button wf_flush_flow_plus off 350 820 100 100 {\Uf107} {adjust flush_flow -0.1}; set_button wf_flush_flow_plus font [skin_font awesome_light 34]
 dui add variable off 340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_flush_flow_setting -anchor center -textvariable {[round_to_one_digits $::settings(flush_flow)][translate "ml/s"]}
 
-dui add dtext off 840 570 -tags wf_heading_flush_timer -text [translate "Flush timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 840 580 -tags wf_heading_flush_timer -text [translate "Flush timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_flush_timer_minus_10 off 730 620 100 100 {\Uf106} {adjust flush 10}; set_button wf_flush_timer_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_flush_timer_plus_10 off 730 820 100 100 {\Uf107} {adjust flush -10}; set_button wf_flush_timer_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_flush_timer_minus off 850 620 100 100 {\Uf106} {adjust flush 1}; set_button wf_flush_timer_minus font [skin_font awesome_light 34]
@@ -544,21 +575,21 @@ dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bo
 hide_flush_settings
 
 ### water
-dui add dtext off 340 570 -tags wf_heading_water_flow -text [translate "Flow rate"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 340 580 -tags wf_heading_water_flow -text [translate "Flow rate"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_water_flow_minus_10 off 230 620 100 100 {\Uf106} {adjust water_flow 1}; set_button wf_water_flow_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_water_flow_plus_10 off 230 820 100 100 {\Uf107} {adjust water_flow -1}; set_button wf_water_flow_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_water_flow_minus off 350 620 100 100 {\Uf106} {adjust water_flow 0.1}; set_button wf_water_flow_minus font [skin_font awesome_light 34]
 add_colour_button wf_water_flow_plus off 350 820 100 100 {\Uf107} {adjust water_flow -0.1}; set_button wf_water_flow_plus font [skin_font awesome_light 34]
 dui add variable off 340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_flow_setting -anchor center -textvariable {[round_to_one_digits $::settings(hotwater_flow)][translate "ml/s"]}
 
-dui add dtext off 840 570 -tags wf_heading_water_temperature -text [translate "Temperature"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 840 580 -tags wf_heading_water_temperature -text [translate "Temperature"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_water_temperature_minus_10 off 730 620 100 100 {\Uf106} {adjust water_temperature 10}; set_button wf_water_temperature_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_water_temperature_plus_10 off 730 820 100 100 {\Uf107} {adjust water_temperature -10}; set_button wf_water_temperature_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_water_temperature_minus off 850 620 100 100 {\Uf106} {adjust water_temperature 1}; set_button wf_water_temperature_minus font [skin_font awesome_light 34]
 add_colour_button wf_water_temperature_plus off 850 820 100 100 {\Uf107} {adjust water_temperature -1}; set_button wf_water_temperature_plus font [skin_font awesome_light 34]
 dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_temperature_setting -anchor center -textvariable {[skin_temperature_measurement $::settings(water_temperature)]}
 
-dui add dtext off 1340 570 -tags wf_heading_water_volume -text [translate "Volume"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off 1340 580 -tags wf_heading_water_volume -text [translate "Volume"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_water_volume_minus_10 off 1230 620 100 100 {\Uf106} {adjust water_volume 10}; set_button wf_water_volume_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_water_volume_plus_10 off 1230 820 100 100 {\Uf107} {adjust water_volume -10}; set_button wf_water_volume_plus_10 font [skin_font awesome_light 34]
 add_colour_button wf_water_volume_minus off 1350 620 100 100 {\Uf106} {adjust water_volume 1}; set_button wf_water_volume_minus font [skin_font awesome_light 34]
@@ -570,7 +601,26 @@ hide_water_settings
 ### screen saver page
 dui add dbutton saver 0 0 \
     -bwidth 2560 -bheight 1600 \
-    -command {set_next_page off off; start_idle; skin_load $::skin(auto_load_fav)}
+    -command {set_next_page off off; start_idle}
+
+
+
+### DYE
+
+proc skin_dye_button {} {
+    variable widgets
+	variable settings
+    set widgets(launch_dye) [dui add dbutton off \
+	2390 945 -bwidth 130 -bheight 120 -radius 30 -tags launch_dye -shape round -fill "#c1c5e4" \
+	-symbol [dui symbol get mug] -symbol_pos {0.5 0.4} -symbol_anchor center -symbol_justify center -symbol_fill white \
+	-label [translate DYE] -label_font_size 12 -label_pos {0.5 0.8} -label_anchor center -label_justify center -label_fill "#8991cc" \
+	-label_width 130 -command [list ::plugins::DYE::open -which_shot default -coords {2400 975} -anchor e] \
+	-label_font_family notosansuibold  -longpress_cmd [::list ::plugins::DYE::open -which_shot dialog -coords \{2400 975\} -anchor e] \
+	-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]]
+}
+
+#skin_dye_button
+
 
 ### manual
 #################
@@ -602,6 +652,7 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         show_graph
         set_next_page off off;
     } elseif {$textstate == "Steam"} {
+        #show_graph
         set ::steam_timer_backup $::settings(steam_timeout)
         set_next_page off off;
         page_show steam
@@ -620,4 +671,4 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         page_show flush
     }
 }
-add_de1_variable "off" 2540 1570 -font Helv_6 -fill $::skin_forground_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
+add_de1_variable "off" 2540 1580 -font [skin_font font 13] -fill $::skin_forground_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}

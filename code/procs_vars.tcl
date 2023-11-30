@@ -114,11 +114,44 @@ proc skin_load_font {name fn pcsize {androidsize {}} } {
 }
 
 proc skin_font {font_name size} {
+
     if {$font_name == "font"} {
-        set font_name $::skin(font_name)
+        if {[language] == "en"} {
+            set font_name $::skin(font_name)
+        } else {
+            set font_name notosansuiregular
+        }
+        if {[language] == "th"} {
+            set font_name sarabun
+        }
+        if {[language] == "ar" || [language] == "arb"} {
+            set font_name Dubai-Regular
+        }
+        if {[language] == "he" || [language] == "heb"} {
+            set font_name hebrew-regular
+        }
+        if {[language] == "zh-hant" || [language] == "zh-hans" || [language] == "kr"} {
+            set font_name NotoSansCJKjp-Regular
+        }
     }
     if {$font_name == "font_bold"} {
-        set font_name $::skin(font_name_bold)
+        if {[language] == "en"} {
+            set font_name $::skin(font_name_bold)
+        } else {
+            set font_name notosansuibold
+        }
+        if {[language] == "th"} {
+            set font_name sarabunbold
+        }
+        if {[language] == "ar" || [language] == "arb"} {
+            set font_name Dubai-Bold
+        }
+        if {[language] == "he" || [language] == "heb"} {
+            set font_name hebrew-bold
+        }
+        if {[language] == "zh-hant" || [language] == "zh-hans" || [language] == "kr"} {
+            set font_name NotoSansCJKjp-Bold
+        }
     }
     if {$font_name == "awesome"} {
         set font_name $::skin(font_awesome)
@@ -140,8 +173,14 @@ proc skin_font {font_name size} {
         if {[file exists "[skin_directory]/fonts/$font_name.otf"] == 1} {
             skin_load_font $font_key "[skin_directory]/fonts/$font_name.otf" $size
             lappend ::skin_fonts $font_key
-        } elseif {[file exists "[skin_directory]/Fonts/$font_name.ttf"] == 1} {
+        } elseif {[file exists "[skin_directory]/fonts/$font_name.ttf"] == 1} {
             skin_load_font $font_key "[skin_directory]/fonts/$font_name.ttf" $size
+            lappend ::skin_fonts $font_key
+        } elseif {[file exists "[homedir]/fonts/$font_name.otf"] == 1} {
+            skin_load_font $font_key "[homedir]/fonts/$font_name.otf" $size
+            lappend ::skin_fonts $font_key
+        } elseif {[file exists "[homedir]/fonts/$font_name.ttf"] == 1} {
+            skin_load_font $font_key "[homedir]/fonts/$font_name.ttf" $size
             lappend ::skin_fonts $font_key
         } else {
             msg "Unable to load font '$font_key'"
@@ -414,6 +453,7 @@ proc hide_graph {} {
     .can itemconfigure main_graph -state hidden
     dui item config off main_graph -initial_state hidden
     set_button auto_tare state normal
+    set_button favs_number state normal
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
         dui item config $pages ${key}_icon -initial_state hidden -state hidden
@@ -421,6 +461,15 @@ proc hide_graph {} {
         dui item config $pages ${key}_data -initial_state hidden -state hidden
         dui item config $pages ${key}_key_button* -initial_state hidden -state hidden
     }
+    dui item config off live_graph_data -initial_state hidden -state hidden
+    .can itemconfigure graph_a -state hidden
+    .can itemconfigure graph_b -state hidden
+    .can itemconfigure graph_c -state hidden
+    .can itemconfigure graph_d -state hidden
+    dui item config off graph_a -initial_state hidden
+    dui item config off graph_b -initial_state hidden
+    dui item config off graph_c -initial_state hidden
+    dui item config off graph_d -initial_state hidden
 }
 
 proc show_graph {} {
@@ -428,6 +477,8 @@ proc show_graph {} {
     .can itemconfigure main_graph -state normal
     dui item config off main_graph -initial_state normal
     set_button auto_tare state hidden
+    set_button favs_number state hidden
+    dui item config off live_graph_data -initial_state normal -state normal
     hide_skin_set
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
@@ -435,6 +486,17 @@ proc show_graph {} {
         dui item config $pages ${key}_text -initial_state normal -state normal
         dui item config $pages ${key}_data -initial_state normal -state normal
         dui item config $pages ${key}_key_button* -initial_state normal -state normal
+    }
+    if {$::main_graph_height == [rescale_y_skin 850]} {
+        dui item config off live_graph_data -initial_state hidden -state hidden
+        .can itemconfigure graph_a -state normal
+        .can itemconfigure graph_b -state normal
+        .can itemconfigure graph_c -state normal
+        .can itemconfigure graph_d -state normal
+        dui item config off graph_a -initial_state normal
+        dui item config off graph_b -initial_state normal
+        dui item config off graph_c -initial_state normal
+        dui item config off graph_d -initial_state normal
     }
 }
 
@@ -562,10 +624,6 @@ proc show_skin_set {option} {
     }
     dui item config off ${option}_index -initial_state normal -state normal
     set_button ${option}_index_button state normal
-    hide_espresso_settings
-    hide_flush_settings
-    hide_water_settings
-    hide_steam_settings
     if {$option == "espresso"} {show_espresso_settings}
     if {$option == "flush"} {show_flush_settings}
     if {$option == "water"} {show_water_settings}
@@ -595,6 +653,7 @@ proc wf_profile_button_list {} {
 }
 
 proc show_espresso_settings {} {
+    set ::wf_espresso_set_showing 1
     foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight} {
         dui item config off ${s} -initial_state normal -state normal
     }
@@ -603,12 +662,16 @@ proc show_espresso_settings {} {
     }
 }
 
+set ::wf_espresso_set_showing 1
 proc hide_espresso_settings {} {
-    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight} {
-        dui item config off ${s} -initial_state hidden -state hidden
-    }
-    foreach s [wf_profile_button_list] {
-        set_button ${s} state hidden
+    if {$::wf_espresso_set_showing == 1} {
+        set ::wf_espresso_set_showing 0
+        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight} {
+            dui item config off ${s} -initial_state hidden -state hidden
+        }
+        foreach s [wf_profile_button_list] {
+            set_button ${s} state hidden
+        }
     }
 }
 
@@ -618,6 +681,7 @@ proc wf_flush_button_list {} {
 }
 
 proc show_flush_settings {} {
+    set ::wf_flush_set_showing 1
     foreach s {wf_heading_flush_flow wf_flush_flow_setting \
                wf_heading_flush_timer wf_flush_timer_setting} {
         dui item config off ${s} -initial_state normal -state normal
@@ -627,13 +691,17 @@ proc show_flush_settings {} {
     }
 }
 
+set ::wf_flush_set_showing 1
 proc hide_flush_settings {} {
-    foreach s {wf_heading_flush_flow wf_flush_flow_setting \
-               wf_heading_flush_timer wf_flush_timer_setting} {
-        dui item config off ${s} -initial_state hidden -state hidden
-    }
-    foreach s [wf_flush_button_list] {
-        set_button ${s} state hidden
+    if {$::wf_flush_set_showing == 1} {
+        set ::wf_flush_set_showing 0
+        foreach s {wf_heading_flush_flow wf_flush_flow_setting \
+            wf_heading_flush_timer wf_flush_timer_setting} {
+            dui item config off ${s} -initial_state hidden -state hidden
+        }
+        foreach s [wf_flush_button_list] {
+            set_button ${s} state hidden
+        }
     }
 }
 
@@ -644,6 +712,7 @@ proc wf_water_button_list {} {
 }
 
 proc show_water_settings {} {
+    set ::wf_water_set_showing 1
     foreach s {wf_heading_water_flow wf_water_flow_setting \
                wf_heading_water_volume wf_water_volume_setting \
                wf_heading_water_temperature wf_water_temperature_setting} {
@@ -654,14 +723,18 @@ proc show_water_settings {} {
     }
 }
 
+set ::wf_water_set_showing 1
 proc hide_water_settings {} {
-    foreach s {wf_heading_water_flow wf_water_flow_setting \
-               wf_heading_water_volume wf_water_volume_setting \
-               wf_heading_water_temperature wf_water_temperature_setting} {
-        dui item config off ${s} -initial_state hidden -state hidden
-    }
-    foreach s [wf_water_button_list] {
-        set_button ${s} state hidden
+    if {$::wf_water_set_showing == 1} {
+        set ::wf_water_set_showing 0
+        foreach s {wf_heading_water_flow wf_water_flow_setting \
+                   wf_heading_water_volume wf_water_volume_setting \
+                   wf_heading_water_temperature wf_water_temperature_setting} {
+            dui item config off ${s} -initial_state hidden -state hidden
+        }
+        foreach s [wf_water_button_list] {
+            set_button ${s} state hidden
+        }
     }
 }
 
@@ -685,6 +758,7 @@ proc hide_jug {option} {
 }
 
 proc show_steam_settings {} {
+    set ::wf_steam_set_showing 1
     dui item config off wf_heading_steam_heater -initial_state normal -state normal
     dui item config off wf_steam_on_off_bg -initial_state normal -state normal
     dui item config off wf_heading_milk_jug -initial_state normal -state normal
@@ -716,34 +790,37 @@ proc show_steam_settings {} {
 proc wf_steam_set_list {} {
     return {jug_s jug_m jug_l}
 }
-
+set ::wf_steam_set_showing 1
 proc hide_steam_settings {} {
-    dui item config off wf_heading_steam_heater -initial_state hidden -state hidden
-    dui item config off wf_steam_on_off_bg -initial_state hidden -state hidden
-    dui item config off wf_heading_milk_jug -initial_state hidden -state hidden
-    dui item config off wf_heading_steam_calibrate -initial_state hidden -state hidden
-    dui item config off wf_milk_weight_text_line_1 -initial_state hidden -state hidden
-    dui item config off wf_milk_weight_text_line_2 -initial_state hidden -state hidden
-    dui item config off wf_milk_weight_text_line_3 -initial_state hidden -state hidden
-    set_button wf_steam_on state hidden
-    set_button wf_steam_off state hidden
-    set_button wf_steam_off_bg state hidden
-    set_button wf_steam_cal_time_plus state hidden
-    set_button wf_steam_jug_time state hidden
-    set_button wf_steam_cal_time_minus state hidden
-    set_button wf_steam_jug_milk state hidden
-    foreach s {wf_heading_steam_timer wf_steam_timer_setting} {
-        dui item config off ${s} -initial_state hidden -state hidden
-    }
-    foreach t [wf_steam_button_list] {
-        set_button ${t} state hidden
-    }
-    foreach u [wf_steam_set_list] {
-        set_button wf_steam_${u} state hidden
-        set_button ${u}_x_button state hidden
-        set_button ${u}_tick_button state hidden
-        hide_jug $u
-        set_button ${u}_edit state hidden
+    if {$::wf_steam_set_showing == 1} {
+        set ::wf_steam_set_showing 0
+        dui item config off wf_heading_steam_heater -initial_state hidden -state hidden
+        dui item config off wf_steam_on_off_bg -initial_state hidden -state hidden
+        dui item config off wf_heading_milk_jug -initial_state hidden -state hidden
+        dui item config off wf_heading_steam_calibrate -initial_state hidden -state hidden
+        dui item config off wf_milk_weight_text_line_1 -initial_state hidden -state hidden
+        dui item config off wf_milk_weight_text_line_2 -initial_state hidden -state hidden
+        dui item config off wf_milk_weight_text_line_3 -initial_state hidden -state hidden
+        set_button wf_steam_on state hidden
+        set_button wf_steam_off state hidden
+        set_button wf_steam_off_bg state hidden
+        set_button wf_steam_cal_time_plus state hidden
+        set_button wf_steam_jug_time state hidden
+        set_button wf_steam_cal_time_minus state hidden
+        set_button wf_steam_jug_milk state hidden
+        foreach s {wf_heading_steam_timer wf_steam_timer_setting} {
+            dui item config off ${s} -initial_state hidden -state hidden
+        }
+        foreach t [wf_steam_button_list] {
+            set_button ${t} state hidden
+        }
+        foreach u [wf_steam_set_list] {
+            set_button wf_steam_${u} state hidden
+            set_button ${u}_x_button state hidden
+            set_button ${u}_tick_button state hidden
+            hide_jug $u
+            set_button ${u}_edit state hidden
+        }
     }
 
 }
@@ -923,7 +1000,7 @@ proc move_workflow_button {button_name} {
     dui item moveto off b_${button_name}_index_button* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
     dui item moveto $pages ${button_name}_data_line_1 [expr $::skin(button_x_${button_name}) + 170] [expr $::skin(button_y_${button_name}) + 120]
     foreach f {espresso steam flush water} {
-        dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 470
+        dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 500
     }
 }
 
@@ -946,7 +1023,7 @@ proc start_button_ready {} {
 }
 
 proc skin_start {option} {
-    if {[ghc_required] || $::graph_hidden == 1} {
+    if {([ghc_required] || $::graph_hidden == 1) && $::de1_num_state($::de1(state)) == "Idle"} {
         show_skin_set $option
     } else {
         if {$option == "water"} {
@@ -1081,6 +1158,7 @@ proc header_settings {} {
         dui item moveto off heading_entry 450 640
     }
 }
+
 proc hide_header_settings {} {
     set_button edit_heading_button state hidden
     show_graph
@@ -1142,6 +1220,18 @@ proc skin_espresso_elapsed_timer {} {
     }
 }
 
+proc skin_graph_info {} {
+    set p $::skin_graphs(live_graph_profile)
+    set b $::skin_graphs(live_graph_beans)
+    set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
+    set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    set pi $::skin_graphs(live_graph_pi_time)
+    set pt $::skin_graphs(live_graph_pour_time)
+    set t $::skin_graphs(live_graph_shot_time)
+    set s { }
+    set g {     }
+    return ${p}${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s
+}
 
 proc cancel_auto_stop {} {
     if {$::android != 1 } {
@@ -1332,13 +1422,19 @@ proc backup_live_graph {} {
 	#skin_save skin_graphs
 }
 
-::de1::event::listener::after_flow_complete_add [lambda {event_dict} {
+::de1::event::listener::on_major_state_change_add [lambda {event_dict} {
     if { [dict get $event_dict previous_state] == "Espresso" } {
-        backup_live_graph
         skin_save skin_graphs
     }
 }]
 
+
+if {$::android != 1} {set ::de1(state) 2}
+::register_state_change_handler Idle Espresso shift_graphs
+::register_state_change_handler Idle Espresso save_graph_cache
+
+
+dui add variable "espresso" 0 -10 -font [skin_font font 1] -textvariable {[backup_live_graph]}
 
 proc restore_live_graphs {} {
 	set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]
@@ -1551,23 +1647,26 @@ proc skin_sleep {} {
 ###### connection status
 
 set ::connect_blink 1
+
 proc skin_scale_disconnected {} {
-	if {$::android == 1 && [ifexists ::settings(scale_bluetooth_address)] == ""} {
+	if {[ifexists ::settings(scale_bluetooth_address)] == ""} {
 		dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
+		return ""
 	}
-	if {$::de1(scale_device_handle) == "0" && $::android == 1} {
+	if {$::device::scale::_watchdog_id == ""} {
 		dui item config $::skin_home_pages scale_btl_icon -fill $::skin_red
 		if {$::connect_blink == 1} {
 		    after 300 {set ::connect_blink 0}
 		    return [translate "reconnect"]
 		} else {
+		    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
 		    set ::connect_blink 1
 		    return ""
 		}
 	}
     dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
-    #return [translate "Scale Connected"]
 }
+
 
 set ::flush_blink 1
 proc flush_motion {} {
@@ -1754,12 +1853,116 @@ set {} {
         }
 }
 
+#### cache graphs
+
+# programming stuff
+
+blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_state_change
+blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_state_change
+blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_state_change
+blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_state_change
+
+proc shift_graph_list {} {
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_state_change]
+}
+
+proc shift_graphs { args } {
+    foreach lg [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
+            set ::graph_cache(graph_d_$lg) $::graph_cache(graph_c_$lg)
+        }
+    }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_b_$lg)] == 1} {
+            set ::graph_cache(graph_c_$lg) $::graph_cache(graph_b_$lg)
+        }
+    }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
+            set ::graph_cache(graph_b_$lg) $::graph_cache(graph_a_$lg)
+        }
+    }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+            set ::graph_cache(graph_a_$lg) $::skin_graphs(live_graph_$lg)
+        }
+    }
+    restore_cache_graphs
+}
+
+proc save_graph_cache { args } {
+    set graph_cache_data {}
+    foreach k [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_a_$k)] == 1} {
+            set v $::graph_cache(graph_a_$k)
+            append graph_cache_data [subst {[list graph_a_$k] [list $v]\n}]
+        }
+    }
+    foreach k [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_b_$k)] == 1} {
+            set v $::graph_cache(graph_b_$k)
+            append graph_cache_data [subst {[list graph_b_$k] [list $v]\n}]
+        }
+    }
+    foreach k [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_c_$k)] == 1} {
+            set v $::graph_cache(graph_c_$k)
+            append graph_cache_data [subst {[list graph_c_$k] [list $v]\n}]
+        }
+    }
+    foreach k [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_d_$k)] == 1} {
+            set v $::graph_cache(graph_d_$k)
+            append graph_cache_data [subst {[list graph_d_$k] [list $v]\n}]
+        }
+    }
+
+    write_file "[skin_directory]/settings/graph_cache.tdb" $graph_cache_data
+}
+
+proc skin_graph_size { value } {
+    set x [expr {$::skin_graph_multiplier * $value}]
+    return $x
+}
+
+proc restore_cache_graphs {} {
+	foreach lg [shift_graph_list] {
+		if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
+			graph_a_$lg length 0
+			graph_a_$lg append $::graph_cache(graph_a_$lg)
+		}
+		if {[info exists ::graph_cache(graph_b_$lg)] == 1} {
+			graph_b_$lg length 0
+			graph_b_$lg append $::graph_cache(graph_b_$lg)
+		}
+		if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
+			graph_c_$lg length 0
+			graph_c_$lg append $::graph_cache(graph_c_$lg)
+		}
+		if {[info exists ::graph_cache(graph_d_$lg)] == 1} {
+			graph_d_$lg length 0
+			graph_d_$lg append $::graph_cache(graph_d_$lg)
+		}
+	}
+}
+
+
+proc load_graph_cache {} {
+    array set ::graph_cache [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/graph_cache.tdb"]]
+}
+
+
+rename start_sleep start_sleep_original
+proc start_sleep { args } {
+    skin_load $::skin(auto_load_fav)
+    start_sleep_original
+}
 
 
 ### flush timer DYE
 ###################################################
 proc skin_loop {} {
-    #PD_backup_live_graph
+    #backup_live_graph
     auto_tare_button_colour
     skin_negative_scale_tare
     restore_live_graphs
