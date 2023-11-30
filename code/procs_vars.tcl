@@ -1535,23 +1535,25 @@ proc toggle_graph {curve} {
             set ::skin($curve) 0
             if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
                 $::home_espresso_graph element configure home_${curve}_goal -linewidth 0
+                $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth 0
                 #$::espresso_zoomed_graph element configure home_${curve}_goal -linewidth 0
             }
             $::home_espresso_graph element configure home_${curve} -linewidth 0
+            $::home_espresso_graph_espresso element configure home_${curve} -linewidth 0
             dui item config espresso ${curve}_data -fill $::skin_text_colour
             dui item config $::skin_home_pages ${curve}_icon -fill $::skin_text_colour -outline $::skin_text_colour
         } else {
             set ::skin($curve) 1
             if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
                 $::home_espresso_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 5]
-                #$::espresso_zoomed_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 5]
+                $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth [rescale_x_skin 5]
             }
             if {$curve == "steps"} {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 2]
-                #$::espresso_zoomed_graph element configure home_${curve} -linewidth [rescale_x_skin 2]
+                $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin 2]
             } else {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 10]
-                #$::espresso_zoomed_graph element configure home_${curve} -linewidth [rescale_x_skin 10]
+                $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin 10]
             }
             dui item config espresso ${curve}_data -fill $::skin_text_colour
             if {$curve == "pressure"} {

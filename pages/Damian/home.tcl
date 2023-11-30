@@ -1,4 +1,4 @@
-set ::skin_version 0.08
+set ::skin_version 0.09
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -265,8 +265,6 @@ add_de1_widget "off flush water" graph 30 520 {
     $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph
 
-setup_home_espresso_graph
-
 add_de1_variable "off" 1950 1550 -font [skin_font font 15] -fill $::skin_forground_colour -anchor e -tags live_graph_data -textvariable {[skin_graph_info]}
 
 add_de1_widget "espresso" graph 30 520 {
@@ -289,6 +287,9 @@ add_de1_widget "espresso" graph 30 520 {
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph_espresso
 
 add_de1_variable "espresso" 1950 1550 -font [skin_font font 15] -fill $::skin_forground_colour -anchor e -textvariable {[skin_graph_info]}
+
+setup_home_espresso_graph
+
 
 dui add canvas_item oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon
 dui add canvas_item oval steam [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon
@@ -672,3 +673,5 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
     }
 }
 add_de1_variable "off" 2540 1580 -font [skin_font font 13] -fill $::skin_forground_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
+
+
