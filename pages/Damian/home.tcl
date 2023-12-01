@@ -1,4 +1,4 @@
-set ::skin_version 0.09
+set ::skin_version 0.10
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -165,6 +165,7 @@ add_de1_variable "off espresso steam" 0 2000 -font [skin_font font 6] -fill #000
 }
 
 blt::vector create skin_espresso_temperature_basket skin_espresso_temperature_mix skin_espresso_temperature_goal
+blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_state_change
 
 set {} {
 blt::vector create skin_pressure_goal skin_flow_goal skin_temperature_goal skin_pressure skin_flow skin_weight skin_temperature skin_resistance
@@ -211,14 +212,6 @@ dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 1224 + 2
     -bwidth 210 -bheight 110 -tags steps_key_button \
     -command {toggle_graph steps}
 
-proc button1 {method args} {
-    set rc [__button1 $method {*}$args]
-    if {$method eq "configure"} {
-        label1 configure -text [__button1 cget -height]
-    }
-    return $rc
-}
-
 set ::main_graph_height [rescale_y_skin 1010]
 add_de1_widget "off flush water" graph 30 520 {
     set ::home_espresso_graph $widget
@@ -248,8 +241,20 @@ add_de1_widget "off flush water" graph 30 520 {
             dui item config off graph_c -initial_state hidden
             dui item config off graph_d -initial_state hidden
             dui item config off live_graph_data -initial_state normal -state normal
+            set ::cache_graph_compare 0
+            $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
+            $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
+            $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+            $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
         }
     }
+
+    $widget element create compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 4] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 4] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 4] -color #a2693d -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color #a2a293  -pixels 0;
+
+
     $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
     $widget element create home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0  -dashes {2 2};
     $widget element create home_temperature_goal -xdata espresso_elapsed -ydata skin_espresso_temperature_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};

@@ -1536,7 +1536,9 @@ proc toggle_graph {curve} {
             if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
                 $::home_espresso_graph element configure home_${curve}_goal -linewidth 0
                 $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth 0
-                #$::espresso_zoomed_graph element configure home_${curve}_goal -linewidth 0
+            }
+            if {$curve == "pressure" || $curve == "weight" || $curve == "flow" || $curve == "steps"} {
+                $::home_espresso_graph element configure compare_${curve} -linewidth 0
             }
             $::home_espresso_graph element configure home_${curve} -linewidth 0
             $::home_espresso_graph_espresso element configure home_${curve} -linewidth 0
@@ -1550,10 +1552,14 @@ proc toggle_graph {curve} {
             }
             if {$curve == "steps"} {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 2]
+                $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 2]
                 $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin 2]
             } else {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 10]
                 $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin 10]
+            }
+            if {$curve == "pressure" || $curve == "flow" || $curve == "weight"} {
+                $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 4]
             }
             dui item config espresso ${curve}_data -fill $::skin_text_colour
             if {$curve == "pressure"} {
@@ -1580,7 +1586,22 @@ proc toggle_graph {curve} {
     skin_save skin_settings
 }
 
-
+set ::cache_graph_compare 0
+proc toggle_graph_compare { graph } {
+    if {$::cache_graph_compare == $graph} {
+        set ::cache_graph_compare 0
+        $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
+        $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
+        $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+        $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
+    } else {
+        set ::cache_graph_compare $graph
+        $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
+        $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
+        $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight
+        $::home_espresso_graph element configure compare_steps -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_state_change
+    }
+}
 
 
 proc setup_home_espresso_graph {} {
