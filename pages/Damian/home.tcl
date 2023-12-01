@@ -1,4 +1,4 @@
-set ::skin_version 0.10
+set ::skin_version 0.11
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -101,7 +101,7 @@ add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::sk
 ### sleep
 
 add_round_button sleep_button $::skin_home_pages $::skin(button_x_power) $::skin(button_y_power) 110 110 {$::skin(icon_power)} {skin_power}; set_button sleep_button font [skin_font awesome 34]
-add_clear_button sleep_power_putton off 10 10 220 200 {} {skin_power}
+add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power}
 
 ### ghc buttons ###
 
@@ -216,7 +216,6 @@ set ::main_graph_height [rescale_y_skin 1010]
 add_de1_widget "off flush water" graph 30 520 {
     set ::home_espresso_graph $widget
     bind $widget [platform_button_press] {
-        #page_show graphs_page
         if {$::main_graph_height == [rescale_y_skin 1010]} {
             set ::main_graph_height [rescale_y_skin 850]
             $::home_espresso_graph configure -height [rescale_y_skin 850]
@@ -655,7 +654,7 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
             set ::settings(steam_timeout) $::steam_timer_backup
             set ::steam_timer_backup 0
         }
-        show_graph
+        #show_graph
         set_next_page off off;
     } elseif {$textstate == "Steam"} {
         #show_graph

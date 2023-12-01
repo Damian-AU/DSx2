@@ -1429,7 +1429,6 @@ proc backup_live_graph {} {
 }]
 
 
-if {$::android != 1} {set ::de1(state) 2}
 ::register_state_change_handler Idle Espresso shift_graphs
 ::register_state_change_handler Idle Espresso save_graph_cache
 
