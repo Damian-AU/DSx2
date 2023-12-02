@@ -1407,7 +1407,8 @@ proc backup_live_graph {} {
 			set ::skin_graphs(live_graph_profile) $::settings(profile_title)
 		    set ::skin_graphs(live_graph_time) $::settings(espresso_clock)
 		    set ::skin_graphs(live_graph_beans) $::settings(grinder_dose_weight)
-		    set ::skin_graphs(live_graph_weight) $::settings(drink_weight)
+		    #set ::skin_graphs(live_graph_weight) $::settings(drink_weight)
+		    set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
 		    set ::skin_graphs(live_graph_pi_water) [round_to_integer $::de1(preinfusion_volume)]
 		    set ::skin_graphs(live_graph_pour_water) [round_to_integer $::de1(pour_volume)]
 		    set ::skin_graphs(live_graph_water) [expr {[round_to_integer $::de1(preinfusion_volume)] + [round_to_integer $::de1(pour_volume)]}]
