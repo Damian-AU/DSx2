@@ -14,6 +14,8 @@ set ::user(yellow) #eae83d
 set ::user(orange) #fe7e00
 set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
+set ::user(graph_grid_colour) $::user(forground_colour)
+set ::user(mini_graph_grid_colour) #bbb
 
 if {[file exists "[skin_directory]/settings/custom_colours.txt"] == 1} {
     array set ::user [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/custom_colours.txt"]]
@@ -37,7 +39,8 @@ set ::skin(help_colour) #fc2ff5
 set ::skin_x_axis_colour $::user(x_axis)
 set ::skin_y_axis_colour $::user(y_axis)
 set ::skin_y2_axis_colour $::skin_red
-set ::skin_grid_colour $::skin_forground_colour
+set ::skin_grid_colour $::user(graph_grid_colour)
+set ::skin_mini_grid_colour $::user(mini_graph_grid_colour)
 set ::skin_home_pages "off espresso steam water flush"
 set ::skin_action_pages "espresso steam water flush"
 set ::skin_blink2 1
@@ -237,19 +240,34 @@ proc skin_extraction_ratio {} {
 }
 
 proc goto_profile_wizard {} {
+    set ::settings(active_settings_tab) settings_1
+    show_settings
     set title_test [string range [ifexists ::settings(profile_title)] 0 7]
-    if {$title_test == "D-Flow /" } {
+    if {$title_test != "D-Flow /"} {
+        after 500 update_de1_explanation_chart
+    }
+    set_next_page off settings_1
+    page_show off
+    set ::settings(active_settings_tab) settings_1
+    set_profiles_scrollbar_dimensions
+    if {$title_test == "D-Flow /" && [file exists "[homedir]/plugins/D_Flow_Espresso_Profile/plugin.tcl"] == 1} {
         ::plugins::D_Flow_Espresso_Profile::prep
         ::plugins::D_Flow_Espresso_Profile::demo_graph
-        dui page load Dflowset
-        } else {
-        after 500 update_de1_explanation_chart
-        set_next_page off $::settings(settings_profile_type)
-        page_show off
-        set ::settings(active_settings_tab) $::settings(settings_profile_type)
-        fill_advanced_profile_steps_listbox
-        set_advsteps_scrollbar_dimensions
+        set_next_page off Dflowset; page_show Dflowset
     }
+}
+
+proc goto_profile_list {} {
+    set ::settings(active_settings_tab) settings_1
+    show_settings
+    set title_test [string range [ifexists ::settings(profile_title)] 0 7]
+    if {$title_test != "D-Flow /"} {
+        after 500 update_de1_explanation_chart
+    }
+    set_next_page off settings_1
+    page_show off
+    set ::settings(active_settings_tab) settings_1
+    set_profiles_scrollbar_dimensions
 }
 
 proc skin_steam_temperature {} {
@@ -264,7 +282,7 @@ proc skin_steam_temperature {} {
 proc skin_steam_settings_info {} {
     set s {   }
     if {$::settings(steam_disabled) != 1} {
-        return [round_to_one_digits [expr $::settings(steam_flow) / 10]][translate "ml/s"]$s[skin_steam_temperature]
+        return [round_to_one_digits [expr $::settings(steam_flow) * 0.01]][translate "ml/s"]$s[skin_steam_temperature]
     } else {
         return [translate "off"]
     }
@@ -649,7 +667,7 @@ proc hide_skin_set {} {
 }
 
 proc wf_profile_button_list {} {
-    return {edit_profile select_profile wf_save_saw_tick_button wf_save_saw_x_button wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
+    return {edit_profile select_profile wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
 }
 
 proc show_espresso_settings {} {
@@ -659,6 +677,10 @@ proc show_espresso_settings {} {
     }
     foreach s [wf_profile_button_list] {
         set_button ${s} state normal
+    }
+    if {$::settings(profile_has_changed) == 1} {
+        set_button wf_save_saw_tick_button state normal
+        set_button wf_save_saw_x_button state normal
     }
 }
 
@@ -672,6 +694,8 @@ proc hide_espresso_settings {} {
         foreach s [wf_profile_button_list] {
             set_button ${s} state hidden
         }
+        set_button wf_save_saw_tick_button state hidden
+        set_button wf_save_saw_x_button state hidden
     }
 }
 
@@ -773,7 +797,7 @@ proc show_steam_settings {} {
     set_button wf_steam_jug_time state normal
     set_button wf_steam_cal_time_minus state normal
     set_button wf_steam_jug_milk state normal
-    foreach s {wf_heading_steam_timer wf_steam_timer_setting} {
+    foreach s {wf_heading_steam_timer wf_steam_timer_setting wf_last_steam_time} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_steam_button_list] {
@@ -808,7 +832,7 @@ proc hide_steam_settings {} {
         set_button wf_steam_jug_time state hidden
         set_button wf_steam_cal_time_minus state hidden
         set_button wf_steam_jug_milk state hidden
-        foreach s {wf_heading_steam_timer wf_steam_timer_setting} {
+        foreach s {wf_heading_steam_timer wf_steam_timer_setting wf_last_steam_time} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
         foreach t [wf_steam_button_list] {
@@ -928,9 +952,18 @@ proc wf_update_profile_saw {} {
 }
 
 proc wf_cancel_profile_saw {} {
-    if {$::settings(profile_has_changed) == 1} { borg toast [translate "Cancelled"]; set ::settings(profile_has_changed) 0; load_fav_profile $::settings(profile)}
+    if {$::settings(profile_has_changed) == 1} {
+        borg toast [translate "Cancelled"]
+        set ::settings(profile_has_changed) 0
+        if {$::settings(settings_profile_type) == "settings_2c"} {
+            set ::settings(final_desired_shot_weight_advanced) $::saw_backup
+        } else {
+            set ::settings(final_desired_shot_weight) $::saw_backup
+        }
+        set_button wf_save_saw_x_button state hidden
+        set_button wf_save_saw_tick_button state hidden
+    }
 }
-
 
 proc set_fav_colour {fav} {
     clear_fav_colour
@@ -1362,19 +1395,41 @@ proc adjust {var value} {
         skin_save settings
     }
     if {$var == "saw"} {
+
         if {$::settings(settings_profile_type) == "settings_2c"} {
+            if {$::settings(profile_has_changed) == 0} {
+                set ::saw_backup $::settings(final_desired_shot_weight_advanced)
+            }
             set ::settings(final_desired_shot_weight_advanced) [round_to_integer [expr $::settings(final_desired_shot_weight_advanced) + $value]]
             if {$::settings(final_desired_shot_weight_advanced) < 0} {set ::settings(final_desired_shot_weight_advanced) 0}
             if {$::settings(final_desired_shot_weight_advanced) > 2000} {set ::settings(final_desired_shot_weight_advanced) 2000}
+            if {$::saw_backup == $::settings(final_desired_shot_weight_advanced)} {
+                set ::settings(profile_has_changed) 0
+            } else {
+                set ::settings(profile_has_changed) 1
+            }
         } else {
+            if {$::settings(profile_has_changed) == 0} {
+                set ::saw_backup $::settings(final_desired_shot_weight)
+            }
             set ::settings(final_desired_shot_weight) [round_to_integer [expr $::settings(final_desired_shot_weight) + $value]]
             if {$::settings(final_desired_shot_weight) < 0} {set ::settings(final_desired_shot_weight) 0}
             if {$::settings(final_desired_shot_weight) > 100} {set ::settings(final_desired_shot_weight) 100}
+            if {$::saw_backup == $::settings(final_desired_shot_weight_advanced)} {
+                set ::settings(profile_has_changed) 0
+            } else {
+                set ::settings(profile_has_changed) 1
+            }
+        }
+        if {$::settings(profile_has_changed) == 1} {
+            set_button wf_save_saw_x_button state normal
+            set_button wf_save_saw_tick_button state normal
+        } else {
+            set_button wf_save_saw_x_button state hidden
+            set_button wf_save_saw_tick_button state hidden
         }
         clear_fav_colour
-        set ::settings(profile_has_changed) 1
         skin_save settings
-
     }
     if {$var == "er"} {
         if {$::settings(settings_profile_type) == "settings_2c"} {
@@ -1985,16 +2040,8 @@ proc start_sleep { args } {
 ### flush timer DYE
 ###################################################
 proc skin_loop {} {
-    #backup_live_graph
     auto_tare_button_colour
     skin_negative_scale_tare
     restore_live_graphs
     check_fav
-    if {$::settings(profile_has_changed) == 1} {
-        set_button wf_save_saw_x_button label_fill $::skin_red
-        set_button wf_save_saw_tick_button label_fill $::skin_green
-    } else {
-        set_button wf_save_saw_x_button label_fill $::skin_background_colour
-        set_button wf_save_saw_tick_button label_fill $::skin_background_colour
-    }
 }

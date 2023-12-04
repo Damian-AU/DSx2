@@ -11,7 +11,7 @@ add_de1_widget off graph 40 1360 {
     $widget element create cache_a_espresso_state_change -xdata graph_a_espresso_elapsed -ydata graph_a_espresso_state_change -label "" -linewidth [rescale_x_skin 3] -color #AAAAAA  -pixels 0 ;
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
-    #$widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_a
 
 add_de1_widget off graph 520 1360 {
@@ -25,7 +25,7 @@ add_de1_widget off graph 520 1360 {
     $widget element create cache_b_espresso_state_change -xdata graph_b_espresso_elapsed -ydata graph_b_espresso_state_change -label "" -linewidth [rescale_x_skin 3] -color #AAAAAA  -pixels 0 ;
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
-    #$widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_b
 
 add_de1_widget off graph 1000 1360 {
@@ -39,7 +39,7 @@ add_de1_widget off graph 1000 1360 {
     $widget element create cache_c_espresso_state_change -xdata graph_c_espresso_elapsed -ydata graph_c_espresso_state_change -label "" -linewidth [rescale_x_skin 3] -color #AAAAAA  -pixels 0 ;
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
-    #$widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_c
 
 add_de1_widget off graph 1480 1360 {
@@ -53,7 +53,7 @@ add_de1_widget off graph 1480 1360 {
     $widget element create cache_d_espresso_state_change -xdata graph_d_espresso_elapsed -ydata graph_d_espresso_state_change -label "" -linewidth [rescale_x_skin 3] -color #AAAAAA  -pixels 0 ;
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
-    #$widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_d
 
 .can itemconfigure graph_a -state hidden

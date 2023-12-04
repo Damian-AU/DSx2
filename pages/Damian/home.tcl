@@ -1,4 +1,4 @@
-set ::skin_version 0.14
+set ::skin_version 0.15
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -469,7 +469,7 @@ add_clear_button wf_close off 150 450 1490 130 {[translate "tap here to close"]}
 
 ### espresso
 dui add dtext off 340 580 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
-add_colour_button select_profile off 230 620 220 100 {[translate "select"]} {set ::settings(active_settings_tab) settings_1; show_settings}
+add_colour_button select_profile off 230 620 220 100 {[translate "select"]} {goto_profile_list}
 add_colour_button edit_profile off 230 820 220 100 {[translate "edit"]} {goto_profile_wizard}
 
 # Dose
@@ -489,10 +489,10 @@ add_colour_button wf_espresso_plus off 1350 820 100 100 {\Uf107} {adjust saw -1}
 dui add variable off 1340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_espresso -anchor center -textvariable {[skin_saw]g}
 
 add_icon_button wf_save_saw_x_button off 1230 960 100 100 {$::skin(icon_x)} {wf_cancel_profile_saw}
-set_button wf_save_saw_x_button label_fill $::skin_background_colour
+set_button wf_save_saw_x_button label_fill $::skin_red
 set_button wf_save_saw_x_button state hidden
 add_icon_button wf_save_saw_tick_button off 1350 960 100 100 {$::skin(icon_tick)} {wf_update_profile_saw}
-set_button wf_save_saw_tick_button label_fill $::skin_background_colour
+set_button wf_save_saw_tick_button label_fill $::skin_green
 set_button wf_save_saw_tick_button state hidden
 
 ### profile notes
