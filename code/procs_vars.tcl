@@ -1462,7 +1462,6 @@ proc backup_live_graph {} {
 			set ::skin_graphs(live_graph_profile) $::settings(profile_title)
 		    set ::skin_graphs(live_graph_time) $::settings(espresso_clock)
 		    set ::skin_graphs(live_graph_beans) $::settings(grinder_dose_weight)
-		    #set ::skin_graphs(live_graph_weight) $::settings(drink_weight)
 		    set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
 		    set ::skin_graphs(live_graph_pi_water) [round_to_integer $::de1(preinfusion_volume)]
 		    set ::skin_graphs(live_graph_pour_water) [round_to_integer $::de1(pour_volume)]
@@ -2029,13 +2028,11 @@ proc load_graph_cache {} {
     array set ::graph_cache [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/graph_cache.tdb"]]
 }
 
-
-rename start_sleep start_sleep_original
-proc start_sleep { args } {
+proc skin_load_fav { args } {
     skin_load $::skin(auto_load_fav)
-    start_sleep_original
 }
-
+#trace add execution start_sleep leave skin_load_fav
+::register_state_change_handler Sleep Idle skin_load_fav
 
 ### flush timer DYE
 ###################################################

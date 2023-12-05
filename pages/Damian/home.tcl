@@ -1,4 +1,4 @@
-set ::skin_version 0.15
+set ::skin_version 0.16
 set ::skin_heading DSx2
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
@@ -166,11 +166,6 @@ add_de1_variable "off espresso steam" 0 2000 -font [skin_font font 6] -fill #000
 
 blt::vector create skin_espresso_temperature_basket skin_espresso_temperature_mix skin_espresso_temperature_goal
 blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_state_change
-
-set {} {
-blt::vector create skin_pressure_goal skin_flow_goal skin_temperature_goal skin_pressure skin_flow skin_weight skin_temperature skin_resistance
-blt::vector create skin_steam_temperature
-}
 
 set ::key_font_size 14
 #dui add variable "espresso" 1950 [expr $::skin(graph_key_y) + 12] -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor e -textvariable {[skin_espresso_elapsed_timer]s}
@@ -615,17 +610,17 @@ dui add dbutton saver 0 0 \
 
 ### DYE
 
-proc skin_dye_button {} {
-    variable widgets
-	variable settings
-    set widgets(launch_dye) [dui add dbutton off \
-	2390 945 -bwidth 130 -bheight 120 -radius 30 -tags launch_dye -shape round -fill "#c1c5e4" \
-	-symbol [dui symbol get mug] -symbol_pos {0.5 0.4} -symbol_anchor center -symbol_justify center -symbol_fill white \
-	-label [translate DYE] -label_font_size 12 -label_pos {0.5 0.8} -label_anchor center -label_justify center -label_fill "#8991cc" \
-	-label_width 130 -command [list ::plugins::DYE::open -which_shot default -coords {2400 975} -anchor e] \
-	-label_font_family notosansuibold  -longpress_cmd [::list ::plugins::DYE::open -which_shot dialog -coords \{2400 975\} -anchor e] \
-	-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]]
-}
+#proc skin_dye_button {} {
+#    variable widgets
+#	variable settings
+#    set widgets(launch_dye) [dui add dbutton off \
+#	2390 945 -bwidth 130 -bheight 120 -radius 30 -tags launch_dye -shape round -fill "#c1c5e4" \
+#	-symbol [dui symbol get mug] -symbol_pos {0.5 0.4} -symbol_anchor center -symbol_justify center -symbol_fill white \
+#	-label [translate DYE] -label_font_size 12 -label_pos {0.5 0.8} -label_anchor center -label_justify center -label_fill "#8991cc" \
+#	-label_width 130 -command [list ::plugins::DYE::open -which_shot default -coords {2400 975} -anchor e] \
+#	-label_font_family notosansuibold  -longpress_cmd [::list ::plugins::DYE::open -which_shot dialog -coords \{2400 975\} -anchor e] \
+#	-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]]
+#}
 
 #skin_dye_button
 
@@ -657,15 +652,12 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
             set ::settings(steam_timeout) $::steam_timer_backup
             set ::steam_timer_backup 0
         }
-        #show_graph
         set_next_page off off;
     } elseif {$textstate == "Steam"} {
-        #show_graph
         set ::steam_timer_backup $::settings(steam_timeout)
         set_next_page off off;
         page_show steam
     } elseif {$textstate == "Espresso"} {
-        #show_graph
         set_next_page off off;
         page_show espresso
     } elseif {$textstate == "HotWater"} {
