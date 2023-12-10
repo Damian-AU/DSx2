@@ -2031,6 +2031,17 @@ proc load_graph_cache {} {
 proc skin_load_fav { args } {
     skin_load $::skin(auto_load_fav)
 }
+
+rename backup_settings backup_settings_orig
+proc backup_settings {} {
+    backup_settings_orig
+    if {$::settings(settings_profile_type) == "settings_2c"} {
+        set ::saw_backup $::settings(final_desired_shot_weight_advanced)
+    } else {
+        set ::saw_backup $::settings(final_desired_shot_weight)
+    }
+}
+
 #trace add execution start_sleep leave skin_load_fav
 ::register_state_change_handler Sleep Idle skin_load_fav
 
