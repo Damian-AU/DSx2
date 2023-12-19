@@ -610,7 +610,7 @@ dui add dbutton saver 0 0 \
 ### DYE
 proc skin_dye_button {} {
 	if {"DYE" in $::settings(enabled_plugins) == 1 && $::settings(skin) == "DSx2" && $::skin(theme) == "Damian"} {
-	    add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) {dye} {}; set_button dye_bg icon_font [skin_font awesome_light 28]
+	    add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) {dye} {}; set_button dye_bg icon_font [skin_font awesome_light 26]
 	    variable widgets
 		variable settings
    		set widgets(launch_dye) [dui add dbutton off \
