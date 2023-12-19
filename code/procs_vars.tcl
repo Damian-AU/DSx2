@@ -1173,6 +1173,7 @@ proc check_heading {} {
         set ::skin(button_y_steam) $::start_button_y
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_y_water) $::start_button_y
+        set ::skin(button_y_dye) $::start_button_y
         move_workflow_button espresso
         move_workflow_button flush
         move_workflow_button steam
@@ -1187,6 +1188,7 @@ proc check_heading {} {
         set ::skin(button_y_steam) $::start_button_y
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_y_water) $::start_button_y
+        set ::skin(button_y_dye) $::start_button_y
         move_workflow_button espresso
         move_workflow_button flush
         move_workflow_button steam

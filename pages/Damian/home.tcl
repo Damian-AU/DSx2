@@ -1,4 +1,4 @@
-set ::skin_version 0.18
+set ::skin_version 0.19
 set ::skin_heading DSx2
 
 #### header
@@ -25,6 +25,8 @@ add_de1_widget "off" entry 450 -1001 {
 	bind $widget <Return> {set ::skin(heading) $::skin_heading; hide_android_keyboard}
 	bind $widget <Leave>  {set ::skin(heading) $::skin_heading; hide_android_keyboard}
     } -width 32 -font [skin_font font 16] -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags heading_entry -textvariable ::skin_heading
+
+add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]} {}; set_button edit_heading_button state hidden
 
 add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"]} {hide_header_settings; skin_save skin}; set_button exit_heading_settings state hidden
 
