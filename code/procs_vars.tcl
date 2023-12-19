@@ -86,6 +86,15 @@ set ::fav_label_fav5 $::skin(fav_label_fav5)
 
 set ::skin(auto_tare_negative_reading) 1
 
+proc create_settings_dir {} {
+    if {[file exists [skin_directory]/settings] != 1} {
+        set path [skin_directory]/settings
+        file mkdir $path
+        file attributes $path
+    }
+}
+create_settings_dir
+
 proc skin_load_font {name fn pcsize {androidsize {}} } {
     if {$::android == 1} {
         set f 2
