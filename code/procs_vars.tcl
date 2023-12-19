@@ -17,8 +17,8 @@ set ::user(y_axis) #2b6084
 set ::user(graph_grid_colour) $::user(forground_colour)
 set ::user(mini_graph_grid_colour) #bbb
 
-if {[file exists "[skin_directory]/settings/custom_colours.txt"] == 1} {
-    array set ::user [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/custom_colours.txt"]]
+if {[file exists "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"] == 1} {
+    array set ::user [encoding convertfrom utf-8 [read_binary_file "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"]]
 }
 
 set ::skin_background_colour $::user(background_colour)
@@ -1163,6 +1163,24 @@ proc toggle_heading {} {
     skin_save skin
 }
 
+proc skin_colour_theme_selection {} {
+    set basedir [skin_directory]/colour_themes
+    set types {
+        {{colour themes}       {.txt}        }
+    }
+    set filename [tk_getOpenFile -filetypes $types -initialdir $basedir -title [translate "load colour theme"]]
+
+    if {$filename != ""} {
+        set tn [file tail $filename]
+        set rn [file rootname $tn]
+        set fd [file dirname $filename]
+        set ::skin(colour_theme_folder) $fd
+        set ::skin(colour_theme) $rn
+        skin_save skin
+        page_show restart_message
+    }
+}
+
 proc check_heading {} {
    if {$::skin(show_heading) == 1} {
         set ::skin_heading $::skin(heading)
@@ -1200,6 +1218,7 @@ proc check_heading {} {
 proc header_settings {} {
     hide_skin_set
     set_button edit_heading_button state normal
+    set_button edit_colour_theme_button state normal
     hide_graph
     set_button close_heading_settings state normal
     set_button exit_heading_settings state normal
@@ -1210,6 +1229,7 @@ proc header_settings {} {
 
 proc hide_header_settings {} {
     set_button edit_heading_button state hidden
+    set_button edit_colour_theme_button state hidden
     show_graph
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
@@ -1820,9 +1840,6 @@ proc check_app_extensions {} {
     set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r\r\r$ext
     if {$show == 1} {after 1000 {page_show plugin_message}}
 }
-
-dui add variable "plugin_message" 360 600 -font [skin_font font_bold 20] -fill $::skin_text_colour -anchor w -width 2000 -textvariable {$::plugin_change_message}
-add_clear_button plugin_message plugin_message 0 0 2560 1600 {} {app_exit}
 
 proc skin_negative_scale_tare {} {
     if {$::de1(scale_sensor_weight) < 0 && $::skin(auto_tare_negative_reading) == 1} {

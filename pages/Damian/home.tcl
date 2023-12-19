@@ -1,4 +1,4 @@
-set ::skin_version 0.19
+set ::skin_version 0.20
 set ::skin_heading DSx2
 
 #### header
@@ -26,7 +26,7 @@ add_de1_widget "off" entry 450 -1001 {
 	bind $widget <Leave>  {set ::skin(heading) $::skin_heading; hide_android_keyboard}
     } -width 32 -font [skin_font font 16] -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags heading_entry -textvariable ::skin_heading
 
-add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]} {}; set_button edit_heading_button state hidden
+add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]\r$::skin(colour_theme)} {skin_colour_theme_selection}; set_button edit_heading_button state hidden
 
 add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"]} {hide_header_settings; skin_save skin}; set_button exit_heading_settings state hidden
 
@@ -603,6 +603,13 @@ add_colour_button wf_water_volume_plus off 1350 820 100 100 {\Uf107} {adjust wat
 dui add variable off 1340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_volume_setting -anchor center -textvariable {[skin_water_volume]}
 
 hide_water_settings
+
+### message pages
+dui add variable "plugin_message" 360 600 -font [skin_font font_bold 20] -fill $::skin_text_colour -anchor w -width 2000 -textvariable {$::plugin_change_message}
+add_clear_button plugin_message plugin_message 0 0 2560 1600 {} {app_exit}
+
+dui add variable "restart_message" 1280 600 -font [skin_font font_bold 28] -fill $::skin_text_colour -anchor center -justify center -textvariable {[translate "Restart the app for your changes to take effect"]\r\r\r[translate "Tap anywhere to exit"]}
+add_clear_button restart_message restart_message 0 0 2560 1600 {} {skin_exit}
 
 ### screen saver page
 dui add dbutton saver 0 0 \

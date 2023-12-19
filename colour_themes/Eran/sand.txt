@@ -1,0 +1,17 @@
+background_colour "#EBE2C7"
+forground_colour "#CD7589"
+button_label_colour "#FEFCFB"
+text_colour "#5C574C"
+selected_colour "#A0F6F5"
+machine_not_ready #DA515E
+machine_ready #0CA581
+green #0CA581
+blue #1867D6
+red #DA515E
+brown #A1663A
+yellow #c5c315
+x_axis #E3E1E1
+y_axis #E3E1E1
+grey #E3E1E1
+graph_grid_colour #C7C7C7
+mini_graph_grid_colour #C7C7C7
