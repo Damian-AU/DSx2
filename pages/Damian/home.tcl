@@ -1,5 +1,6 @@
-set ::skin_version 0.17
+set ::skin_version 0.18
 set ::skin_heading DSx2
+
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
 dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags headerbar_bg1
@@ -606,24 +607,21 @@ dui add dbutton saver 0 0 \
     -bwidth 2560 -bheight 1600 \
     -command {set_next_page off off; start_idle}
 
-
-
 ### DYE
-
-#proc skin_dye_button {} {
-#    variable widgets
-#	variable settings
-#    set widgets(launch_dye) [dui add dbutton off \
-#	2390 945 -bwidth 130 -bheight 120 -radius 30 -tags launch_dye -shape round -fill "#c1c5e4" \
-#	-symbol [dui symbol get mug] -symbol_pos {0.5 0.4} -symbol_anchor center -symbol_justify center -symbol_fill white \
-#	-label [translate DYE] -label_font_size 12 -label_pos {0.5 0.8} -label_anchor center -label_justify center -label_fill "#8991cc" \
-#	-label_width 130 -command [list ::plugins::DYE::open -which_shot default -coords {2400 975} -anchor e] \
-#	-label_font_family notosansuibold  -longpress_cmd [::list ::plugins::DYE::open -which_shot dialog -coords \{2400 975\} -anchor e] \
-#	-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]]
-#}
-
-#skin_dye_button
-
+proc skin_dye_button {} {
+	if {"DYE" in $::settings(enabled_plugins) == 1 && $::settings(skin) == "DSx2" && $::skin(theme) == "Damian"} {
+	    add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) {dye} {}; set_button dye_bg icon_font [skin_font awesome_light 28]
+	    variable widgets
+		variable settings
+   		set widgets(launch_dye) [dui add dbutton off \
+		$::skin(button_x_dye) $::skin(button_y_dye) \
+		-bwidth 230 -bheight 100 -tags launch_dye \
+		-command [list ::plugins::DYE::open -which_shot default -coords {2400 1030} -anchor e] \
+		-longpress_cmd [::list ::plugins::DYE::open -which_shot dialog -coords \{2400 1050\} -anchor e] \
+		-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]]
+	}
+}
+skin_dye_button
 
 ### manual
 #################

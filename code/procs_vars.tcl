@@ -54,6 +54,8 @@ set ::skin(button_x_water) [expr $::start_button_x + 830]
 set ::skin(button_y_water) $::start_button_y
 set ::skin(button_x_flush) [expr $::start_button_x + 1190]
 set ::skin(button_y_flush) $::start_button_y
+set ::skin(button_x_dye) [expr $::start_button_x + 1550]
+set ::skin(button_y_dye) $::start_button_y
 set ::skin(button_y_stop_espresso) $::start_button_y
 set ::skin(button_y_stop_steam) $::start_button_y
 set ::skin(button_y_stop_flush) $::start_button_y
@@ -1015,25 +1017,35 @@ proc check_fav {} {
 }
 
 proc move_workflow_button {button_name} {
-    set z ::${button_name}(pages)
-    set pages [set $z]
-    set width 340
-    set height 100
+    if {$button_name == "dye"} {
+        set width 230
+        set height 100
+        dui item moveto off bb_${button_name}_bg* $::skin(button_x_dye) [expr $::skin(button_y_dye) + 0]
+        dui item moveto off s_${button_name}_bg [expr $::skin(button_x_dye) + 100] $::skin(button_y_dye)
+        dui item moveto off li_${button_name}_bg [expr ($::skin(button_x_dye) + 50)] [expr $::skin(button_y_dye) + $height/2 - 2]
+        dui item moveto off l_${button_name}_bg [expr ($::skin(button_x_dye) + 44) + $width/2] [expr $::skin(button_y_dye) + $height/2 - 2]
+        dui item moveto off b_${button_name}_bg* $::skin(button_x_dye) $::skin(button_y_dye)
 
-    dui item moveto $pages bb_${button_name}_start* $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 0]
-    #dui item moveto $pages s_${button_name}_start $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 0]
-    dui item moveto $pages s_${button_name}_start [expr $::skin(button_x_${button_name}) + 100] $::skin(button_y_${button_name})
+        dui item moveto off launch_dye* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
+    } else {
+        set z ::${button_name}(pages)
+        set pages [set $z]
+        set width 340
+        set height 100
 
-    dui item moveto $pages li_${button_name}_start [expr ($::skin(button_x_${button_name}) + 50)] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
-    dui item moveto $pages l_${button_name}_start [expr ($::skin(button_x_${button_name}) + 44) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
-    dui item moveto $pages b_${button_name}_start* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
-    dui item moveto $pages l_${button_name} [expr $::skin(button_x_${button_name}) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
-    dui item moveto $pages b_${button_name}* $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 100]
-    dui item moveto off l_${button_name}_index_button [expr $::skin(button_x_${button_name}) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
-    dui item moveto off b_${button_name}_index_button* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
-    dui item moveto $pages ${button_name}_data_line_1 [expr $::skin(button_x_${button_name}) + 170] [expr $::skin(button_y_${button_name}) + 120]
-    foreach f {espresso steam flush water} {
-        dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 500
+        dui item moveto $pages bb_${button_name}_start* $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 0]
+        dui item moveto $pages s_${button_name}_start [expr $::skin(button_x_${button_name}) + 100] $::skin(button_y_${button_name})
+        dui item moveto $pages li_${button_name}_start [expr ($::skin(button_x_${button_name}) + 50)] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
+        dui item moveto $pages l_${button_name}_start [expr ($::skin(button_x_${button_name}) + 44) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
+        dui item moveto $pages b_${button_name}_start* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
+        dui item moveto $pages l_${button_name} [expr $::skin(button_x_${button_name}) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
+        dui item moveto $pages b_${button_name}* $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 100]
+        dui item moveto off l_${button_name}_index_button [expr $::skin(button_x_${button_name}) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - 2]
+        dui item moveto off b_${button_name}_index_button* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
+        dui item moveto $pages ${button_name}_data_line_1 [expr $::skin(button_x_${button_name}) + 170] [expr $::skin(button_y_${button_name}) + 120]
+        foreach f {espresso steam flush water} {
+            dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 500
+        }
     }
 }
 
@@ -1165,6 +1177,7 @@ proc check_heading {} {
         move_workflow_button flush
         move_workflow_button steam
         move_workflow_button water
+        move_workflow_button dye
     } else {
         set ::skin_heading {}
         dui item config off headerbar_bg -initial_state hidden -state hidden
@@ -1178,6 +1191,7 @@ proc check_heading {} {
         move_workflow_button flush
         move_workflow_button steam
         move_workflow_button water
+        move_workflow_button dye
     }
 }
 
@@ -1286,6 +1300,8 @@ proc workflow {option} {
         set ::skin(button_y_steam) $::start_button_y
         set ::skin(button_x_water) [expr $::start_button_x + 3000]
         set ::skin(button_y_water) 0
+        set ::skin(button_x_dye) [expr $::start_button_x + 1190]
+        set ::skin(button_y_dye) $::start_button_y
     }
     if {$option == "long"} {
         set ::skin(button_x_water) [expr $::start_button_x + 110]
@@ -1296,6 +1312,8 @@ proc workflow {option} {
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_x_steam) [expr $::start_button_x + 3000]
         set ::skin(button_y_steam) $::start_button_y
+        set ::skin(button_x_dye) [expr $::start_button_x + 1190]
+        set ::skin(button_y_dye) $::start_button_y
     }
     if {$option == "americano"} {
         set ::skin(button_x_espresso) [expr $::start_button_x + 110]
@@ -1306,6 +1324,8 @@ proc workflow {option} {
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_x_steam) [expr $::start_button_x + 3000]
         set ::skin(button_y_steam) $::start_button_y
+        set ::skin(button_x_dye) [expr $::start_button_x + 1190]
+        set ::skin(button_y_dye) $::start_button_y
     }
     if {$option == "espresso"} {
         set ::skin(button_x_espresso) [expr $::start_button_x + 110]
@@ -1316,22 +1336,26 @@ proc workflow {option} {
         set ::skin(button_y_water) $::start_button_y
         set ::skin(button_x_flush) [expr $::start_button_x + 470]
         set ::skin(button_y_flush) $::start_button_y
+        set ::skin(button_x_dye) [expr $::start_button_x + 830]
+        set ::skin(button_y_dye) $::start_button_y
     }
     if {$option == "none"} {
-        set ::skin(button_x_espresso) [expr $::start_button_x + 110]
+        set ::skin(button_x_espresso) [expr $::start_button_x + 10]
         set ::skin(button_y_espresso) $::start_button_y
-        set ::skin(button_x_steam) [expr $::start_button_x + 470]
+        set ::skin(button_x_steam) [expr $::start_button_x + 370]
         set ::skin(button_y_steam) $::start_button_y
-        set ::skin(button_x_water) [expr $::start_button_x + 830]
+        set ::skin(button_x_water) [expr $::start_button_x + 730]
         set ::skin(button_y_water) $::start_button_y
-        set ::skin(button_x_flush) [expr $::start_button_x + 1190]
+        set ::skin(button_x_flush) [expr $::start_button_x + 1090]
         set ::skin(button_y_flush) $::start_button_y
+        set ::skin(button_x_dye) [expr $::start_button_x + 1450]
+        set ::skin(button_y_dye) $::start_button_y
     }
     move_workflow_button espresso
     move_workflow_button flush
     move_workflow_button steam
     move_workflow_button water
-
+    move_workflow_button dye
 
     set_button wf_latte label_fill $::skin_button_label_colour
     set_button wf_long label_fill $::skin_button_label_colour
@@ -2045,7 +2069,6 @@ proc backup_settings {} {
 #trace add execution start_sleep leave skin_load_fav
 ::register_state_change_handler Sleep Idle skin_load_fav
 
-### flush timer DYE
 ###################################################
 proc skin_loop {} {
     auto_tare_button_colour
