@@ -1,4 +1,4 @@
-set ::skin_version 0.20
+set ::skin_version 0.21
 set ::skin_heading DSx2
 
 #### header
@@ -215,8 +215,8 @@ add_de1_widget "off flush water" graph 30 520 {
     set ::home_espresso_graph $widget
     bind $widget [platform_button_press] {
         if {$::main_graph_height == [rescale_y_skin 1010]} {
-            set ::main_graph_height [rescale_y_skin 850]
-            $::home_espresso_graph configure -height [rescale_y_skin 850]
+            set ::main_graph_height [rescale_y_skin 840]
+            $::home_espresso_graph configure -height [rescale_y_skin 840]
             .can itemconfigure graph_a -state normal
             .can itemconfigure graph_b -state normal
             .can itemconfigure graph_c -state normal
@@ -226,6 +226,15 @@ add_de1_widget "off flush water" graph 30 520 {
             dui item config off graph_c -initial_state normal
             dui item config off graph_d -initial_state normal
             dui item config off live_graph_data -initial_state hidden -state hidden
+
+            dui item config off cga_p -initial_state normal -state normal
+            dui item config off cgb_p -initial_state normal -state normal
+            dui item config off cgc_p -initial_state normal -state normal
+            dui item config off cgd_p -initial_state normal -state normal
+            dui item config off cga_d -initial_state normal -state normal
+            dui item config off cgb_d -initial_state normal -state normal
+            dui item config off cgc_d -initial_state normal -state normal
+            dui item config off cgd_d -initial_state normal -state normal
         } else {
             set ::main_graph_height [rescale_y_skin 1010]
             $::home_espresso_graph configure -height [rescale_y_skin 1010]
@@ -238,6 +247,16 @@ add_de1_widget "off flush water" graph 30 520 {
             dui item config off graph_c -initial_state hidden
             dui item config off graph_d -initial_state hidden
             dui item config off live_graph_data -initial_state normal -state normal
+
+            dui item config off cga_p -initial_state hidden -state hidden
+            dui item config off cgb_p -initial_state hidden -state hidden
+            dui item config off cgc_p -initial_state hidden -state hidden
+            dui item config off cgd_p -initial_state hidden -state hidden
+            dui item config off cga_d -initial_state hidden -state hidden
+            dui item config off cgb_d -initial_state hidden -state hidden
+            dui item config off cgc_d -initial_state hidden -state hidden
+            dui item config off cgd_d -initial_state hidden -state hidden
+
             set ::cache_graph_compare 0
             $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
             $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow

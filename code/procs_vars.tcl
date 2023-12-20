@@ -499,6 +499,15 @@ proc hide_graph {} {
     dui item config off graph_b -initial_state hidden
     dui item config off graph_c -initial_state hidden
     dui item config off graph_d -initial_state hidden
+
+    dui item config off cga_p -initial_state hidden -state hidden
+    dui item config off cgb_p -initial_state hidden -state hidden
+    dui item config off cgc_p -initial_state hidden -state hidden
+    dui item config off cgd_p -initial_state hidden -state hidden
+    dui item config off cga_d -initial_state hidden -state hidden
+    dui item config off cgb_d -initial_state hidden -state hidden
+    dui item config off cgc_d -initial_state hidden -state hidden
+    dui item config off cgd_d -initial_state hidden -state hidden
 }
 
 proc show_graph {} {
@@ -516,7 +525,7 @@ proc show_graph {} {
         dui item config $pages ${key}_data -initial_state normal -state normal
         dui item config $pages ${key}_key_button* -initial_state normal -state normal
     }
-    if {$::main_graph_height == [rescale_y_skin 850]} {
+    if {$::main_graph_height == [rescale_y_skin 840]} {
         dui item config off live_graph_data -initial_state hidden -state hidden
         .can itemconfigure graph_a -state normal
         .can itemconfigure graph_b -state normal
@@ -526,6 +535,15 @@ proc show_graph {} {
         dui item config off graph_b -initial_state normal
         dui item config off graph_c -initial_state normal
         dui item config off graph_d -initial_state normal
+
+        dui item config off cga_p -initial_state normal -state normal
+        dui item config off cgb_p -initial_state normal -state normal
+        dui item config off cgc_p -initial_state normal -state normal
+        dui item config off cgd_p -initial_state normal -state normal
+        dui item config off cga_d -initial_state normal -state normal
+        dui item config off cgb_d -initial_state normal -state normal
+        dui item config off cgc_d -initial_state normal -state normal
+        dui item config off cgd_d -initial_state normal -state normal
     }
 }
 
@@ -1992,7 +2010,15 @@ blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_es
 blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_state_change
 
 proc shift_graph_list {} {
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_state_change profile time]
+}
+
+proc shift_graph_list_vectors {} {
     return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_state_change]
+}
+
+proc shift_graph_list_variables {} {
+    return [list profile time]
 }
 
 proc shift_graphs { args } {
@@ -2055,7 +2081,7 @@ proc skin_graph_size { value } {
 }
 
 proc restore_cache_graphs {} {
-	foreach lg [shift_graph_list] {
+	foreach lg [shift_graph_list_vectors] {
 		if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
 			graph_a_$lg length 0
 			graph_a_$lg append $::graph_cache(graph_a_$lg)
@@ -2073,6 +2099,31 @@ proc restore_cache_graphs {} {
 			graph_d_$lg append $::graph_cache(graph_d_$lg)
 		}
 	}
+}
+
+proc name_length { string length} {
+    set string [string range $string 0 [expr $length - 1]]
+    return $string
+}
+
+proc cache_date_time_format { time } {
+    set date [clock format $time -format {%a %d}]
+    if {$::settings(enable_ampm) == 0} {
+        set a [clock format $time -format {%H}]
+        set b [clock format $time -format {:%M}]
+        set c $a
+    } else {
+        set a [clock format $time -format {%I}]
+        set b [clock format $time -format {:%M}]
+        set c $a
+        regsub {^[0]} $c {\1} c
+    }
+    if {$::settings(enable_ampm) == 1} {
+        set pm [clock format $time -format %P]
+    } else {
+        set pm ""
+    }
+    return "$date $c$b$pm"
 }
 
 

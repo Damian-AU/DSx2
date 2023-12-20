@@ -1,6 +1,6 @@
 set ::skin_graph_multiplier .8
 
-add_de1_widget off graph 40 1360 {
+add_de1_widget off graph 40 1350 {
     set ::cache_graph_a $widget
     bind $widget [platform_button_press] {
         toggle_graph_compare graph_a
@@ -12,9 +12,9 @@ add_de1_widget off graph 40 1360 {
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_a
+} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_a
 
-add_de1_widget off graph 520 1360 {
+add_de1_widget off graph 520 1350 {
     set ::cache_graph_b $widget
     bind $widget [platform_button_press] {
         toggle_graph_compare graph_b
@@ -26,9 +26,9 @@ add_de1_widget off graph 520 1360 {
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_b
+} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_b
 
-add_de1_widget off graph 1000 1360 {
+add_de1_widget off graph 1000 1350 {
     set ::cache_graph_c $widget
     bind $widget [platform_button_press] {
         toggle_graph_compare graph_c
@@ -40,9 +40,9 @@ add_de1_widget off graph 1000 1360 {
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_c
+} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_c
 
-add_de1_widget off graph 1480 1360 {
+add_de1_widget off graph 1480 1350 {
     set ::cache_graph_d $widget
     bind $widget [platform_button_press] {
         toggle_graph_compare graph_d
@@ -54,7 +54,7 @@ add_de1_widget off graph 1480 1360 {
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0;
     $widget axis configure y -color $::skin_x_axis_colour -tickfont [skin_font font 8] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10}  -hide 0;
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 270]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_d
+} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_d
 
 .can itemconfigure graph_a -state hidden
 .can itemconfigure graph_b -state hidden
@@ -68,4 +68,15 @@ dui item config off graph_d -initial_state hidden
 
 load_graph_cache
 restore_cache_graphs
+set ::cache_lable_height 1572
+dui add variable off 60 $::cache_lable_height -anchor "w" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cga_p -textvariable {[name_length $::graph_cache(graph_a_profile) 21]}
+dui add variable off 510 $::cache_lable_height -anchor "e" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cga_d -textvariable {[cache_date_time_format $::graph_cache(graph_a_time)]}
 
+dui add variable off 540 $::cache_lable_height -anchor "w" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cgb_p -textvariable {[name_length $::graph_cache(graph_b_profile) 21]}
+dui add variable off 990 $::cache_lable_height -anchor "e" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cgb_d -textvariable {[cache_date_time_format $::graph_cache(graph_b_time)]}
+
+dui add variable off 1020 $::cache_lable_height -anchor "w" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cgc_p -textvariable {[name_length $::graph_cache(graph_c_profile) 21]}
+dui add variable off 1470 $::cache_lable_height -anchor "e" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cgc_d -textvariable {[cache_date_time_format $::graph_cache(graph_c_time)]}
+
+dui add variable off 1500 $::cache_lable_height -anchor "w" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cgd_p -textvariable {[name_length $::graph_cache(graph_d_profile) 21]}
+dui add variable off 1950 $::cache_lable_height -anchor "e" -font [skin_font font 12] -fill $::skin_text_colour -initial_state hidden -tags cgd_d -textvariable {[cache_date_time_format $::graph_cache(graph_d_time)]}
