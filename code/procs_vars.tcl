@@ -978,6 +978,8 @@ proc toggle_steam_heater {} {
 
 proc wf_update_profile_saw {} {
     if {$::settings(profile_has_changed) == 1} { borg toast [translate "Profile Updated"]; save_profile }
+    set_button wf_save_saw_x_button state hidden
+    set_button wf_save_saw_tick_button state hidden
 }
 
 proc wf_cancel_profile_saw {} {
@@ -1552,6 +1554,7 @@ proc backup_live_graph {} {
 
 ::de1::event::listener::on_major_state_change_add [lambda {event_dict} {
     if { [dict get $event_dict previous_state] == "Espresso" } {
+        backup_live_graph
         skin_save skin_graphs
     }
 }]
@@ -1561,7 +1564,7 @@ proc backup_live_graph {} {
 ::register_state_change_handler Idle Espresso save_graph_cache
 
 
-dui add variable "espresso" 0 -10 -font [skin_font font 1] -textvariable {[backup_live_graph]}
+# dui add variable "espresso" 0 -10 -font [skin_font font 1] -textvariable {[backup_live_graph]}
 
 proc restore_live_graphs {} {
 	set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]

@@ -167,6 +167,8 @@ proc skin_load {key} {
             fill_profiles_listbox
             skin_save skin
             restore_graphs
+            set_button wf_save_saw_x_button state hidden
+            set_button wf_save_saw_tick_button state hidden
         } else {
             # show_manual fav_manual
         }
