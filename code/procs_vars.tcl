@@ -696,12 +696,12 @@ proc hide_skin_set {} {
 }
 
 proc wf_profile_button_list {} {
-    return {edit_profile select_profile wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
+    return {wf_bean_cup_button edit_profile select_profile wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
 }
 
 proc show_espresso_settings {} {
     set ::wf_espresso_set_showing 1
-    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight} {
+    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup wf_dose_cup_text_line_1 wf_dose_cup_text_line_2 wf_dose_cup_text_line_3} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_profile_button_list] {
@@ -717,7 +717,7 @@ set ::wf_espresso_set_showing 1
 proc hide_espresso_settings {} {
     if {$::wf_espresso_set_showing == 1} {
         set ::wf_espresso_set_showing 0
-        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight} {
+        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup wf_dose_cup_text_line_1 wf_dose_cup_text_line_2 wf_dose_cup_text_line_3} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
         foreach s [wf_profile_button_list] {
@@ -948,6 +948,25 @@ proc skin_milk_weight {} {
     } else {
         return ""
     }
+}
+
+proc skin_bean_weight {} {
+    set bean_cup [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)]
+    if {[expr ($::de1(scale_sensor_weight) > $::skin(bean_cup_g))] && [expr ($::de1(scale_sensor_weight) - $::skin(bean_cup_g)) < 32.1] && $::skin(bean_cup_g) != 0} {
+        set g g
+        set x 0
+        catch {
+            set x [expr [round_to_one_digits $bean_cup]]
+        }
+        return $x$g
+    } else {
+        return ""
+    }
+}
+
+proc set_bean_cup_weight {} {
+    set ::skin(bean_cup_g) [round_to_one_digits $::de1(scale_sensor_weight)]
+    skin_save skin
 }
 
 proc setup_steam_switch_state {} {
@@ -1417,9 +1436,15 @@ proc workflow {option} {
 }
 
 proc set_scale_weight_to_dose {} {
-    set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::de1(scale_sensor_weight)]]
-    skin_save settings
-    borg toast [translate "Bean weight set"]
+    if {[expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)] < 6} {
+        borg toast [translate "weight too low"]
+    } elseif { [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)] > 32.1} {
+        borg toast [translate "weight too high"]
+    } else {
+        set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)]]
+        skin_save settings
+        borg toast [translate "Bean weight set"]
+    }
 }
 
 proc adjust {var value} {
@@ -1802,6 +1827,9 @@ proc skin_sleep {} {
 set ::connect_blink 1
 
 proc skin_scale_disconnected {} {
+    if {[skin_bean_weight] != "" } {
+        dui item config $::skin_home_pages scale_btl_icon -state hidden
+    }
 	if {[ifexists ::settings(scale_bluetooth_address)] == ""} {
 		dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
 		return ""
@@ -1818,8 +1846,8 @@ proc skin_scale_disconnected {} {
 		}
 	}
     dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
-}
 
+}
 
 set ::flush_blink 1
 proc flush_motion {} {
@@ -1831,6 +1859,7 @@ proc flush_motion {} {
         return f
     }
 }
+
 set ::steam_blink 1
 proc steam_motion {} {
 	if {$::steam_blink == 1} {

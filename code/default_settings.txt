@@ -105,3 +105,5 @@ legend_font_size 16
 theme Damian
 colour_theme default
 colour_theme_folder default
+
+bean_cup_g 0.0

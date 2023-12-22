@@ -1,4 +1,4 @@
-set ::skin_version 0.22
+set ::skin_version 0.23
 set ::skin_heading DSx2
 
 #### header
@@ -87,6 +87,7 @@ dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 190] [expr $
 
 add_colour_button scale_bg_shape $::skin_home_pages $::skin(button_x_scale) $::skin(button_y_scale) 380 110 {} {do_nothing}
 dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 108] [expr $::skin(button_y_scale) + 26] -font [skin_font D-font 19] -fill $::skin_button_label_colour -tags scale_btl_icon -anchor w -textvariable {$::skin(icon_bluetooth)}
+dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 112] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor w -textvariable {[skin_bean_weight]}
 dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 270] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor e -textvariable {[skin_milk_weight]}
 dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 190] [expr $::skin(button_y_scale) + 64] -font [skin_font font_bold 20] -fill $::skin_button_label_colour -anchor center -textvariable {[round_to_one_digits $::de1(scale_sensor_weight)]g}
 
@@ -496,6 +497,13 @@ add_colour_button wf_dose_plus off 730 820 100 100 {\Uf107} {adjust dose -1}; se
 add_colour_button wf_dose_minus_10 off 850 620 100 100 {\Uf106} {adjust dose 0.1}; set_button wf_dose_minus_10 font [skin_font awesome_light 34]
 add_colour_button wf_dose_plus_10 off 850 820 100 100 {\Uf107} {adjust dose -0.1}; set_button wf_dose_plus_10 font [skin_font awesome_light 34]
 dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_beans -anchor center -textvariable {[round_to_one_digits $::settings(grinder_dose_weight)]g}
+
+dui add dtext off 180 1230 -tags wf_heading_bean_cup -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_forground_colour -anchor w
+add_colour_button wf_bean_cup_button off 180 1270 220 100 {$::skin(bean_cup_g)g} {set_bean_cup_weight}
+dui add dtext off 180 1420 -tags wf_dose_cup_text_line_1 -width 1400 -text [translate "If you prefer to tare without the dose cup, set a dose cup weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1470 -tags wf_dose_cup_text_line_2 -text [translate "If you prefer to tare with the dose cup, set the dose cup weight to 0.0"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1520 -tags wf_dose_cup_text_line_3 -text [translate "Tap the dose cup button to set it to the current scale weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+
 
 # Espresso SAW
 dui add dtext off 1340 580 -tags wf_heading_espresso_weight -text [translate "Espresso weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
