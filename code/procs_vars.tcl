@@ -1350,6 +1350,19 @@ proc skin_graph_info {} {
     return ${p}${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s
 }
 
+proc skin_graph_live_info {} {
+    set p $::settings(profile_title)
+    set b $::settings(grinder_dose_weight)
+    set w [round_to_one_digits $::de1(scale_weight)]
+    set er [round_to_one_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
+    set pi [espresso_preinfusion_timer]
+    set pt [espresso_pour_timer]
+    set t [espresso_elapsed_timer]
+    set s { }
+    set g {     }
+    return ${p}${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s
+}
+
 proc cancel_auto_stop {} {
     if {$::android != 1 } {
     after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
@@ -1825,7 +1838,6 @@ proc skin_sleep {} {
 ###### connection status
 
 set ::connect_blink 1
-
 proc skin_scale_disconnected {} {
     if {[skin_bean_weight] != "" } {
         dui item config $::skin_home_pages scale_btl_icon -state hidden
