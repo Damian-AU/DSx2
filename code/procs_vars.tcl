@@ -477,6 +477,10 @@ proc set_arrow {arrow value} {
 
 set ::graph_hidden 0
 proc hide_graph {} {
+    if {$::main_graph_showing == "show espresso"} {
+        hide_steam_graph
+        set ::main_graph_showing "show steam"
+    }
     set ::graph_hidden 1
     dui item moveto off heading_entry 450 -1001
     .can itemconfigure main_graph -state hidden
@@ -508,6 +512,9 @@ proc hide_graph {} {
     dui item config off cgb_d -initial_state hidden -state hidden
     dui item config off cgc_d -initial_state hidden -state hidden
     dui item config off cgd_d -initial_state hidden -state hidden
+
+    dui item config off main_graph_toggle_label -initial_state hidden -state hidden
+    dui item config off main_graph_toggle_button* -initial_state hidden -state hidden
 }
 
 proc show_graph {} {
@@ -544,6 +551,54 @@ proc show_graph {} {
         dui item config off cgb_d -initial_state normal -state normal
         dui item config off cgc_d -initial_state normal -state normal
         dui item config off cgd_d -initial_state normal -state normal
+    }
+    dui item config off main_graph_toggle_label -initial_state normal -state normal
+    dui item config off main_graph_toggle_button* -initial_state normal -state normal
+}
+
+
+proc hide_steam_graph {} {
+    .can itemconfigure main_graph_steam -state hidden
+    dui item config off main_graph_steam -initial_state hidden
+    foreach key {pressure flow temperature} {
+        dui item config off steam_steam_${key}_icon_off -initial_state hidden -state hidden
+        dui item config off steam_steam_${key}_text_off -initial_state hidden -state hidden
+        dui item config off steam_steam_${key}_button_off* -initial_state hidden -state hidden
+    }
+}
+
+proc show_steam_graph {} {
+    .can itemconfigure main_graph_steam -state normal
+    dui item config off main_graph_steam -initial_state normal
+    foreach key {pressure flow temperature} {
+        dui item config off steam_steam_${key}_icon_off -initial_state normal -state normal
+        dui item config off steam_steam_${key}_text_off -initial_state normal -state normal
+        dui item config off steam_steam_${key}_button_off* -initial_state normal -state normal
+    }
+    dui item config off main_graph_toggle_label -initial_state normal -state normal
+    dui item config off main_graph_toggle_button* -initial_state normal -state normal
+
+    #steam_steam_pressure_icon_off
+    #steam_steam_pressure_text_off
+    #steam_steam_flow_text_off
+    #steam_steam_temperature_text_off
+    #steam_steam_pressure_button_off
+    #steam_steam_flow_button_off
+    #steam_steam_temperature_button_off
+}
+
+set ::main_graph_showing "show steam"
+
+proc toggle_main_graph {} {
+    if {$::main_graph_showing == "show steam"} {
+        hide_graph
+        set_button auto_tare state hidden
+        show_steam_graph
+        set ::main_graph_showing "show espresso"
+    } else {
+        hide_steam_graph
+        show_graph
+        set ::main_graph_showing "show steam"
     }
 }
 
@@ -1684,17 +1739,23 @@ proc toggle_graph {curve} {
             set ::skin($curve) 0
             $::home_steam_graph element configure home_${curve} -linewidth 0
             dui item config "steam" steam_${curve}_icon -fill $::skin_text_colour -outline $::skin_text_colour
+            $::main_graph_steam element configure home_${curve} -linewidth 0
+            dui item config "off" steam_${curve}_icon_off -fill $::skin_text_colour -outline $::skin_text_colour
         } else {
             set ::skin($curve) 1
             $::home_steam_graph element configure home_${curve} -linewidth [rescale_x_skin 6]
+            $::main_graph_steam element configure home_${curve} -linewidth [rescale_x_skin 6]
             if {$curve == "steam_pressure"} {
                 dui item config "steam" steam_${curve}_icon -fill $::skin_green -outline $::skin_green
+                dui item config "off" steam_${curve}_icon_off -fill $::skin_green -outline $::skin_green
             }
             if {$curve == "steam_temperature"} {
                 dui item config "steam" steam_${curve}_icon -fill $::skin_red -outline $::skin_red
+                dui item config "off" steam_${curve}_icon_off -fill $::skin_red -outline $::skin_red
             }
             if {$curve == "steam_flow"} {
                 dui item config "steam" steam_${curve}_icon -fill $::skin_blue -outline $::skin_blue
+                dui item config "off" steam_${curve}_icon_off -fill $::skin_blue -outline $::skin_blue
             }
 
         }

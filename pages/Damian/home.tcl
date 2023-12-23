@@ -1,4 +1,4 @@
-set ::skin_version 0.24
+set ::skin_version 0.25
 set ::skin_heading DSx2
 
 #### header
@@ -312,6 +312,13 @@ add_de1_variable "espresso" 1950 1550 -font [skin_font font 15] -fill $::skin_fo
 
 setup_home_espresso_graph
 
+### graph toggle
+dui add variable "off" [expr $::skin(graph_key_x) + 1580 + 38 + 200] [expr $::skin(graph_key_y) + 12] -tags main_graph_toggle_label -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor e -justify center -textvariable {$::main_graph_showing}
+
+dui add dbutton off [expr $::skin(graph_key_x) + 1580 + 38] [expr $::skin(graph_key_y) ] \
+    -bwidth 200 -bheight 110 -initial_state normal -tags main_graph_toggle_button \
+    -command {toggle_main_graph}
+
 
 dui add canvas_item oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon
 dui add canvas_item oval steam [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon
@@ -332,7 +339,7 @@ dui add dbutton steam [expr $::skin(graph_key_x) + 474 + 80] [expr $::skin(graph
 
 
 # Steam graph
-add_de1_widget "steam" graph 60 500 {
+add_de1_widget "steam" graph 30 520 {
     set ::home_steam_graph $widget
     bind $widget [platform_button_press] {
         #say [translate {zoom}] $::settings(sound_button_in);
@@ -345,11 +352,48 @@ add_de1_widget "steam" graph 60 500 {
     $widget element create home_steam_temperature -xdata steam_elapsed -ydata steam_temperature100th -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_red  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 14] -min 0.0;
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -subdivisions 1
-    $widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
+    #$widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
     $widget grid configure -color $::skin_grid_colour -dashes {4 12} -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags steam_graph
 
 
+dui add canvas_item oval off $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon_off -initial_state hidden
+dui add canvas_item oval off [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon_off -initial_state hidden
+dui add canvas_item oval off [expr $::skin(graph_key_x) + 446 + 80] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 446 + 42 + 80] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -tags steam_steam_temperature_icon_off -initial_state hidden
+dui add variable "off" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags steam_steam_pressure_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "Pressure"]}
+dui add variable "off" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags steam_steam_flow_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "Flow rate"]}
+dui add variable "off" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "Temperature"]}
+
+dui add dbutton off $::skin(graph_key_x) [expr $::skin(graph_key_y) - 50] \
+    -bwidth 210 -bheight 110 -initial_state hidden -tags steam_steam_pressure_button_off \
+    -command {toggle_graph steam_pressure}
+dui add dbutton off [expr $::skin(graph_key_x) + 226 + 40] [expr $::skin(graph_key_y) - 50] \
+    -bwidth 210 -bheight 110 -initial_state hidden -tags steam_steam_flow_button_off \
+    -command {toggle_graph steam_flow}
+dui add dbutton off [expr $::skin(graph_key_x) + 474 + 80] [expr $::skin(graph_key_y) - 50] \
+    -bwidth 210 -bheight 110 -initial_state hidden -tags steam_steam_temperature_button_off \
+    -command {toggle_graph steam_temperature}
+
+
+
+add_de1_widget "off" graph 30 520 {
+    set ::main_graph_steam $widget
+    bind $widget [platform_button_press] {
+        #say [translate {zoom}] $::settings(sound_button_in);
+        #set_next_page off off_steam_zoomed;
+        #set_next_page steam steam_steam_zoomed;
+        #page_show $::de1(current_context);
+    }
+    $widget element create home_steam_pressure -xdata steam_elapsed -ydata steam_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_green -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_steam_flow -xdata steam_elapsed -ydata steam_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_steam_temperature -xdata steam_elapsed -ydata steam_temperature100th -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_red  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 14] -min 0.0;
+    $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -subdivisions 1
+    #$widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
+    $widget grid configure -color $::skin_grid_colour -dashes {4 12} -linewidth 1
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph_steam
+.can itemconfigure main_graph_steam -state hidden
+dui item config off main_graph_steam -initial_state hidden
 #######################################################
 
 ### fav edit pages ###
