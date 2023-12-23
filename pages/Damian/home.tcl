@@ -1,4 +1,4 @@
-set ::skin_version 0.25
+set ::skin_version 0.26
 set ::skin_heading DSx2
 
 #### header
@@ -542,11 +542,11 @@ add_colour_button wf_dose_minus_10 off 850 620 100 100 {\Uf106} {adjust dose 0.1
 add_colour_button wf_dose_plus_10 off 850 820 100 100 {\Uf107} {adjust dose -0.1}; set_button wf_dose_plus_10 font [skin_font awesome_light 34]
 dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_beans -anchor center -textvariable {[round_to_one_digits $::settings(grinder_dose_weight)]g}
 
-dui add dtext off 180 1230 -tags wf_heading_bean_cup -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1230 -tags wf_heading_bean_cup -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
 add_colour_button wf_bean_cup_button off 180 1270 220 100 {$::skin(bean_cup_g)g} {set_bean_cup_weight}
-dui add dtext off 180 1420 -tags wf_dose_cup_text_line_1 -width 1400 -text [translate "If you prefer to tare without the dose cup, set a dose cup weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1470 -tags wf_dose_cup_text_line_2 -text [translate "If you prefer to tare with the dose cup, set the dose cup weight to 0.0"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1520 -tags wf_dose_cup_text_line_3 -text [translate "Tap the dose cup button to set it to the current scale weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1420 -tags wf_dose_cup_text_line_1 -width 1400 -text [translate "If you prefer to tare without the dose cup, set a dose cup weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1470 -tags wf_dose_cup_text_line_2 -text [translate "If you prefer to tare with the dose cup, set the dose cup weight to 0.0"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1520 -tags wf_dose_cup_text_line_3 -text [translate "Tap the dose cup button to set it to the current scale weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
 
 
 # Espresso SAW
@@ -619,10 +619,10 @@ add_colour_button wf_steam_timer_minus off 1350 620 100 100 {\Uf106} {adjust ste
 add_colour_button wf_steam_timer_plus off 1350 820 100 100 {\Uf107} {adjust steam -1}; set_button wf_steam_timer_plus font [skin_font awesome_light 34]
 dui add variable off 1340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_steam_timer_setting -anchor center -textvariable {[round_to_integer $::settings(steam_timeout)]s}
 
-dui add dtext off 180 1160 -tags wf_heading_steam_calibrate -text [translate "Calibrate steam timer by weight"] -font [skin_font font_bold 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1400 -tags wf_milk_weight_text_line_1 -width 1400 -text [translate "1: Place the empty jug on the scale, tap the pencil next to the respective jug button to set the weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1470 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
-dui add dtext off 180 1520 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_forground_colour -anchor w
+dui add dtext off 180 1160 -tags wf_heading_steam_calibrate -text [translate "Calibrate steam timer by weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1400 -tags wf_milk_weight_text_line_1 -width 1400 -text [translate "1: Place the empty jug on the scale, tap the pencil next to the respective jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1470 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1520 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
 
 add_icon_label_button wf_steam_jug_milk off 180 1230 280 100 {$::skin(icon_milk)} {[round_to_integer $::skin(milk_g)]g} {set ::skin(milk_g) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
 add_icon_button wf_steam_cal_time_minus off 600 1230 100 100 {$::skin(icon_minus)} {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) - 1]]; if {$::skin(milk_s) < 5} {set ::skin(milk_s) 5}}; set_button wf_steam_cal_time_minus font [skin_font D-font 34]
