@@ -1,4 +1,4 @@
-set ::skin_version 0.29
+set ::skin_version 0.30
 set ::skin_heading DSx2
 
 #### header
@@ -711,6 +711,7 @@ skin_load $::skin(auto_load_fav)
 setup_steam_switch_state
 check_current_jug
 check_app_extensions
+workflow $::skin(workflow)
 dui add variable off 0 0 -fill $::skin_text_colour  -font [skin_font font 14] -tags loop -anchor center -textvariable {[skin_loop]}
 
 # optional keyboard bindings

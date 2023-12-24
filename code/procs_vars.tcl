@@ -1478,16 +1478,29 @@ proc workflow {option} {
         set ::skin(button_y_dye) $::start_button_y
     }
     if {$option == "none"} {
-        set ::skin(button_x_espresso) [expr $::start_button_x + 10]
-        set ::skin(button_y_espresso) $::start_button_y
-        set ::skin(button_x_steam) [expr $::start_button_x + 370]
-        set ::skin(button_y_steam) $::start_button_y
-        set ::skin(button_x_water) [expr $::start_button_x + 730]
-        set ::skin(button_y_water) $::start_button_y
-        set ::skin(button_x_flush) [expr $::start_button_x + 1090]
-        set ::skin(button_y_flush) $::start_button_y
-        set ::skin(button_x_dye) [expr $::start_button_x + 1450]
-        set ::skin(button_y_dye) $::start_button_y
+        if {"DYE" in $::settings(enabled_plugins) == 1} {
+            set ::skin(button_x_espresso) [expr $::start_button_x + 10]
+            set ::skin(button_y_espresso) $::start_button_y
+            set ::skin(button_x_steam) [expr $::start_button_x + 370]
+            set ::skin(button_y_steam) $::start_button_y
+            set ::skin(button_x_water) [expr $::start_button_x + 730]
+            set ::skin(button_y_water) $::start_button_y
+            set ::skin(button_x_flush) [expr $::start_button_x + 1090]
+            set ::skin(button_y_flush) $::start_button_y
+            set ::skin(button_x_dye) [expr $::start_button_x + 1450]
+            set ::skin(button_y_dye) $::start_button_y
+        } else {
+            set ::skin(button_x_espresso) [expr $::start_button_x + 110]
+            set ::skin(button_y_espresso) $::start_button_y
+            set ::skin(button_x_steam) [expr $::start_button_x + 470]
+            set ::skin(button_y_steam) $::start_button_y
+            set ::skin(button_x_water) [expr $::start_button_x + 830]
+            set ::skin(button_y_water) $::start_button_y
+            set ::skin(button_x_flush) [expr $::start_button_x + 1190]
+            set ::skin(button_y_flush) $::start_button_y
+            set ::skin(button_x_dye) [expr $::start_button_x + 1550]
+            set ::skin(button_y_dye) $::start_button_y
+        }
     }
     move_workflow_button espresso
     move_workflow_button flush
