@@ -46,15 +46,15 @@ set ::skin_action_pages "espresso steam water flush"
 set ::skin_blink2 1
 set ::start_button_x 180
 set ::start_button_y 100
-set ::skin(button_x_espresso) [expr $::start_button_x + 110]
+set ::skin(button_x_espresso) [expr $::start_button_x + 10]
 set ::skin(button_y_espresso) $::start_button_y
-set ::skin(button_x_steam) [expr $::start_button_x + 470]
+set ::skin(button_x_steam) [expr $::start_button_x + 370]
 set ::skin(button_y_steam) $::start_button_y
-set ::skin(button_x_water) [expr $::start_button_x + 830]
+set ::skin(button_x_water) [expr $::start_button_x + 730]
 set ::skin(button_y_water) $::start_button_y
-set ::skin(button_x_flush) [expr $::start_button_x + 1190]
+set ::skin(button_x_flush) [expr $::start_button_x + 1090]
 set ::skin(button_y_flush) $::start_button_y
-set ::skin(button_x_dye) [expr $::start_button_x + 1550]
+set ::skin(button_x_dye) [expr $::start_button_x + 1450]
 set ::skin(button_y_dye) $::start_button_y
 set ::skin(button_y_stop_espresso) $::start_button_y
 set ::skin(button_y_stop_steam) $::start_button_y
