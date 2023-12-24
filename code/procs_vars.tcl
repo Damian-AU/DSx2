@@ -1637,6 +1637,7 @@ proc backup_live_graph {} {
 		    set ::skin_graphs(live_graph_pi_time) [espresso_preinfusion_timer]
 		    set ::skin_graphs(live_graph_pour_time) [espresso_pour_timer]
 		    set ::skin_graphs(live_graph_shot_time) [espresso_elapsed_timer]
+		    set ::skin_graphs(live_graph_beverage_type) $::settings(beverage_type)
 		} else {
 			set ::skin_graphs(live_graph_$lg) {}
 		}
@@ -1670,6 +1671,9 @@ proc restore_live_graphs {} {
 			$lg append $::skin_graphs(live_graph_$lg)
 		}
 	}
+	if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
+        set ::skin_graphs(live_graph_beverage_type) "espresso"
+    }
 }
 
 proc restore_graphs {} {
@@ -2127,27 +2131,29 @@ proc shift_graph_list_variables {} {
 }
 
 proc shift_graphs { args } {
-    foreach lg [shift_graph_list] {
-        if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
-            set ::graph_cache(graph_d_$lg) $::graph_cache(graph_c_$lg)
+    if {$::skin_graphs(live_graph_beverage_type) != "cleaning"} {
+        foreach lg [shift_graph_list] {
+            if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
+                set ::graph_cache(graph_d_$lg) $::graph_cache(graph_c_$lg)
+            }
         }
-    }
-    foreach lg [shift_graph_list] {
-        if {[info exists ::graph_cache(graph_b_$lg)] == 1} {
-            set ::graph_cache(graph_c_$lg) $::graph_cache(graph_b_$lg)
+        foreach lg [shift_graph_list] {
+            if {[info exists ::graph_cache(graph_b_$lg)] == 1} {
+                set ::graph_cache(graph_c_$lg) $::graph_cache(graph_b_$lg)
+            }
         }
-    }
-    foreach lg [shift_graph_list] {
-        if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
-            set ::graph_cache(graph_b_$lg) $::graph_cache(graph_a_$lg)
+        foreach lg [shift_graph_list] {
+            if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
+                set ::graph_cache(graph_b_$lg) $::graph_cache(graph_a_$lg)
+            }
         }
-    }
-    foreach lg [shift_graph_list] {
-        if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
-            set ::graph_cache(graph_a_$lg) $::skin_graphs(live_graph_$lg)
+        foreach lg [shift_graph_list] {
+            if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+                set ::graph_cache(graph_a_$lg) $::skin_graphs(live_graph_$lg)
+            }
         }
+        restore_cache_graphs
     }
-    restore_cache_graphs
 }
 
 proc save_graph_cache { args } {
