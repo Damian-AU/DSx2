@@ -98,12 +98,14 @@ create_settings_dir
 proc skin_load_font {name fn pcsize {androidsize {}} } {
     if {$::android == 1} {
         set f 2
+        # set f 2.19
     } else {
         set f 2
     }
     if {($::android == 1 || $::undroid == 1) && $androidsize != ""} {
         set pcsize $androidsize
     }
+    # multiple by 0.4 to scale font to Pulak's style sheet sizes
     set platform_font_size [expr {int(1.0 * $::fontm * $pcsize * $f * 0.4)}]
     if {[info exists ::loaded_fonts] != 1} {
         set ::loaded_fonts list
@@ -180,7 +182,7 @@ proc skin_font {font_name size} {
     if {[info exists ::skin_fonts] != 1} {
         set ::skin_fonts list
     }
-    set font_key "$font_name $size skin"
+    set font_key "$font_name $size"
     set font_index [lsearch $::skin_fonts $font_key]
     if {$font_index == -1} {
         # support for both OTF and TTF files
@@ -721,9 +723,7 @@ proc show_skin_set {option} {
     #rest_fav_buttons
     hide_skin_set
     hide_graph
-    foreach n {1 2 3 4 5} {
-        dui item config off index_shape_${n} -initial_state normal -state normal
-    }
+    dui item config off index_shape -initial_state normal -state normal
     dui item config off ${option}_index -initial_state normal -state normal
     set_button ${option}_index_button state normal
     if {$option == "espresso"} {show_espresso_settings}
@@ -734,9 +734,7 @@ proc show_skin_set {option} {
 }
 
 proc hide_skin_set {} {
-    foreach n {1 2 3 4 5} {
-        dui item config off index_shape_${n} -initial_state hidden -state hidden
-    }
+    dui item config off index_shape -initial_state hidden -state hidden
     hide_espresso_settings
     hide_flush_settings
     hide_water_settings
@@ -751,12 +749,12 @@ proc hide_skin_set {} {
 }
 
 proc wf_profile_button_list {} {
-    return {wf_bean_cup_button edit_profile select_profile wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
+    return {wf_info_button wf_bean_cup_button edit_profile select_profile wf_dose_minus wf_dose_plus wf_dose_minus_10 wf_dose_plus_10 wf_espresso_minus wf_espresso_plus wf_espresso_minus_10 wf_espresso_plus_10}
 }
 
 proc show_espresso_settings {} {
     set ::wf_espresso_set_showing 1
-    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup wf_dose_cup_text_line_1 wf_dose_cup_text_line_2 wf_dose_cup_text_line_3} {
+    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_profile_button_list] {
@@ -772,7 +770,7 @@ set ::wf_espresso_set_showing 1
 proc hide_espresso_settings {} {
     if {$::wf_espresso_set_showing == 1} {
         set ::wf_espresso_set_showing 0
-        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup wf_dose_cup_text_line_1 wf_dose_cup_text_line_2 wf_dose_cup_text_line_3} {
+        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
         foreach s [wf_profile_button_list] {
@@ -780,7 +778,16 @@ proc hide_espresso_settings {} {
         }
         set_button wf_save_saw_tick_button state hidden
         set_button wf_save_saw_x_button state hidden
+        hide_wf_espresso_info
     }
+}
+
+proc show_wf_espresso_info {} {
+    dui item config off wf_espresso_info -initial_state normal -state normal
+}
+
+proc hide_wf_espresso_info {} {
+    dui item config off wf_espresso_info -initial_state hidden -state hidden
 }
 
 proc wf_flush_button_list {} {
@@ -1287,8 +1294,7 @@ proc skin_colour_theme_selection {} {
 proc check_heading {} {
    if {$::skin(show_heading) == 1} {
         set ::skin_heading $::skin(heading)
-        dui item config off headerbar_bg -initial_state normal -state normal
-        dui item config off headerbar_bg1 -initial_state normal -state normal
+        dui item config off headerbar_heading -initial_state normal -state normal
         set ::start_button_y 150
         set ::skin(button_y_espresso) $::start_button_y
         set ::skin(button_y_steam) $::start_button_y
@@ -1302,8 +1308,7 @@ proc check_heading {} {
         move_workflow_button dye
     } else {
         set ::skin_heading {}
-        dui item config off headerbar_bg -initial_state hidden -state hidden
-        dui item config off headerbar_bg1 -initial_state hidden -state hidden
+        dui item config off headerbar_heading -initial_state hidden -state hidden
         set ::start_button_y 100
         set ::skin(button_y_espresso) $::start_button_y
         set ::skin(button_y_steam) $::start_button_y
@@ -1340,7 +1345,7 @@ proc hide_header_settings {} {
 }
 
 proc wifi_status {} {
-    if {[borg networkinfo] == "wifi"} {
+    if {$::android == 1 && [borg networkinfo] == "wifi"} {
         dui item config $::skin_home_pages wifi_icon -fill $::skin_green
     } else {
         dui item config $::skin_home_pages wifi_icon -fill $::skin_button_label_colour

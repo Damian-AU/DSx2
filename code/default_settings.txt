@@ -54,6 +54,8 @@ icon_arrow_right_up 1
 icon_skip \Ue902
 icon_stop \Ue903
 
+icon_info \Uf129
+
 glt1 4
 glt2 4
 glt3 4

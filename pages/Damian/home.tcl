@@ -1,18 +1,17 @@
-set ::skin_version 0.30
+set ::skin_version 0.31
 set ::skin_heading DSx2
 
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
-dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags headerbar_bg1
-dui add shape round_outline $::skin_home_pages 0 0 1760 100 -width 0 -fill $::skin_forground_colour -tags headerbar_bg
-dui add canvas_item arc $::skin_home_pages -110 -120 210 170 -start 270 -outline $::skin_forground_colour -fill $::skin_forground_colour
-dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_forground_colour -fill $::skin_forground_colour
-dui add variable $::skin_home_pages 1020 0 -font [skin_font font 40] -fill $::skin_button_label_colour -tags heading -anchor n -textvariable {$::skin_heading}
+dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
+dui add shape round_outline $::skin_home_pages 0 0 1760 100 -width 0 -fill $::skin_forground_colour -tags {headerbar_bg2 headerbar headerbar_heading}
+dui add canvas_item arc $::skin_home_pages -110 -120 210 170 -start 270 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg3 headerbar}
+dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg4 headerbar}
+dui add variable $::skin_home_pages 1020 0 -font [skin_font font 40] -fill $::skin_button_label_colour -anchor n -tags {heading headerbar} -textvariable {$::skin_heading}
 
-dui add variable $::skin_home_pages 2540 4 -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor ne -textvariable {[skin_clock]}
-dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome 14] -fill $::skin_button_label_colour -tags wifi_icon -anchor ne -textvariable {\uf1eb [wifi_status]}
-dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light 18] -fill $::skin_button_label_colour -tags battery_icon -anchor ne -textvariable {[skin_battery_status]}
-
+dui add variable $::skin_home_pages 2540 4 -font [skin_font font 15] -fill $::skin_button_label_colour -anchor ne -tags {headerbar_clock headerbar} -textvariable {[skin_clock]}
+dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome 14] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
+dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light 18] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
 
 add_clear_button heading off 0 10 2560 100 {} {header_settings}
 add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; skin_save skin}; set_button close_heading_settings state hidden
@@ -51,7 +50,6 @@ set_button fav4_edit font [skin_font awesome_light 28]
 set_button fav5_edit font [skin_font awesome_light 28]
 
 set_favs_showing
-
 
 
 ### machine
@@ -513,12 +511,9 @@ dui add dtext off [expr $::skin(button_x_steam) + 170] 500 -tags steam_index -te
 dui add dtext off [expr $::skin(button_x_flush) + 170] 500 -tags flush_index -text $::skin(icon_index) -font [skin_font D-font 30] -fill $::skin_forground_colour -anchor s -initial_state hidden
 dui add dtext off [expr $::skin(button_x_water) + 170] 500 -tags water_index -text $::skin(icon_index) -font [skin_font D-font 30] -fill $::skin_forground_colour -anchor s -initial_state hidden
 
-dui add canvas_item arc off 1540 492 1640 540 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags index_shape_1 -initial_state hidden
-dui add canvas_item arc off 1540 500 1634 540 -outline $::skin_background_colour -fill $::skin_background_colour -tags index_shape_2 -initial_state hidden
-dui add canvas_item arc off 150 492 250 540 -start 90 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags index_shape_3 -initial_state hidden
-dui add canvas_item arc off 156 500 250 540 -start 90 -outline $::skin_background_colour -fill $::skin_background_colour -tags index_shape_4 -initial_state hidden
-dui add canvas_item rect off 200 490 1590 498 -width 0 -fill $::skin_forground_colour -tags index_shape_5 -initial_state hidden
-
+dui add canvas_item arc off 150 494 250 542 -start 90 -width [expr {4 * $::settings(screen_size_width) / 1280}] -style {} -style arc -outline $::skin_forground_colour -tags {index_shape_1 index_shape} -initial_state hidden
+dui add canvas_item arc off 1450 494 1550 542 -start 0 -width [expr {4 * $::settings(screen_size_width) / 1280}] -style {} -style arc -outline $::skin_forground_colour -tags {index_shape_3 index_shape} -initial_state hidden
+dui add canvas_item rect off 200 490 1500 498 -width 0 -fill $::skin_forground_colour -tags {index_shape_2 index_shape} -initial_state hidden
 
 add_clear_button espresso_index_button off $::skin(button_x_espresso) $::skin(button_y_steam) 340 380  {} {show_graph}; set_button espresso_index_button state hidden
 add_clear_button steam_index_button off $::skin(button_x_steam) $::skin(button_y_steam) 340 380  {} {show_graph}; set_button steam_index_button state hidden
@@ -528,25 +523,25 @@ add_clear_button water_index_button off $::skin(button_x_water) $::skin(button_y
 
 ### close button
 add_clear_button wf_close off 150 450 1490 130 {[translate "tap here to close"]} {show_graph}; set_button wf_close state hidden; set_button wf_close font [skin_font font 16]
-
+#########################################################
 ### espresso
-dui add dtext off 340 580 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
-add_colour_button select_profile off 230 620 220 100 {[translate "select"]} {goto_profile_list}
-add_colour_button edit_profile off 230 820 220 100 {[translate "edit"]} {goto_profile_wizard}
+dui add dtext off 310 580 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button select_profile off 200 620 220 100 {[translate "select"]} {goto_profile_list}
+add_colour_button edit_profile off 200 820 220 100 {[translate "edit"]} {goto_profile_wizard}
 
 # Dose
-dui add dtext off 840 580 -tags wf_heading_bean_weight -text [translate "Bean weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
-add_colour_button wf_dose_minus off 730 620 100 100 {\Uf106} {adjust dose 1}; set_button wf_dose_minus font [skin_font awesome_light 34]
-add_colour_button wf_dose_plus off 730 820 100 100 {\Uf107} {adjust dose -1}; set_button wf_dose_plus font [skin_font awesome_light 34]
-add_colour_button wf_dose_minus_10 off 850 620 100 100 {\Uf106} {adjust dose 0.1}; set_button wf_dose_minus_10 font [skin_font awesome_light 34]
-add_colour_button wf_dose_plus_10 off 850 820 100 100 {\Uf107} {adjust dose -0.1}; set_button wf_dose_plus_10 font [skin_font awesome_light 34]
-dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_beans -anchor center -textvariable {[round_to_one_digits $::settings(grinder_dose_weight)]g}
+set ::wf_dose_x 160
+dui add dtext off [expr 840 + $::wf_dose_x] 580 -tags wf_heading_bean_weight -text [translate "Bean weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button wf_dose_minus off [expr 730 + $::wf_dose_x] 620 100 100 {\Uf106} {adjust dose 1}; set_button wf_dose_minus font [skin_font awesome_light 34]
+add_colour_button wf_dose_plus off [expr 730 + $::wf_dose_x] 820 100 100 {\Uf107} {adjust dose -1}; set_button wf_dose_plus font [skin_font awesome_light 34]
+add_colour_button wf_dose_minus_10 off [expr 850 + $::wf_dose_x] 620 100 100 {\Uf106} {adjust dose 0.1}; set_button wf_dose_minus_10 font [skin_font awesome_light 34]
+add_colour_button wf_dose_plus_10 off [expr 850 + $::wf_dose_x] 820 100 100 {\Uf107} {adjust dose -0.1}; set_button wf_dose_plus_10 font [skin_font awesome_light 34]
+dui add variable off [expr 840 + $::wf_dose_x] 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_beans -anchor center -textvariable {[round_to_one_digits $::settings(grinder_dose_weight)]g}
 
-dui add dtext off 180 1230 -tags wf_heading_bean_cup -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
-add_colour_button wf_bean_cup_button off 180 1270 220 100 {$::skin(bean_cup_g)g} {set_bean_cup_weight}
-dui add dtext off 180 1420 -tags wf_dose_cup_text_line_1 -width 1400 -text [translate "If you prefer to tare without the dose cup, set a dose cup weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
-dui add dtext off 180 1470 -tags wf_dose_cup_text_line_2 -text [translate "If you prefer to tare with the dose cup, set the dose cup weight to 0.0"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
-dui add dtext off 180 1520 -tags wf_dose_cup_text_line_3 -text [translate "Tap the dose cup button to set it to the current scale weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off [expr 840 - $::wf_dose_x] 580 -tags wf_heading_bean_cup -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button wf_bean_cup_button off [expr 730 - $::wf_dose_x] 620 220 100 {$::skin(bean_cup_g)g} {set_bean_cup_weight}
+add_icon_button wf_info_button off [expr 630 - $::wf_dose_x] 620 100 100 {$::skin(icon_info)} {show_wf_espresso_info}
+
 
 
 # Espresso SAW
@@ -564,13 +559,20 @@ add_icon_button wf_save_saw_tick_button off 1350 960 100 100 {$::skin(icon_tick)
 set_button wf_save_saw_tick_button label_fill $::skin_green
 set_button wf_save_saw_tick_button state hidden
 
+dui add shape rect off 100 560 1700 900 -width 1 -outline $::skin_forground_colour -fill $::skin_background_colour -tags {wf_espresso_info_bg wf_espresso_info} -initial_state hidden
+dui add dtext off 180 680 -tags {wf_dose_cup_text_line_1 wf_espresso_info} -width 1400 -text [translate "If you prefer to tare without the dose cup, set a dose cup weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w -initial_state hidden
+dui add dtext off 180 740 -tags {wf_dose_cup_text_line_2 wf_espresso_info} -text [translate "If you prefer to tare with the dose cup, set the dose cup weight to 0.0"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w -initial_state hidden
+dui add dtext off 180 800 -tags {wf_dose_cup_text_line_3 wf_espresso_info} -text [translate "Tap the dose cup button to set it to the current scale weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w -initial_state hidden
+dui add dtext off 900 580 -tags {wf_dose_cup_text_line_4 wf_espresso_info} -width 1400 -text [translate "tap to close"] -font [skin_font font 18] -fill $::skin_text_colour -anchor center -initial_state hidden
+add_clear_button {wf_espresso_info_close_button wf_espresso_info} off 100 560 1600 340 {} {hide_wf_espresso_info}; set_button {wf_espresso_info_close_button wf_espresso_info} state hidden
+
 ### profile notes
 #dui add dtext off 230 1050 -tags wf_heading_profile_notes -text [translate "Profile Notes"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw
 #dui add variable off 230 1110 -fill $::skin_text_colour  -font [skin_font font 18] -tags wf_profile_notes -anchor nw -justify left -width 1230 -textvariable {$::settings(profile_notes)}
 
 
 hide_espresso_settings
-
+###########################################################
 
 
 ### steam
@@ -751,5 +753,4 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
     }
 }
 add_de1_variable "off" 2540 1580 -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
-
 
