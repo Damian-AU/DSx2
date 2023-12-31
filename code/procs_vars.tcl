@@ -97,14 +97,15 @@ create_settings_dir
 
 proc skin_load_font {name fn pcsize {androidsize {}} } {
     if {$::android == 1} {
-        set f 2
-        # set f 2.19
+        #set f 2
+        set f 2.19
     } else {
         set f 2
     }
     if {($::android == 1 || $::undroid == 1) && $androidsize != ""} {
         set pcsize $androidsize
     }
+
     # multiple by 0.4 to scale font to Pulak's style sheet sizes
     set platform_font_size [expr {int(1.0 * $::fontm * $pcsize * $f * 0.4)}]
     if {[info exists ::loaded_fonts] != 1} {
@@ -205,6 +206,20 @@ proc skin_font {font_name size} {
     return $font_key
 }
 
+proc fixed_size { size } {
+    set s8 1
+    if {$::settings(screen_size_width) == 2800} {
+        set s8 1.24
+    }
+    if {$::android != 1} {
+        set sys_size $size
+    } else {
+        set sys_size [expr {(($size * 0.6 / $::settings(default_font_calibration)) * 2 / 2.19) * $s8}]
+    }
+    #return [expr {$sys_size * 0.6 / $::settings(default_font_calibration)}]
+    #return [expr {$sys_size / $::settings(default_font_calibration) * 0.45}]
+    return $sys_size
+}
 
 proc skin_low_water {} {
     if {[expr $::de1(water_level) < {$::settings(water_refill_point) + 3}]} {
@@ -417,7 +432,7 @@ proc add_clear_button {button_name pages x y width height tv command } {
 
 proc add_icon_button {button_name pages x y width height tv command } {
     set ::${button_name}(pages) $pages
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light 34] -fill $::skin_text_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
@@ -426,7 +441,7 @@ proc add_icon_label_button {button_name pages x y width height tvi tv command } 
 
     dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_forground_colour -outline $::skin_forground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
-    dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font 40] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
+    dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
     dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
@@ -435,7 +450,7 @@ proc add_round_button {button_name pages x y width height tv command } {
     set ::${button_name}(pages) $pages
 
     dui add shape oval $pages $x $y [expr $x + $width] [expr $y + $height] -fill $::skin_forground_colour -outline $::skin_button_label_colour -tags s_${button_name}
-    dui add variable $pages [expr $x + $width/2 +1] [expr $y + $height/2 - 1] -width [expr $width - 10] -font [skin_font awesome_light 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
+    dui add variable $pages [expr $x + $width/2 +1] [expr $y + $height/2 - 1] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
@@ -466,7 +481,7 @@ proc add_arrow {arrow_name pages x y arrow info} {
         set a center
         dui add variable $pages [expr $x - 400] $y -font [skin_font font_bold 20] -fill $::skin(help_colour) -width 600 -anchor $a -justify center -tags ${arrow_name}_info -initial_state hidden -textvariable $info
     }
-    dui add variable $pages $x $y -font [skin_font D-font 50] -fill $::skin(help_colour) -anchor $a -justify center -tags $arrow_name -initial_state hidden -textvariable $af
+    dui add variable $pages $x $y -font [skin_font D-font [fixed_size 50]] -fill $::skin(help_colour) -anchor $a -justify center -tags $arrow_name -initial_state hidden -textvariable $af
 
 }
 
@@ -1080,26 +1095,22 @@ proc wf_cancel_profile_saw {} {
 proc set_fav_colour {fav} {
     clear_fav_colour
     set_button $fav icon_fill $::skin_selected_colour
-    set_button $fav icon_font [skin_font awesome 28]
+    set_button $fav icon_font [skin_font awesome [fixed_size 28]]
 }
 
 proc clear_fav_colour {} {
     foreach key {fav1 fav2 fav3 fav4 fav5} {
         set_button $key icon_fill $::skin_button_label_colour
-        set_button $key icon_font [skin_font awesome_light 28]
+        set_button $key icon_font [skin_font awesome_light [fixed_size 28]]
     }
 }
 
 proc check_fav_settings_vars {} {
     return {
         profile
-        #profile_title
-        #profile_filename
-        # grinder_dose_weight
         steam_disabled
         steam_flow
         steam_temperature
-        # steam_timeout
         flush_seconds
         hotwater_flow
         water_temperature
