@@ -1,4 +1,4 @@
-set ::skin_version 0.33
+set ::skin_version 0.34
 set ::skin_heading DSx2
 
 #### header
@@ -30,8 +30,19 @@ add_de1_widget "off" entry 450 -1001 {
     } -width 32 -font [skin_font font [fixed_size 16]] -borderwidth 1 -bg $::skin_forground_colour -foreground $::skin_button_label_colour -tags heading_entry -textvariable ::skin_heading
 
 add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]\r$::skin(colour_theme)} {skin_colour_theme_selection}; set_button edit_heading_button state hidden
+add_colour_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state [translate "icon"]\r[translate "calibration"]} {toggle_icon_size_settings}; set_button edit_icon_size_button state hidden
 
 add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"]} {hide_header_settings; skin_save skin}; set_button exit_heading_settings state hidden
+
+
+dui add dtext off 800 780 -tags {heading_icon_size icon_size_set} -text [translate "Adjust so the star tips touch the square"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -justify center -initial_state hidden
+add_colour_button icon_size_minus off 640 840 100 100 {\Uf106} {adjust icon_size 1}; set_button icon_size_minus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_minus state hidden
+add_colour_button icon_size_plus off 640 1040 100 100 {\Uf107} {adjust icon_size -1}; set_button icon_size_plus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_plus state hidden
+dui add variable off 690 990 -fill $::skin_text_colour -font [skin_font font_bold 24] -tags {icon_size_value icon_size_set} -anchor center -initial_state hidden -textvariable {$::skin(icon_size)}
+
+dui add shape rect off 850 940 950 1040 -width 2 -outline $::skin_text_colour -fill $::skin_background_colour -tags {icon_size_shape icon_size_set} -initial_state hidden
+dui add variable off 900 990 -font [skin_font awesome_light [fixed_size 50]] -fill $::skin_text_colour -anchor center -initial_state hidden -tags {skin_icon_size_test icon_size_set} -textvariable {$::skin(icon_fav)}
+
 
 #####################
 ### fav
@@ -62,15 +73,15 @@ dui add variable $::skin_home_pages 2330 [expr $::skin(button_y_machine) - 36] -
 dui add variable $::skin_home_pages 2426 [expr $::skin(button_y_machine) + 60] -font [skin_font font 15] -fill $::skin_text_colour  -anchor w -textvariable {[skin_steamtemp_text]}
 dui add variable $::skin_home_pages 2090 [expr $::skin(button_y_machine) + 186] -font [skin_font font 15] -fill $::skin_button_label_colour  -anchor w -textvariable {[skin_low_water]}
 
-dui add variable espresso 2358 [expr $::skin(button_y_machine) + 28] -font [skin_font D-font [fixed_size 52]] -fill $::skin_brown  -anchor n -textvariable {e}
-dui add variable "espresso water" 2366 [expr $::skin(button_y_machine) + 60] -font [skin_font D-font [fixed_size 52]] -fill $::skin_blue  -anchor n -textvariable {c}
-dui add variable flush 2358 [expr $::skin(button_y_machine) + 10] -font [skin_font D-font [fixed_size 52]] -fill $::skin_blue  -anchor n -textvariable {[flush_motion]}
-dui add variable steam 2420 [expr $::skin(button_y_machine) + 64] -font [skin_font D-font [fixed_size 40]] -fill $::skin_blue  -anchor n -textvariable {[steam_motion]}
-dui add variable water 2330 [expr $::skin(button_y_machine) - 20] -font [skin_font D-font [fixed_size 60]] -fill $::skin_blue  -anchor n -textvariable {w}
+dui add variable espresso 2358 [expr $::skin(button_y_machine) + 28] -font [skin_font D-font [fixed_size 52]] -fill $::skin_brown -anchor n -tags espresso_pour -textvariable {e}
+dui add variable "espresso water" 2366 [expr $::skin(button_y_machine) + 60] -font [skin_font D-font [fixed_size 52]] -fill $::skin_blue -anchor n -tags ewc -textvariable {c}
+dui add variable flush 2358 [expr $::skin(button_y_machine) + 10] -font [skin_font D-font [fixed_size 52]] -fill $::skin_blue -anchor n -tags flush_motion -textvariable {[flush_motion]}
+dui add variable steam 2420 [expr $::skin(button_y_machine) + 64] -font [skin_font D-font [fixed_size 40]] -fill $::skin_blue -anchor n -tags steam_motion -textvariable {[steam_motion]}
+dui add variable water 2330 [expr $::skin(button_y_machine) - 20] -font [skin_font D-font [fixed_size 60]] -fill $::skin_blue -anchor n -tags water_motion -textvariable {w}
 
 dui add variable $::skin_home_pages 2070 [expr $::skin(button_y_machine) - 36] -font [skin_font D-font [fixed_size 19]] -fill $::skin_button_label_colour -tags de1_btl_icon -anchor w -textvariable {$::skin(icon_bluetooth)}
 dui add variable $::skin_home_pages 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font_bold 18] -fill $::skin_selected_colour -tags machine_state_text -width 220 -anchor center -justify center -textvariable {[string range $::skin_machine_state 0 18]}
-dui add variable $::skin_home_pages 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font awesome_light [fixed_size 70]] -fill $::skin_red -tags machine_state -anchor center -textvariable {[skin_machine_state]}
+dui add variable $::skin_home_pages 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font awesome_light [fixed_size 60]] -fill $::skin_red -tags machine_state -anchor center -textvariable {[skin_machine_state]}
 dui add variable "steam" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font 40] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_steam_timer]}
 dui add variable "flush" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font 40] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_flush_timer]}
 
@@ -104,7 +115,7 @@ dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 276]
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
 
 ### sleep
-dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 54] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -textvariable {p}
+dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 54] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -tags sleep_button -textvariable {p}
 add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power}
 
 ### ghc buttons ###
@@ -513,9 +524,9 @@ dui add dtext off [expr $::skin(button_x_steam) + 170] 500 -tags steam_index -te
 dui add dtext off [expr $::skin(button_x_flush) + 170] 500 -tags flush_index -text $::skin(icon_index) -font [skin_font D-font [fixed_size 30]] -fill $::skin_forground_colour -anchor s -initial_state hidden
 dui add dtext off [expr $::skin(button_x_water) + 170] 500 -tags water_index -text $::skin(icon_index) -font [skin_font D-font [fixed_size 30]] -fill $::skin_forground_colour -anchor s -initial_state hidden
 
-dui add canvas_item arc off 150 494 250 542 -start 90 -width [expr {4 * $::settings(screen_size_width) / 1280}] -style {} -style arc -outline $::skin_forground_colour -tags {index_shape_1 index_shape} -initial_state hidden
-dui add canvas_item arc off 1450 494 1550 542 -start 0 -width [expr {4 * $::settings(screen_size_width) / 1280}] -style {} -style arc -outline $::skin_forground_colour -tags {index_shape_3 index_shape} -initial_state hidden
-dui add canvas_item rect off 200 490 1500 498 -width 0 -fill $::skin_forground_colour -tags {index_shape_2 index_shape} -initial_state hidden
+dui add canvas_item arc off 120 494 220 542 -start 90 -width [expr {4 * $::settings(screen_size_width) / 1280}] -style {} -style arc -outline $::skin_forground_colour -tags {index_shape_1 index_shape} -initial_state hidden
+dui add canvas_item arc off 1480 494 1580 542 -start 0 -width [expr {4 * $::settings(screen_size_width) / 1280}] -style {} -style arc -outline $::skin_forground_colour -tags {index_shape_3 index_shape} -initial_state hidden
+dui add canvas_item rect off 170 490 1530 498 -width 0 -fill $::skin_forground_colour -tags {index_shape_2 index_shape} -initial_state hidden
 
 add_clear_button espresso_index_button off $::skin(button_x_espresso) $::skin(button_y_steam) 340 380  {} {show_graph}; set_button espresso_index_button state hidden
 add_clear_button steam_index_button off $::skin(button_x_steam) $::skin(button_y_steam) 340 380  {} {show_graph}; set_button steam_index_button state hidden

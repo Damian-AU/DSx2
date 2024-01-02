@@ -206,21 +206,37 @@ proc skin_font {font_name size} {
     return $font_key
 }
 
-proc fixed_size { size } {
-    set s8 1
+if {[info exists ::skin(icon_size)] != 1} {
+    set ::skin(icon_size) 3
     if {$::settings(screen_size_width) == 2800} {
-        set s8 1.24
+        set ::skin(icon_size) 5
     }
     if {$::settings(screen_size_width) == 1340} {
-        set s8 0.8
+        set ::skin(icon_size) 1
+    }
+}
+
+proc fixed_size { size } {
+    if {$::skin(icon_size) == 1} {
+        set ::skin_icon_size 0.8
+    }
+    if {$::skin(icon_size) == 2} {
+        set ::skin_icon_size 0.9
+    }
+    if {$::skin(icon_size) == 3} {
+        set ::skin_icon_size 1
+    }
+    if {$::skin(icon_size) == 4} {
+        set ::skin_icon_size 1.12
+    }
+    if {$::skin(icon_size) == 5} {
+        set ::skin_icon_size 1.24
     }
     if {$::android != 1} {
-        set sys_size $size
+        set sys_size [expr $size * $::skin_icon_size]
     } else {
-        set sys_size [expr {(($size * 0.6 / $::settings(default_font_calibration)) * 2 / 2.19) * $s8}]
+        set sys_size [expr {(($size * 0.6 / $::settings(default_font_calibration)) * 2 / 2.19) * $::skin_icon_size}]
     }
-    #return [expr {$sys_size * 0.6 / $::settings(default_font_calibration)}]
-    #return [expr {$sys_size / $::settings(default_font_calibration) * 0.45}]
     return $sys_size
 }
 
@@ -441,19 +457,10 @@ proc add_icon_button {button_name pages x y width height tv command } {
 
 proc add_icon_label_button {button_name pages x y width height tvi tv command } {
     set ::${button_name}(pages) $pages
-
     dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_forground_colour -outline $::skin_forground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
     dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
     dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
-    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
-}
-
-proc add_round_button {button_name pages x y width height tv command } {
-    set ::${button_name}(pages) $pages
-
-    dui add shape oval $pages $x $y [expr $x + $width] [expr $y + $height] -fill $::skin_forground_colour -outline $::skin_button_label_colour -tags s_${button_name}
-    dui add variable $pages [expr $x + $width/2 +1] [expr $y + $height/2 - 1] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
@@ -484,7 +491,7 @@ proc add_arrow {arrow_name pages x y arrow info} {
         set a center
         dui add variable $pages [expr $x - 400] $y -font [skin_font font_bold 20] -fill $::skin(help_colour) -width 600 -anchor $a -justify center -tags ${arrow_name}_info -initial_state hidden -textvariable $info
     }
-    dui add variable $pages $x $y -font [skin_font D-font [fixed_size 50]] -fill $::skin(help_colour) -anchor $a -justify center -tags $arrow_name -initial_state hidden -textvariable $af
+    dui add variable $pages $x $y -font [skin_font D-font 50] -fill $::skin(help_colour) -anchor $a -justify center -tags $arrow_name -initial_state hidden -textvariable $af
 
 }
 
@@ -1299,6 +1306,20 @@ proc toggle_heading {} {
     }
     skin_save skin
 }
+set ::icon_size_state "show"
+proc toggle_icon_size_settings {} {
+    if {$::icon_size_state == "hide"} {
+        set ::icon_size_state "show"
+        dui item config off icon_size_set -initial_state hidden -state hidden
+        set_button icon_size_minus state hidden
+        set_button icon_size_plus state hidden
+    } else {
+        set ::icon_size_state "hide"
+        dui item config off icon_size_set -initial_state normal -state normal
+        set_button icon_size_minus state normal
+        set_button icon_size_plus state normal
+    }
+}
 
 proc skin_colour_theme_selection {} {
     set basedir [skin_directory]/colour_themes
@@ -1354,6 +1375,7 @@ proc header_settings {} {
     hide_skin_set
     set_button edit_heading_button state normal
     set_button edit_colour_theme_button state normal
+    set_button edit_icon_size_button state normal
     hide_graph
     set_button close_heading_settings state normal
     set_button exit_heading_settings state normal
@@ -1365,10 +1387,15 @@ proc header_settings {} {
 proc hide_header_settings {} {
     set_button edit_heading_button state hidden
     set_button edit_colour_theme_button state hidden
+    set_button edit_icon_size_button state hidden
     show_graph
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
     dui item moveto off heading_entry 450 -1001
+    set ::icon_size_state "show"
+    dui item config off icon_size_set -initial_state hidden -state hidden
+    set_button icon_size_minus state hidden
+    set_button icon_size_plus state hidden
 }
 
 proc wifi_status {} {
@@ -1568,7 +1595,7 @@ proc adjust {var value} {
     if {$var == "flush_flow"} {
         set ::settings(flush_flow) [expr $::settings(flush_flow) + $value]
         if {$::settings(flush_flow) < 1} {set ::settings(flush_flow) 1}
-        if {$::settings(flush_flow) > 10} {set ::settings(flush_flow) 10}
+        if {$::settings(flush_flow) > 5} {set ::settings(flush_flow) 5}
         skin_save flush
     }
     if {$var == "steam"} {
@@ -1658,7 +1685,178 @@ proc adjust {var value} {
         }
         skin_save settings
     }
+    if {$var == "icon_size"} {
+        set ::skin(icon_size) [expr $::skin(icon_size) + $value]
+        if {$::skin(icon_size) < 1} {set ::skin(icon_size) 1}
+        if {$::skin(icon_size) > 5} {set ::skin(icon_size) 5}
+        dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
+        resize_fixed_icons
+        skin_save skin
+    }
 }
+
+proc resize_fixed_icons {} {
+    dui item config off heading_entry -font [skin_font font [fixed_size 16]]
+    dui item config $::skin_home_pages heading -font [skin_font font [fixed_size 40]]
+    dui item config $::skin_home_pages headerbar_clock -font [skin_font font [fixed_size 15]]
+    dui item config $::skin_home_pages wifi_icon -font [skin_font awesome [fixed_size 14]]
+    dui item config $::skin_home_pages battery_icon -font [skin_font awesome_light [fixed_size 18]]
+    dui item config $::skin_home_pages heading_entry -font [skin_font font [fixed_size 16]]
+    set_button fav1 icon_font [skin_font awesome_light [fixed_size 28]]
+    set_button fav2 icon_font [skin_font awesome_light [fixed_size 28]]
+    set_button fav3 icon_font [skin_font awesome_light [fixed_size 28]]
+    set_button fav4 icon_font [skin_font awesome_light [fixed_size 28]]
+    set_button fav5 icon_font [skin_font awesome_light [fixed_size 28]]
+    set_button fav1_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button fav2_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button fav3_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button fav4_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button fav5_edit font [skin_font awesome_light [fixed_size 28]]
+    dui item config $::skin_home_pages decent_icon -font [skin_font D-font [fixed_size 264]]
+    dui item config espresso espresso_pour -font [skin_font D-font [fixed_size 52]]
+    dui item config "espresso water" ewc -font [skin_font D-font [fixed_size 52]]
+    dui item config flush flush_motion -font [skin_font D-font [fixed_size 52]]
+    dui item config steam steam_motion -font [skin_font D-font [fixed_size 40]]
+    dui item config water water_motion -font [skin_font D-font [fixed_size 60]]
+    dui item config $::skin_home_pages de1_btl_icon -font [skin_font D-font [fixed_size 19]]
+    dui item config $::skin_home_pages machine_state -font [skin_font awesome_light [fixed_size 60]]
+    dui item config $::skin_home_pages scale_btl_icon -font [skin_font D-font [fixed_size 19]]
+    set_button bw font [skin_font D-font [fixed_size 42]]
+    set_button mw font [skin_font D-font [fixed_size 42]]
+    dui item config $::skin_home_pages sleep_button -font [skin_font D-font [fixed_size 68]]
+    set_button stop_espresso_icon font [skin_font D-font [fixed_size 40]]
+    set_button power_sleep icon_font [skin_font awesome_light [fixed_size 26]]
+    set_button power_exit icon_font [skin_font awesome_light [fixed_size 26]]
+    dui item config "off flush water" pressure_text -font [skin_font font $::key_font_size]
+    dui item config "off flush water" flow_text -font [skin_font font $::key_font_size]
+    dui item config "off flush water" weight_text -font [skin_font font $::key_font_size]
+    dui item config "off flush water" temperature_text -font [skin_font font $::key_font_size]
+    dui item config "off flush water" resistance_text -font [skin_font font $::key_font_size]
+    dui item config "off flush water" steps_text -font [skin_font font $::key_font_size]
+    dui item config espresso pressure_data -font [skin_font font $::key_font_size]
+    dui item config espresso flow_data -font [skin_font font $::key_font_size]
+    dui item config espresso weight_data -font [skin_font font $::key_font_size]
+    dui item config espresso temperature_data -font [skin_font font $::key_font_size]
+    dui item config espresso resistance_data -font [skin_font font $::key_font_size]
+    dui item config espresso steps_data -font [skin_font font $::key_font_size]
+    $::home_espresso_graph axis configure x -tickfont [skin_font font [fixed_size 14]]
+    $::home_espresso_graph axis configure y -tickfont [skin_font font [fixed_size 14]]
+    $::home_espresso_graph_espresso axis configure x -tickfont [skin_font font [fixed_size 14]]
+    $::home_espresso_graph_espresso axis configure y -tickfont [skin_font font [fixed_size 14]]
+    $::home_steam_graph axis configure x -tickfont [skin_font font [fixed_size 14]]
+    $::home_steam_graph axis configure y -tickfont [skin_font font [fixed_size 14]]
+    dui item config off fav1_entry -font [skin_font font [fixed_size 20]]
+    dui item config off fav2_entry -font [skin_font font [fixed_size 20]]
+    dui item config off fav3_entry -font [skin_font font [fixed_size 20]]
+    dui item config off fav4_entry -font [skin_font font [fixed_size 20]]
+    dui item config off fav5_entry -font [skin_font font [fixed_size 20]]
+    dui item config off fav1_auto_load_l1 -font [skin_font font [fixed_size 18]]
+    dui item config off fav1_auto_load_l2 -font [skin_font font [fixed_size 18]]
+    dui item config off fav1_auto_load_l3 -font [skin_font D-font [fixed_size 60]]
+    dui item config off fav2_auto_load_l1 -font [skin_font font [fixed_size 18]]
+    dui item config off fav2_auto_load_l2 -font [skin_font font [fixed_size 18]]
+    dui item config off fav2_auto_load_l3 -font [skin_font D-font [fixed_size 60]]
+    dui item config off fav3_auto_load_l1 -font [skin_font font [fixed_size 18]]
+    dui item config off fav3_auto_load_l2 -font [skin_font font [fixed_size 18]]
+    dui item config off fav3_auto_load_l3 -font [skin_font D-font [fixed_size 60]]
+    dui item config off fav4_auto_load_l1 -font [skin_font font [fixed_size 18]]
+    dui item config off fav4_auto_load_l2 -font [skin_font font [fixed_size 18]]
+    dui item config off fav4_auto_load_l3 -font [skin_font D-font [fixed_size 60]]
+    dui item config off fav5_auto_load_l1 -font [skin_font font [fixed_size 18]]
+    dui item config off fav5_auto_load_l2 -font [skin_font font [fixed_size 18]]
+    dui item config off fav5_auto_load_l3 -font [skin_font D-font [fixed_size 60]]
+    dui item config off espresso_index -font [skin_font D-font [fixed_size 30]]
+    dui item config off steam_index -font [skin_font D-font [fixed_size 30]]
+    dui item config off flush_index -font [skin_font D-font [fixed_size 30]]
+    dui item config off water_index -font [skin_font D-font [fixed_size 30]]
+    set_button wf_dose_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_dose_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_dose_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_dose_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_espresso_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_espresso_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_espresso_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_espresso_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_s_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button jug_m_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button jug_l_edit font [skin_font awesome_light [fixed_size 28]]
+    set_button wf_steam_timer_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_steam_timer_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_steam_timer_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_steam_timer_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_steam_cal_time_minus font [skin_font D-font [fixed_size 34]]
+    set_button wf_steam_jug_time font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_steam_cal_time_plus font [skin_font D-font [fixed_size 34]]
+    set_button wf_flush_flow_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_flow_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_flow_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_flow_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_timer_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_timer_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_timer_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_flush_timer_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_flow_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_flow_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_flow_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_flow_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_temperature_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_temperature_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_temperature_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_temperature_plus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_volume_minus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_volume_plus_10 font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_volume_minus font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_water_volume_plus font [skin_font awesome_light [fixed_size 34]]
+    if {"DYE" in $::settings(enabled_plugins) == 1 && $::settings(skin) == "DSx2" && $::skin(theme) == "Damian"} {
+        set_button dye_bg icon_font [skin_font awesome_light [fixed_size 26]]
+    }
+    $::cache_graph_a axis configure x -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_a axis configure y -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_b axis configure x -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_b axis configure y -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_c axis configure x -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_c axis configure y -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_d axis configure x -tickfont [skin_font font [fixed_size 8]]
+    $::cache_graph_d axis configure y -tickfont [skin_font font [fixed_size 8]]
+    dui item config off cga_p -font [skin_font font [fixed_size 12]]
+    dui item config off cga_d -font [skin_font font [fixed_size 12]]
+    dui item config off cgb_p -font [skin_font font [fixed_size 12]]
+    dui item config off cgb_d -font [skin_font font [fixed_size 12]]
+    dui item config off cgc_p -font [skin_font font [fixed_size 12]]
+    dui item config off cgc_d -font [skin_font font [fixed_size 12]]
+    dui item config off cgd_p -font [skin_font font [fixed_size 12]]
+    dui item config off cgd_d -font [skin_font font [fixed_size 12]]
+    set_button fav1_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav1_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav2_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav2_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav3_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav3_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav4_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav4_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav5_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button fav5_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_info_button font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_save_saw_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button wf_save_saw_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_s_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_s_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_m_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_m_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_l_x_button font [skin_font awesome_light [fixed_size 34]]
+    set_button jug_l_tick_button font [skin_font awesome_light [fixed_size 34]]
+    set_button espresso_start icon_font [skin_font D-font [fixed_size 40]]
+    set_button steam_start icon_font [skin_font D-font [fixed_size 40]]
+    set_button flush_start icon_font [skin_font D-font [fixed_size 40]]
+    set_button water_start icon_font [skin_font D-font [fixed_size 40]]
+    set_button stop_steam icon_font [skin_font D-font [fixed_size 40]]
+    set_button stop_flush icon_font [skin_font D-font [fixed_size 40]]
+    set_button stop_water icon_font [skin_font D-font [fixed_size 40]]
+
+
+
+}
+
 
 ###################################################
 ### Graphs
