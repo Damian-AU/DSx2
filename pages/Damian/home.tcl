@@ -1,8 +1,9 @@
-set ::skin_version 0.34
+set ::skin_version 0.35
 set ::skin_heading DSx2
 
 #### header
-dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
+#dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
+dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour -tags {headerar_bg0 headerbar}
 if {$::settings(screen_size_width) == 1340} {
     dui add canvas_item arc $::skin_home_pages 1580 -80 1870 103 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
 } else {
@@ -115,9 +116,10 @@ dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 276]
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
 
 ### sleep
-dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 54] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -tags sleep_button -textvariable {p}
-add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power}
-
+#dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 54] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -tags sleep_button -textvariable {p}
+dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 54] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -textvariable {p} -tags {sleep_button powerbutton headerbar}
+#add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power}
+add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power} headerbar
 ### ghc buttons ###
 
 add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) {[translate "espresso"]} {skin_start espresso}
@@ -765,5 +767,5 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         page_show flush
     }
 }
-add_de1_variable "off" 2540 1580 -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
-
+#add_de1_variable "off" 2540 1580 -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
+add_de1_variable "off" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}

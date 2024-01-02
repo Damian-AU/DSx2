@@ -443,10 +443,16 @@ proc add_colour_button {button_name pages x y width height tv command } {
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
-proc add_clear_button {button_name pages x y width height tv command } {
+#proc add_clear_button {button_name pages x y width height tv command } {
+#    set ::${button_name}(pages) $pages
+#    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
+#    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
+#}
+
+proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
-    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_icon_button {button_name pages x y width height tv command } {
