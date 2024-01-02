@@ -1,9 +1,13 @@
-set ::skin_version 0.32
+set ::skin_version 0.33
 set ::skin_heading DSx2
 
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_forground_colour
-dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
+if {$::settings(screen_size_width) == 1340} {
+    dui add canvas_item arc $::skin_home_pages 1580 -80 1870 103 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
+} else {
+    dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270  -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
+}
 dui add shape round_outline $::skin_home_pages 0 0 1760 100 -width 0 -fill $::skin_forground_colour -tags {headerbar_bg2 headerbar headerbar_heading}
 dui add canvas_item arc $::skin_home_pages -110 -120 210 170 -start 270 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg3 headerbar}
 dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_forground_colour -fill $::skin_forground_colour -tags {headerbar_bg4 headerbar}
@@ -100,8 +104,7 @@ dui add canvas_item rect $::skin_home_pages [expr $::skin(button_x_scale) + 276]
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
 
 ### sleep
-
-add_round_button sleep_button $::skin_home_pages $::skin(button_x_power) $::skin(button_y_power) 110 110 {$::skin(icon_power)} {skin_power}; set_button sleep_button font [skin_font awesome [fixed_size 34]]
+dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 54] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -textvariable {p}
 add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power}
 
 ### ghc buttons ###
@@ -111,7 +114,7 @@ dui add variable off [expr $::skin(button_x_espresso) + 170] [expr $::skin(butto
 add_clear_button espresso off $::skin(button_x_espresso) [expr $::skin(button_y_espresso) + 100] 340 180 {} {show_skin_set espresso}
 
 add_icon_label_button steam_start off $::skin(button_x_steam) $::skin(button_y_steam) 340 100 $::skin(icon_steam) {[translate "steam"]} {skin_start steam}
-dui add variable off [expr $::skin(button_x_steam) + 170] [expr $::skin(button_y_steam) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags steam_data_line_1 -anchor n -justify center -width 340 -textvariable {[skin_steam_settings_info]\r[skin_steam_text $::settings(steam_timeout)]}
+dui add variable off [expr $::skin(button_x_steam) + 170] [expr $::skin(button_y_steam) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags steam_data_line_1 -anchor n -justify center -width 340 -textvariable {[skin_steam_settings_info]\r[jug_size_data]\r[skin_steam_text $::settings(steam_timeout)]}
 add_clear_button steam off $::skin(button_x_steam) [expr $::skin(button_y_steam) + 100] 340 180 {} {show_skin_set steam}
 
 add_icon_label_button water_start off $::skin(button_x_water) $::skin(button_y_water) 340 100 $::skin(icon_water) {[translate "water"]} {skin_start water}

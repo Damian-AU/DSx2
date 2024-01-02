@@ -211,6 +211,9 @@ proc fixed_size { size } {
     if {$::settings(screen_size_width) == 2800} {
         set s8 1.24
     }
+    if {$::settings(screen_size_width) == 1340} {
+        set s8 0.8
+    }
     if {$::android != 1} {
         set sys_size $size
     } else {
@@ -967,10 +970,23 @@ proc set_jug {j} {
 
 proc check_current_jug {} {
     set j $::skin(jug_size)
+    set ::skin(jug_g) $::skin(jug_${j})
     set_button wf_steam_jug_s icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_m icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_l icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_${j} icon_fill $::skin_selected_colour
+}
+
+proc jug_size_data {} {
+    if {$::skin(jug_size) == "s"} {
+        return [translate "small jug"]
+    } elseif {$::skin(jug_size) == "m"} {
+        return [translate "medium jug"]
+    } elseif {$::skin(jug_size) == "l"} {
+        return [[translate "large jug"]
+    } else {
+        return [translate "no jug set"]
+    }
 }
 
 proc skin_steam_time_calc {} {
