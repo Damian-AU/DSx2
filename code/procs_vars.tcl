@@ -1567,6 +1567,7 @@ proc workflow {option} {
             set ::skin(button_y_dye) $::start_button_y
         }
     }
+    set ::settings(DSx2_workflow) $::skin(workflow)
     move_workflow_button espresso
     move_workflow_button flush
     move_workflow_button steam
@@ -1940,6 +1941,7 @@ proc skin_temperature_units {in} {
 	}
 }
 
+blt::vector create skin_espresso_temperature_basket skin_espresso_temperature_mix skin_espresso_temperature_goal
 proc clear_temp_data {args} {
 	skin_espresso_temperature_basket length 0
     skin_espresso_temperature_basket append [skin_temperature_units $::settings(espresso_temperature)]
@@ -2197,6 +2199,79 @@ proc steam_motion {} {
     }
 }
 
+proc load_scale_filter {} {
+    namespace eval ::skin::slow_scale_filtering {
+        proc main {} {
+            # Things to do to accomplish this
+            #
+            #   * Ensure the internal sample buffer is long enough
+            #   * Create procs to estimate the flow and flow delay
+            #   * Use the new procs for `flow_filtered` and `flow_filtered_time`
+            # 40 samples is about 4 seconds, for about 2 seconds of delay
+            # This is similar to the 20-sample tau of the old estimator
+            variable flow_samples_slow 40
+            variable _new_samples [expr { max([::device::scale::history::samples_for_shift_register], \
+                                  $flow_samples_slow) }]
+            # Extend the internal shift registers, if needed
+            rename ::device::scale::history::samples_for_shift_register \
+                ::device::scale::history::samples_for_shift_register_orig_slow_scale_filtering
+            msg -NOTICE "rename  ::device::scale::history::samples_for_shift_register" \
+                "::device::scale::history::samples_for_shift_register_orig_slow_scale_filtering"
+            proc ::device::scale::history::samples_for_shift_register {} {
+                expr { $::skin::slow_scale_filtering::_new_samples }
+            }
+            # New estimators are being added, so no need to rename and log
+            proc ::device::scale::history::flow_fd_slow {} {
+
+                variable _scale_raw_weight
+
+                if {[llength $_scale_raw_weight] \
+                        < $::skin::slow_scale_filtering::flow_samples_slow} {return 0}
+
+                    set intervals [ expr { $::skin::slow_scale_filtering::flow_samples_slow - 1 }]
+                    expr { ( [lindex $_scale_raw_weight end] - [lindex $_scale_raw_weight end-$intervals] ) \
+                               / ( [::device::scale::period::estimate] * $intervals ) }
+            }
+            proc ::device::scale::history::flow_time_fd_slow {} {
+
+                # Center of window
+
+                variable _scale_raw_arrival
+
+                if {[llength $_scale_raw_arrival] \
+                        < $::skin::slow_scale_filtering::flow_samples_slow} {return 0}
+
+                set intervals [ expr { $::skin::slow_scale_filtering::flow_samples_slow - 1 }]
+                expr { ( [lindex $_scale_raw_arrival end] + [lindex $_scale_raw_arrival end-$intervals] ) / 2.0 }
+            }
+
+            # The estimators are set up when the scale connects
+            # While it is probably safe to hope that another callback on_connect
+            # executes after the "core" one, always better not to assume things
+            proc install_slow_estimators {event_dict} {
+
+                proc ::device::scale::history::flow_filtered {} {
+                    ::device::scale::history::flow_fd_slow
+                }
+
+                proc ::device::scale::history::flow_Filtered_time {} {
+                    ::device::scale::history::flow_time_fd_slow
+                }
+            }
+            rename ::device::scale::callbacks::on_connect \
+                ::device::scale::callbacks::on_connect_orig_slow_scale_filtering
+            msg -NOTICE "rename  ::device::scale::callbacks::on_connect" \
+                "::device::scale::callbacks::on_connect_orig_slow_scale_filtering"
+
+            proc ::device::scale::callbacks::on_connect {event_dict} {
+
+                ::device::scale::callbacks::on_connect_orig_slow_scale_filtering $event_dict
+                ::skin::slow_scale_filtering::install_slow_estimators $event_dict
+            }
+        } ;# main
+    }
+}
+
 proc check_app_extensions {} {
     set show 0
     set dflow ""
@@ -2208,11 +2283,20 @@ proc check_app_extensions {} {
         set dflow {- We needed to enable "D_Flow_Espresso_Profile" app extension for this skin to work best}
         set show 1
     }
-    if {"slow_scale_filtering" in $::settings(enabled_plugins) == 0 } {
-        append ::settings(enabled_plugins) { slow_scale_filtering}
-        save_settings
-        set scale {- We needed to enable "slow_scale_filtering" app extension for this skin to work best}
-        set show 1
+    if {[file exists "[homedir]/plugins/slow_scale_filtering/plugin.tcl"] == 1} {
+        if {"slow_scale_filtering" in $::settings(enabled_plugins) == 0 } {
+            append ::settings(enabled_plugins) { slow_scale_filtering}
+            save_settings
+            set scale {- We needed to enable "slow_scale_filtering" app extension for this skin to work best}
+            set show 1
+        }
+    } else {
+        if {"slow_scale_filtering" in $::settings(enabled_plugins) == 1 } {
+            set idx [lsearch $::settings(enabled_plugins) "slow_scale_filtering"]
+            set ::settings(enabled_plugins) [lreplace $::settings(enabled_plugins) $idx $idx]
+            save_settings
+        }
+        load_scale_filter
     }
     if {"DPx_Screen_Saver" in $::settings(enabled_plugins) == 1 } {
         set idx [lsearch $::settings(enabled_plugins) "DPx_Screen_Saver"]

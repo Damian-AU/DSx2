@@ -1,4 +1,4 @@
-set ::skin_version 0.35
+set ::skin_version 0.36
 set ::skin_heading DSx2
 
 #### header
@@ -137,7 +137,6 @@ add_clear_button water off $::skin(button_x_water) [expr $::skin(button_y_water)
 add_icon_label_button flush_start off $::skin(button_x_flush) $::skin(button_y_flush) 340 100 $::skin(icon_flush) {[translate "flush"]} {skin_start flush}
 dui add variable off [expr $::skin(button_x_flush) + 170] [expr $::skin(button_y_flush) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags flush_data_line_1 -anchor n -justify center -width 340 -textvariable {[round_to_integer $::settings(flush_seconds)]s}
 add_clear_button flush off $::skin(button_x_flush) [expr $::skin(button_y_flush) + 100] 340 180 {} {show_skin_set flush}
-
 
 ### stop buttons
 
