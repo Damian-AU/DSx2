@@ -412,9 +412,17 @@ proc skin_water_temperature {} {
 
 proc skin_water_volume {} {
     if {$::settings(scale_bluetooth_address) != ""} {
-        return [skin_return_weight_measurement $::settings(water_volume)]
+        return [skin_return_weight_measurement [expr $::settings(water_volume) + $::skin(wsaw_offset)]]
     } else {
-        return [skin_return_liquid_measurement $::settings(water_volume)]
+        return [skin_return_liquid_measurement [expr $::settings(water_volume) + $::skin(wsaw_offset)]]
+    }
+}
+
+proc skin_water_offset {} {
+    if {$::settings(scale_bluetooth_address) != ""} {
+        return [skin_return_weight_measurement [expr $::skin(wsaw_offset) * -1]]
+    } else {
+        return [skin_return_liquid_measurement [expr $::skin(wsaw_offset) * -1]]
     }
 }
 
@@ -854,13 +862,15 @@ proc hide_flush_settings {} {
 proc wf_water_button_list {} {
     return {wf_water_flow_minus wf_water_flow_plus wf_water_flow_minus_10 wf_water_flow_plus_10 \
             wf_water_volume_minus wf_water_volume_plus wf_water_volume_minus_10 wf_water_volume_plus_10 \
-            wf_water_temperature_minus wf_water_temperature_plus wf_water_temperature_minus_10 wf_water_temperature_plus_10}
+            wf_water_temperature_minus wf_water_temperature_plus wf_water_temperature_minus_10 wf_water_temperature_plus_10 \
+            wf_water_offset_minus wf_water_offset_plus}
 }
 
 proc show_water_settings {} {
     set ::wf_water_set_showing 1
     foreach s {wf_heading_water_flow wf_water_flow_setting \
                wf_heading_water_volume wf_water_volume_setting \
+               wf_heading_water_offset wf_water_offset_setting \
                wf_heading_water_temperature wf_water_temperature_setting} {
         dui item config off ${s} -initial_state normal -state normal
     }
@@ -875,6 +885,7 @@ proc hide_water_settings {} {
         set ::wf_water_set_showing 0
         foreach s {wf_heading_water_flow wf_water_flow_setting \
                    wf_heading_water_volume wf_water_volume_setting \
+                   wf_heading_water_offset wf_water_offset_setting \
                    wf_heading_water_temperature wf_water_temperature_setting} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
@@ -1602,7 +1613,7 @@ proc adjust {var value} {
     if {$var == "flush_flow"} {
         set ::settings(flush_flow) [expr $::settings(flush_flow) + $value]
         if {$::settings(flush_flow) < 1} {set ::settings(flush_flow) 1}
-        if {$::settings(flush_flow) > 5} {set ::settings(flush_flow) 5}
+        if {$::settings(flush_flow) > 10} {set ::settings(flush_flow) 10}
         skin_save flush
     }
     if {$var == "steam"} {
@@ -1699,6 +1710,12 @@ proc adjust {var value} {
         dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
         resize_fixed_icons
         skin_save skin
+    }
+    if {$var == "wsaw_offset"} {
+        set ::skin(wsaw_offset) [expr $::skin(wsaw_offset) + $value]
+        set ::settings(water_volume) [expr $::settings(water_volume) - $value]
+        if {$::skin(wsaw_offset) < - 10} {set ::skin(wsaw_offset) -10; set ::settings(water_volume) [expr $::settings(water_volume) + $value]}
+        if {$::skin(wsaw_offset) > 10} {set ::skin(wsaw_offset) 10; set ::settings(water_volume) [expr $::settings(water_volume) + $value]}
     }
 }
 
@@ -2599,3 +2616,4 @@ proc skin_loop {} {
     restore_live_graphs
     check_fav
 }
+

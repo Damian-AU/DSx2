@@ -1,4 +1,4 @@
-set ::skin_version 0.36
+set ::skin_version 0.37
 set ::skin_heading DSx2
 
 #### header
@@ -123,7 +123,7 @@ add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power} headerbar
 ### ghc buttons ###
 
 add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) {[translate "espresso"]} {skin_start espresso}
-dui add variable off [expr $::skin(button_x_espresso) + 170] [expr $::skin(button_y_espresso) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags espresso_data_line_1 -anchor n -justify center -width 340 -textvariable {$::settings(profile_title)\r[skin_dose] [translate " : "] [skin_saw]g\r[skin_extraction_ratio]}
+dui add variable off [expr $::skin(button_x_espresso) + 170] [expr $::skin(button_y_espresso) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags espresso_data_line_1 -anchor n -justify center -width 340 -textvariable {[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate " : "] [skin_saw]g\r[skin_extraction_ratio]}
 add_clear_button espresso off $::skin(button_x_espresso) [expr $::skin(button_y_espresso) + 100] 340 180 {} {show_skin_set espresso}
 
 add_icon_label_button steam_start off $::skin(button_x_steam) $::skin(button_y_steam) 340 100 $::skin(icon_steam) {[translate "steam"]} {skin_start steam}
@@ -675,19 +675,24 @@ add_colour_button wf_water_flow_minus off 350 620 100 100 {\Uf106} {adjust water
 add_colour_button wf_water_flow_plus off 350 820 100 100 {\Uf107} {adjust water_flow -0.1}; set_button wf_water_flow_plus font [skin_font awesome_light [fixed_size 34]]
 dui add variable off 340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_flow_setting -anchor center -textvariable {[round_to_one_digits $::settings(hotwater_flow)][translate "ml/s"]}
 
-dui add dtext off 840 580 -tags wf_heading_water_temperature -text [translate "Temperature"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
-add_colour_button wf_water_temperature_minus_10 off 730 620 100 100 {\Uf106} {adjust water_temperature 10}; set_button wf_water_temperature_minus_10 font [skin_font awesome_light [fixed_size 34]]
-add_colour_button wf_water_temperature_plus_10 off 730 820 100 100 {\Uf107} {adjust water_temperature -10}; set_button wf_water_temperature_plus_10 font [skin_font awesome_light [fixed_size 34]]
-add_colour_button wf_water_temperature_minus off 850 620 100 100 {\Uf106} {adjust water_temperature 1}; set_button wf_water_temperature_minus font [skin_font awesome_light [fixed_size 34]]
-add_colour_button wf_water_temperature_plus off 850 820 100 100 {\Uf107} {adjust water_temperature -1}; set_button wf_water_temperature_plus font [skin_font awesome_light [fixed_size 34]]
-dui add variable off 840 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_temperature_setting -anchor center -textvariable {[skin_temperature_measurement $::settings(water_temperature)]}
+dui add dtext off 750 580 -tags wf_heading_water_temperature -text [translate "Temperature"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button wf_water_temperature_minus_10 off 640 620 100 100 {\Uf106} {adjust water_temperature 10}; set_button wf_water_temperature_minus_10 font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_temperature_plus_10 off 640 820 100 100 {\Uf107} {adjust water_temperature -10}; set_button wf_water_temperature_plus_10 font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_temperature_minus off 760 620 100 100 {\Uf106} {adjust water_temperature 1}; set_button wf_water_temperature_minus font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_temperature_plus off 760 820 100 100 {\Uf107} {adjust water_temperature -1}; set_button wf_water_temperature_plus font [skin_font awesome_light [fixed_size 34]]
+dui add variable off 750 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_temperature_setting -anchor center -textvariable {[skin_temperature_measurement $::settings(water_temperature)]}
 
-dui add dtext off 1340 580 -tags wf_heading_water_volume -text [translate "Volume"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
-add_colour_button wf_water_volume_minus_10 off 1230 620 100 100 {\Uf106} {adjust water_volume 10}; set_button wf_water_volume_minus_10 font [skin_font awesome_light [fixed_size 34]]
-add_colour_button wf_water_volume_plus_10 off 1230 820 100 100 {\Uf107} {adjust water_volume -10}; set_button wf_water_volume_plus_10 font [skin_font awesome_light [fixed_size 34]]
-add_colour_button wf_water_volume_minus off 1350 620 100 100 {\Uf106} {adjust water_volume 1}; set_button wf_water_volume_minus font [skin_font awesome_light [fixed_size 34]]
-add_colour_button wf_water_volume_plus off 1350 820 100 100 {\Uf107} {adjust water_volume -1}; set_button wf_water_volume_plus font [skin_font awesome_light [fixed_size 34]]
-dui add variable off 1340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_volume_setting -anchor center -textvariable {[skin_water_volume]}
+dui add dtext off 1180 580 -tags wf_heading_water_volume -text [translate "Volume"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button wf_water_volume_minus_10 off 1070 620 100 100 {\Uf106} {adjust water_volume 10}; set_button wf_water_volume_minus_10 font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_volume_plus_10 off 1070 820 100 100 {\Uf107} {adjust water_volume -10}; set_button wf_water_volume_plus_10 font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_volume_minus off 1190 620 100 100 {\Uf106} {adjust water_volume 1}; set_button wf_water_volume_minus font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_volume_plus off 1190 820 100 100 {\Uf107} {adjust water_volume -1}; set_button wf_water_volume_plus font [skin_font awesome_light [fixed_size 34]]
+dui add variable off 1180 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_volume_setting -anchor center -textvariable {[skin_water_volume]}
+
+dui add dtext off 1390 580 -tags wf_heading_water_offset -text [translate "Offset"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+add_colour_button wf_water_offset_minus off 1340 620 100 100 {\Uf106} {adjust wsaw_offset -1}; set_button wf_water_offset_minus font [skin_font awesome_light [fixed_size 34]]
+add_colour_button wf_water_offset_plus off 1340 820 100 100 {\Uf107} {adjust wsaw_offset 1}; set_button wf_water_offset_plus font [skin_font awesome_light [fixed_size 34]]
+dui add variable off 1390 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_water_offset_setting -anchor center -textvariable {[skin_water_offset]}
 
 hide_water_settings
 
@@ -766,5 +771,5 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         page_show flush
     }
 }
-#add_de1_variable "off" 2540 1580 -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
 add_de1_variable "off" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
+
