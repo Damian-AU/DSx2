@@ -221,7 +221,7 @@ proc fixed_size { size } {
         set ::skin_icon_size 0.8
     }
     if {$::skin(icon_size) == 2} {
-        set ::skin_icon_size 0.9
+        set ::skin_icon_size 0.95
     }
     if {$::skin(icon_size) == 3} {
         set ::skin_icon_size 1
@@ -301,6 +301,13 @@ proc goto_profile_wizard {} {
         ::plugins::D_Flow_Espresso_Profile::prep
         ::plugins::D_Flow_Espresso_Profile::demo_graph
         set_next_page off Dflowset; page_show Dflowset
+    } else {
+        after 500 update_de1_explanation_chart
+        set_next_page off $::settings(settings_profile_type)
+        page_show off
+        set ::settings(active_settings_tab) $::settings(settings_profile_type)
+        fill_advanced_profile_steps_listbox
+        set_advsteps_scrollbar_dimensions
     }
 }
 
@@ -2404,13 +2411,14 @@ proc skin_machine_state {} {
     if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating"} {
         dui item config $::skin_home_pages machine_state -fill $::skin_machine_not_ready
         return [skin_machine_state_heating]
-    } elseif {[de1_substate_text] == "ready"} {
-        dui item config $::skin_home_pages machine_state -fill $::skin_machine_ready
-        return $::skin(icon_tick)
     } elseif {[de1_substate_text] == "starting" || [de1_connected_state] == [translate "Disconnected"]} {
         dui item config $::skin_home_pages machine_state -fill $::skin_machine_not_ready
         return $::skin(icon_x)
+    } elseif {[de1_substate_text] == "ready"} {
+        dui item config $::skin_home_pages machine_state -fill $::skin_machine_ready
+        return $::skin(icon_tick)
     } else {
+        dui item config $::skin_home_pages machine_state -fill $::skin_machine_not_ready
         return ""
     }
 }
