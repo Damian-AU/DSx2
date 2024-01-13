@@ -1,4 +1,4 @@
-set ::skin_version 0.38
+set ::skin_version 0.39
 set ::skin_heading DSx2
 
 #### header
@@ -18,7 +18,8 @@ dui add variable $::skin_home_pages 2540 4 -font [skin_font font [fixed_size 15]
 dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome [fixed_size 14]] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
 dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
 
-add_clear_button heading off 0 10 2560 100 {} {header_settings}
+add_clear_button heading off 0 10 2560 100 {} header_settings headerbar
+
 add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; skin_save skin}; set_button close_heading_settings state hidden
 
 ## settings
@@ -710,16 +711,16 @@ dui add dbutton saver 0 0 \
 
 ### DYE
 proc skin_dye_button {} {
-	if {"DYE" in $::settings(enabled_plugins) == 1 && $::settings(skin) == "DSx2" && $::skin(theme) == "Damian"} {
-	    add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) {dye} {}; set_button dye_bg icon_font [skin_font awesome_light [fixed_size 26]]
-	    variable widgets
-		variable settings
-   		set widgets(launch_dye) [dui add dbutton off \
-		$::skin(button_x_dye) $::skin(button_y_dye) \
-		-bwidth 230 -bheight 100 -tags launch_dye \
-		-command [list ::plugins::DYE::open -which_shot default -coords {2400 1030} -anchor e] \
-		-longpress_cmd [::list ::plugins::DYE::open -which_shot dialog -coords \{2400 1050\} -anchor e] \
-		-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]]
+	if {[plugins enabled DYE] && $::settings(skin) == "DSx2" && $::skin(theme) == "Damian"} {
+		add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) {dye} {}
+		set_button dye_bg icon_font [skin_font awesome_light [fixed_size 26]]
+		dui add dbutton $::skin_home_pages $::skin(button_x_dye) $::skin(button_y_dye) \
+			-bwidth 230 -bheight 100 -tags launch_dye \
+			-command [list ::plugins::DYE::open -which_shot default] \
+			-longpress_cmd [::list ::plugins::DYE::open -which_shot dialog \
+			-coords \{[expr \$::skin(button_x_dye)+230] \
+			[expr \$::skin(button_y_dye)+140]\} -anchor ne] \
+			-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]
 	}
 }
 skin_dye_button

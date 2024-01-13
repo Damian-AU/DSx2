@@ -1303,6 +1303,9 @@ proc skin_flush_timer {} {
 proc skin_steam_timer {} {
     set t [round_to_integer [expr {$::settings(steam_timeout) - [steam_pour_timer]}]]
     set s s
+    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating"} {
+        return ""
+    }
     if {$t < 0} {
         return ""
     } else {
@@ -1313,6 +1316,9 @@ proc skin_steam_timer {} {
 proc skin_water_timer {} {
     set t [round_to_integer [expr {$::settings(water_timeout) - [water_pour_timer]}]]
     set s s
+    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating"} {
+        return ""
+    }
     if {$t < 0} {
         return 0s
     } else {
@@ -1477,7 +1483,7 @@ proc skin_espresso_elapsed_timer {} {
 
 proc skin_graph_info {} {
     set p $::skin_graphs(live_graph_profile)
-    set b $::skin_graphs(live_graph_beans)
+    set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
     set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
     set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
     set pi $::skin_graphs(live_graph_pi_time)
