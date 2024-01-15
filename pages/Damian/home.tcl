@@ -1,4 +1,4 @@
-set ::skin_version 0.39
+set ::skin_version 0.40
 set ::skin_heading DSx2
 
 #### header
@@ -20,7 +20,7 @@ dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed
 
 add_clear_button heading off 0 10 2560 100 {} header_settings headerbar
 
-add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; skin_save skin}; set_button close_heading_settings state hidden
+add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; show_graph; skin_save skin}; set_button close_heading_settings state hidden
 
 ## settings
 add_colour_button edit_heading_button off 100 620 340 100 {[translate "toggle heading"]} {toggle_heading}; set_button edit_heading_button state hidden
@@ -34,7 +34,7 @@ add_de1_widget "off" entry 450 -1001 {
 add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]\r$::skin(colour_theme)} {skin_colour_theme_selection}; set_button edit_heading_button state hidden
 add_colour_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state [translate "icon"]\r[translate "calibration"]} {toggle_icon_size_settings}; set_button edit_icon_size_button state hidden
 
-add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"]} {hide_header_settings; skin_save skin}; set_button exit_heading_settings state hidden
+add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"]} {hide_header_settings; show_graph; skin_save skin}; set_button exit_heading_settings state hidden
 
 
 dui add dtext off 800 780 -tags {heading_icon_size icon_size_set} -text [translate "Adjust so the star tips touch the square"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -justify center -initial_state hidden
@@ -55,11 +55,11 @@ add_icon_label_button fav3 $::skin_home_pages $::skin(button_x_fav) [expr $::sta
 add_icon_label_button fav4 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 360] 360 100 $::skin(icon_fav) {$::fav_label_fav4} {skin_load fav4}; set_button fav4 icon_font [skin_font awesome_light [fixed_size 28]]
 add_icon_label_button fav5 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 480] 360 100 $::skin(icon_fav) {$::fav_label_fav5} {skin_load fav5}; set_button fav5 icon_font [skin_font awesome_light [fixed_size 28]]
 
-add_icon_button fav1_edit $::skin_home_pages 1990 $::start_button_y 100 100 {$::skin(icon_edit)} {edit fav1}
-add_icon_button fav2_edit $::skin_home_pages 1990 [expr $::start_button_y + 120] 100 100 {$::skin(icon_edit)} {edit fav2}
-add_icon_button fav3_edit $::skin_home_pages 1990 [expr $::start_button_y + 240] 100 100 {$::skin(icon_edit)} {edit fav3}
-add_icon_button fav4_edit $::skin_home_pages 1990 [expr $::start_button_y + 360] 100 100 {$::skin(icon_edit)} {edit fav4}
-add_icon_button fav5_edit $::skin_home_pages 1990 [expr $::start_button_y + 480] 100 100 {$::skin(icon_edit)} {edit fav5}
+add_icon_button fav1_edit $::skin_home_pages 1990 $::start_button_y 100 100 {$::skin(icon_edit)} {edit fav1} fav_edit_buttons
+add_icon_button fav2_edit $::skin_home_pages 1990 [expr $::start_button_y + 120] 100 100 {$::skin(icon_edit)} {edit fav2} fav_edit_buttons
+add_icon_button fav3_edit $::skin_home_pages 1990 [expr $::start_button_y + 240] 100 100 {$::skin(icon_edit)} {edit fav3} fav_edit_buttons
+add_icon_button fav4_edit $::skin_home_pages 1990 [expr $::start_button_y + 360] 100 100 {$::skin(icon_edit)} {edit fav4} fav_edit_buttons
+add_icon_button fav5_edit $::skin_home_pages 1990 [expr $::start_button_y + 480] 100 100 {$::skin(icon_edit)} {edit fav5} fav_edit_buttons
 set_button fav1_edit font [skin_font awesome_light [fixed_size 28]]
 set_button fav2_edit font [skin_font awesome_light [fixed_size 28]]
 set_button fav3_edit font [skin_font awesome_light [fixed_size 28]]

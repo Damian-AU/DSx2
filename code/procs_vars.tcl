@@ -470,10 +470,10 @@ proc add_clear_button {button_name pages x y width height tv command {extra_tags
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
-proc add_icon_button {button_name pages x y width height tv command } {
+proc add_icon_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
-    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_icon_label_button {button_name pages x y width height tvi tv command } {
@@ -530,6 +530,7 @@ proc hide_graph {} {
         set ::main_graph_showing "show steam"
     }
     set ::graph_hidden 1
+    set_favs_showing
     dui item moveto off heading_entry 450 -1001
     .can itemconfigure main_graph -state hidden
     dui item config off main_graph -initial_state hidden
@@ -567,12 +568,14 @@ proc hide_graph {} {
 
 proc show_graph {} {
     set ::graph_hidden 0
+    rest_fav_buttons
     .can itemconfigure main_graph -state normal
     dui item config off main_graph -initial_state normal
     set_button auto_tare state hidden
     set_button favs_number state hidden
     dui item config off live_graph_data -initial_state normal -state normal
     hide_skin_set
+    dui item config off fav_edit_buttons -initial_state hidden -state hidden
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
         dui item config $pages ${key}_icon -initial_state normal -state normal
@@ -673,12 +676,15 @@ proc toggle_favs_to_show {} {
 }
 
 proc set_favs_showing {} {
+    if {[info exists ::plugins::DYE::settings(dsx2_use_dye_favs)]} {
+        if {$::plugins::DYE::settings(dsx2_use_dye_favs) == 1} {
+            return
+        }
+    }
     set_button fav3 state normal
-    set_button fav3_edit state normal
     set_button fav4 state normal
-    set_button fav4_edit state normal
     set_button fav5 state normal
-    set_button fav5_edit state normal
+    dui item config off fav_edit_buttons -initial_state normal -state normal
     if {$::skin(favs_to_show) == 2} {
         set_button fav3 state hidden
         set_button fav3_edit state hidden
@@ -697,9 +703,17 @@ proc set_favs_showing {} {
         set_button fav5 state hidden
         set_button fav5_edit state hidden
     }
+    if {$::graph_hidden == 0} {
+        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+    }
 }
 
 proc rest_fav_buttons {} {
+    if {[info exists ::plugins::DYE::settings(dsx2_use_dye_favs)]} {
+        if {$::plugins::DYE::settings(dsx2_use_dye_favs) == 1} {
+            return
+        }
+    }
     foreach k {fav1 fav2 fav3 fav4 fav5} {
         dui item config off ${k}_auto_load_l1 -initial_state hidden -state hidden
         dui item config off ${k}_auto_load_l2 -initial_state hidden -state hidden
@@ -768,7 +782,7 @@ proc show_skin_set {option} {
     hide_header_settings
     #rest_fav_buttons
     hide_skin_set
-    hide_graph
+    if {$::graph_hidden == 0} {hide_graph}
     dui item config off index_shape -initial_state normal -state normal
     dui item config off ${option}_index -initial_state normal -state normal
     set_button ${option}_index_button state normal
@@ -1402,15 +1416,24 @@ proc check_heading {} {
 }
 
 proc header_settings {} {
-    hide_skin_set
-    set_button edit_heading_button state normal
-    set_button edit_colour_theme_button state normal
-    set_button edit_icon_size_button state normal
-    hide_graph
-    set_button close_heading_settings state normal
-    set_button exit_heading_settings state normal
-    if {$::skin(show_heading) == 1} {
-        dui item moveto off heading_entry 450 640
+    if {[dui page current] != "off"} {
+        return
+    }
+    if {$::graph_hidden == 0} {
+        hide_skin_set
+        set_button edit_heading_button state normal
+        set_button edit_colour_theme_button state normal
+        set_button edit_icon_size_button state normal
+        hide_graph
+        set_button close_heading_settings state normal
+        set_button exit_heading_settings state normal
+        if {$::skin(show_heading) == 1} {
+            dui item moveto off heading_entry 450 640
+        }
+        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+
+    } else {
+        show_graph
     }
 }
 
@@ -1418,7 +1441,7 @@ proc hide_header_settings {} {
     set_button edit_heading_button state hidden
     set_button edit_colour_theme_button state hidden
     set_button edit_icon_size_button state hidden
-    show_graph
+    #show_graph
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
     dui item moveto off heading_entry 450 -1001
