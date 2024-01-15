@@ -1317,7 +1317,7 @@ proc skin_flush_timer {} {
 proc skin_steam_timer {} {
     set t [round_to_integer [expr {$::settings(steam_timeout) - [steam_pour_timer]}]]
     set s s
-    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating"} {
+    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating" || [de1_substate_text] == "puffing"} {
         return ""
     }
     if {$t < 0} {
@@ -2518,6 +2518,9 @@ proc shift_graph_list_variables {} {
 }
 
 proc shift_graphs { args } {
+    if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
+        set ::skin_graphs(live_graph_beverage_type) "espresso"
+    }
     if {$::skin_graphs(live_graph_beverage_type) != "cleaning"} {
         foreach lg [shift_graph_list] {
             if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
