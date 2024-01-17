@@ -206,6 +206,7 @@ proc skin_font {font_name size} {
     return $font_key
 }
 
+set ::icon_cal_check 0
 if {[info exists ::skin(icon_size)] != 1} {
     set ::skin(icon_size) 3
     if {$::settings(screen_size_width) == 2800} {
@@ -213,6 +214,28 @@ if {[info exists ::skin(icon_size)] != 1} {
     }
     if {$::settings(screen_size_width) == 1340} {
         set ::skin(icon_size) 1
+    }
+    set ::icon_cal_check 1
+}
+set ::skin_initial_setup ""
+proc initial_icon_cal_check {} {
+    if {$::icon_cal_check == 1} {
+        set ::skin_initial_setup [translate "First time start up, please check icon calibration"]
+        hide_skin_set
+        set_button edit_heading_button state normal
+        set_button edit_colour_theme_button state normal
+        set_button edit_icon_size_button state normal
+        hide_graph
+        set_button close_heading_settings state normal
+        set_button exit_heading_settings state normal
+        if {$::skin(show_heading) == 1} {
+            dui item moveto off heading_entry 450 640
+        }
+        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+        set ::icon_size_state "hide"
+        dui item config off icon_size_set -initial_state normal -state normal
+        set_button icon_size_minus state normal
+        set_button icon_size_plus state normal
     }
 }
 
@@ -1438,10 +1461,10 @@ proc header_settings {} {
 }
 
 proc hide_header_settings {} {
+    set ::skin_initial_setup ""
     set_button edit_heading_button state hidden
     set_button edit_colour_theme_button state hidden
     set_button edit_icon_size_button state hidden
-    #show_graph
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
     dui item moveto off heading_entry 450 -1001
@@ -2197,6 +2220,7 @@ proc skin_power_off_timer {} {
 
     return $::skin_sleep_countdown
 }
+
 proc skin_exit {} {
     app_exit
 }
@@ -2252,79 +2276,6 @@ proc steam_motion {} {
     }
 }
 
-proc load_scale_filter {} {
-    namespace eval ::skin::slow_scale_filtering {
-        proc main {} {
-            # Things to do to accomplish this
-            #
-            #   * Ensure the internal sample buffer is long enough
-            #   * Create procs to estimate the flow and flow delay
-            #   * Use the new procs for `flow_filtered` and `flow_filtered_time`
-            # 40 samples is about 4 seconds, for about 2 seconds of delay
-            # This is similar to the 20-sample tau of the old estimator
-            variable flow_samples_slow 40
-            variable _new_samples [expr { max([::device::scale::history::samples_for_shift_register], \
-                                  $flow_samples_slow) }]
-            # Extend the internal shift registers, if needed
-            rename ::device::scale::history::samples_for_shift_register \
-                ::device::scale::history::samples_for_shift_register_orig_slow_scale_filtering
-            msg -NOTICE "rename  ::device::scale::history::samples_for_shift_register" \
-                "::device::scale::history::samples_for_shift_register_orig_slow_scale_filtering"
-            proc ::device::scale::history::samples_for_shift_register {} {
-                expr { $::skin::slow_scale_filtering::_new_samples }
-            }
-            # New estimators are being added, so no need to rename and log
-            proc ::device::scale::history::flow_fd_slow {} {
-
-                variable _scale_raw_weight
-
-                if {[llength $_scale_raw_weight] \
-                        < $::skin::slow_scale_filtering::flow_samples_slow} {return 0}
-
-                    set intervals [ expr { $::skin::slow_scale_filtering::flow_samples_slow - 1 }]
-                    expr { ( [lindex $_scale_raw_weight end] - [lindex $_scale_raw_weight end-$intervals] ) \
-                               / ( [::device::scale::period::estimate] * $intervals ) }
-            }
-            proc ::device::scale::history::flow_time_fd_slow {} {
-
-                # Center of window
-
-                variable _scale_raw_arrival
-
-                if {[llength $_scale_raw_arrival] \
-                        < $::skin::slow_scale_filtering::flow_samples_slow} {return 0}
-
-                set intervals [ expr { $::skin::slow_scale_filtering::flow_samples_slow - 1 }]
-                expr { ( [lindex $_scale_raw_arrival end] + [lindex $_scale_raw_arrival end-$intervals] ) / 2.0 }
-            }
-
-            # The estimators are set up when the scale connects
-            # While it is probably safe to hope that another callback on_connect
-            # executes after the "core" one, always better not to assume things
-            proc install_slow_estimators {event_dict} {
-
-                proc ::device::scale::history::flow_filtered {} {
-                    ::device::scale::history::flow_fd_slow
-                }
-
-                proc ::device::scale::history::flow_Filtered_time {} {
-                    ::device::scale::history::flow_time_fd_slow
-                }
-            }
-            rename ::device::scale::callbacks::on_connect \
-                ::device::scale::callbacks::on_connect_orig_slow_scale_filtering
-            msg -NOTICE "rename  ::device::scale::callbacks::on_connect" \
-                "::device::scale::callbacks::on_connect_orig_slow_scale_filtering"
-
-            proc ::device::scale::callbacks::on_connect {event_dict} {
-
-                ::device::scale::callbacks::on_connect_orig_slow_scale_filtering $event_dict
-                ::skin::slow_scale_filtering::install_slow_estimators $event_dict
-            }
-        } ;# main
-    }
-}
-
 proc check_app_extensions {} {
     set show 0
     set dflow ""
@@ -2344,12 +2295,11 @@ proc check_app_extensions {} {
             set show 1
         }
     } else {
-        if {"slow_scale_filtering" in $::settings(enabled_plugins) == 1 } {
-            set idx [lsearch $::settings(enabled_plugins) "slow_scale_filtering"]
-            set ::settings(enabled_plugins) [lreplace $::settings(enabled_plugins) $idx $idx]
-            save_settings
-        }
-        load_scale_filter
+        file copy [skin_directory]/code/slow_scale_filtering [homedir]/plugins/slow_scale_filtering
+        append ::settings(enabled_plugins) { slow_scale_filtering}
+        save_settings
+        set scale {- We needed to enable "slow_scale_filtering" app extension for this skin to work best}
+        set show 1
     }
     if {"DPx_Screen_Saver" in $::settings(enabled_plugins) == 1 } {
         set idx [lsearch $::settings(enabled_plugins) "DPx_Screen_Saver"]

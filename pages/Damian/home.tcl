@@ -1,4 +1,4 @@
-set ::skin_version 0.41
+set ::skin_version 0.42
 set ::skin_heading DSx2
 
 #### header
@@ -36,14 +36,16 @@ add_colour_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state 
 
 add_colour_button exit_heading_settings off 100 1200 260 100 {[translate "close"]} {hide_header_settings; show_graph; skin_save skin}; set_button exit_heading_settings state hidden
 
+dui add variable off 50 540 -fill $::skin_selected_colour -font [skin_font font_bold 24] -anchor w -textvariable {$::skin_initial_setup}
 
-dui add dtext off 800 780 -tags {heading_icon_size icon_size_set} -text [translate "Adjust so the star tips touch the square"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -justify center -initial_state hidden
-add_colour_button icon_size_minus off 640 840 100 100 {\Uf106} {adjust icon_size 1}; set_button icon_size_minus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_minus state hidden
-add_colour_button icon_size_plus off 640 1040 100 100 {\Uf107} {adjust icon_size -1}; set_button icon_size_plus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_plus state hidden
-dui add variable off 690 990 -fill $::skin_text_colour -font [skin_font font_bold 24] -tags {icon_size_value icon_size_set} -anchor center -initial_state hidden -textvariable {$::skin(icon_size)}
+dui add dbutton off 500 760 -bwidth 600 -bheight 560 -tags {icon_size_outline icon_size_set} -shape outline -width 2 -outline $::skin_selected_colour -initial_state hidden -command {do_nothing}
+dui add dtext off 800 880 -tags {heading_icon_size icon_size_set} -text [translate "Adjust so the star tips touch the square"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -justify center -initial_state hidden
+add_colour_button icon_size_minus off 640 940 100 100 {\Uf106} {adjust icon_size 1}; set_button icon_size_minus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_minus state hidden
+add_colour_button icon_size_plus off 640 1140 100 100 {\Uf107} {adjust icon_size -1}; set_button icon_size_plus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_plus state hidden
+dui add variable off 690 1090 -fill $::skin_text_colour -font [skin_font font_bold 24] -tags {icon_size_value icon_size_set} -anchor center -initial_state hidden -textvariable {$::skin(icon_size)}
 
-dui add shape rect off 850 940 950 1040 -width 2 -outline $::skin_text_colour -fill $::skin_background_colour -tags {icon_size_shape icon_size_set} -initial_state hidden
-dui add variable off 900 990 -font [skin_font awesome_light [fixed_size 50]] -fill $::skin_text_colour -anchor center -initial_state hidden -tags {skin_icon_size_test icon_size_set} -textvariable {$::skin(icon_fav)}
+dui add shape rect off 850 1040 950 1140 -width 2 -outline $::skin_text_colour -fill $::skin_background_colour -tags {icon_size_shape icon_size_set} -initial_state hidden
+dui add variable off 900 1090 -font [skin_font awesome_light [fixed_size 50]] -fill $::skin_text_colour -anchor center -initial_state hidden -tags {skin_icon_size_test icon_size_set} -textvariable {$::skin(icon_fav)}
 
 
 #####################
@@ -735,6 +737,7 @@ check_current_jug
 check_app_extensions
 workflow $::skin(workflow)
 dui add variable off 0 0 -fill $::skin_text_colour  -font [skin_font font 14] -tags loop -anchor center -textvariable {[skin_loop]}
+initial_icon_cal_check
 
 # optional keyboard bindings
 focus .can
