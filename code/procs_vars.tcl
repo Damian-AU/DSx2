@@ -643,6 +643,7 @@ proc hide_steam_graph {} {
 
 proc show_steam_graph {} {
     .can itemconfigure main_graph_steam -state normal
+    dui item config off fav_edit_buttons -initial_state hidden -state hidden
     dui item config off main_graph_steam -initial_state normal
     foreach key {pressure flow temperature} {
         dui item config off steam_steam_${key}_icon_off -initial_state normal -state normal
@@ -651,14 +652,6 @@ proc show_steam_graph {} {
     }
     dui item config off main_graph_toggle_label -initial_state normal -state normal
     dui item config off main_graph_toggle_button* -initial_state normal -state normal
-
-    #steam_steam_pressure_icon_off
-    #steam_steam_pressure_text_off
-    #steam_steam_flow_text_off
-    #steam_steam_temperature_text_off
-    #steam_steam_pressure_button_off
-    #steam_steam_flow_button_off
-    #steam_steam_temperature_button_off
 }
 
 set ::main_graph_showing "show steam"
@@ -681,7 +674,7 @@ proc do_nothing {} {
 }
 
 proc steam_stop_label {} {
-    if {[de1_substate_text] == "puffing"} {
+    if {$::de1(substate) == 20} {
         return [translate "purge"]
         set_button steam_extend state hidden
     } else {
@@ -696,6 +689,7 @@ proc toggle_favs_to_show {} {
         set ::skin(favs_to_show) 2
     }
     rest_fav_buttons
+    skin_save skin
 }
 
 proc set_favs_showing {} {
@@ -1249,7 +1243,7 @@ proc move_workflow_button {button_name} {
         dui item moveto off b_${button_name}_index_button* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
         dui item moveto $pages ${button_name}_data_line_1 [expr $::skin(button_x_${button_name}) + 170] [expr $::skin(button_y_${button_name}) + 120]
         foreach f {espresso steam flush water} {
-            dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 500
+            dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 540
         }
     }
 }
@@ -1340,7 +1334,7 @@ proc skin_flush_timer {} {
 proc skin_steam_timer {} {
     set t [round_to_integer [expr {$::settings(steam_timeout) - [steam_pour_timer]}]]
     set s s
-    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating" || [de1_substate_text] == "puffing"} {
+    if {$::de1(substate) == 1 || $::de1(substate) == 2 || $::de1(substate) == 20} {
         return ""
     }
     if {$t < 0} {
@@ -1353,7 +1347,7 @@ proc skin_steam_timer {} {
 proc skin_water_timer {} {
     set t [round_to_integer [expr {$::settings(water_timeout) - [water_pour_timer]}]]
     set s s
-    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating"} {
+    if {$::de1(substate) == 1 || $::de1(substate) == 2} {
         return ""
     }
     if {$t < 0} {
@@ -1968,8 +1962,6 @@ proc backup_live_graph {} {
 			set ::skin_graphs(live_graph_$lg) {}
 		}
 	}
-
-	#skin_save skin_graphs
 }
 
 ::de1::event::listener::on_major_state_change_add [lambda {event_dict} {
@@ -2143,7 +2135,7 @@ proc toggle_graph {curve} {
             $::home_espresso_graph axis configure y -max $::skin(zoomed_y_axis_max) -min $::skin(zoomed_y_axis_min)
         }
     }
-    skin_save skin_settings
+    skin_save skin
 }
 
 set ::cache_graph_compare 0
@@ -2295,11 +2287,13 @@ proc check_app_extensions {} {
             set show 1
         }
     } else {
-        file copy [skin_directory]/code/slow_scale_filtering [homedir]/plugins/slow_scale_filtering
-        append ::settings(enabled_plugins) { slow_scale_filtering}
-        save_settings
-        set scale {- We needed to enable "slow_scale_filtering" app extension for this skin to work best}
-        set show 1
+        if {[file exists "[skin_directory]/code/slow_scale_filtering/plugin.tcl"] == 1} {
+            file copy [skin_directory]/code/slow_scale_filtering [homedir]/plugins/slow_scale_filtering
+            append ::settings(enabled_plugins) { slow_scale_filtering}
+            save_settings
+            set scale {- We needed to enable "slow_scale_filtering" app extension for this skin to work best}
+            set show 1
+        }
     }
     if {"DPx_Screen_Saver" in $::settings(enabled_plugins) == 1 } {
         set idx [lsearch $::settings(enabled_plugins) "DPx_Screen_Saver"]
@@ -2310,7 +2304,7 @@ proc check_app_extensions {} {
     }
     set ext {Tap on the screen to exit the app, the changes will be applied when you restart}
     set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r\r\r$ext
-    if {$show == 1} {after 1000 {page_show plugin_message}}
+    if {$show == 1} {after 2000 {page_show plugin_message}}
 }
 
 proc skin_negative_scale_tare {} {
@@ -2370,14 +2364,14 @@ proc skin_heating_percentage {} {
 set ::skin_machine_state {}
 proc skin_machine_state {} {
     set ::skin_machine_state {}
-    if {([de1_substate_text] == "preinfusion" || [de1_substate_text] == "pouring") && $::de1_num_state($::de1(state)) == "Espresso"} {
+    if {($::de1(substate) == 4 || $::de1(substate) == 5) && $::de1(state) == 4} {
         set ::skin_machine_state $::settings(current_frame_description)
     }
-    if {[de1_substate_text] == "puffing"} {
+    if {$::de1(substate) == 20} {
         set ::skin_machine_state "[translate "waiting"]\r[translate "to purge"]"
 
     }
-    if {[de1_substate_text] == "Error_BootFill"} {
+    if {$::de1(substate) == 216} {
         set ::skin_machine_state "[translate "boot err"]\r[translate "no water"]"
     }
 
@@ -2387,13 +2381,13 @@ proc skin_machine_state {} {
         dui item config $::skin_home_pages de1_btl_icon -fill $::skin_blue
     }
 
-    if {[de1_substate_text] == "heating" || [de1_substate_text] == "final heating"} {
+    if {$::de1(substate) == 1 || $::de1(substate) == 2} {
         dui item config $::skin_home_pages machine_state -fill $::skin_machine_not_ready
         return [skin_machine_state_heating]
-    } elseif {[de1_substate_text] == "starting" || [de1_connected_state] == [translate "Disconnected"]} {
+    } elseif {$::de1(substate) == "-" || $::de1(substate) == "" || [de1_connected_state] == [translate "Disconnected"]} {
         dui item config $::skin_home_pages machine_state -fill $::skin_machine_not_ready
         return $::skin(icon_x)
-    } elseif {[de1_substate_text] == "ready"} {
+    } elseif {$::de1(substate) == 0} {
         dui item config $::skin_home_pages machine_state -fill $::skin_machine_ready
         return $::skin(icon_tick)
     } else {
