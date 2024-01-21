@@ -1,4 +1,3 @@
-set ::skin_version 0.45
 set ::skin_heading DSx2
 
 #### header

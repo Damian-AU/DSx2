@@ -1,3 +1,5 @@
+set ::skin_version 1.00
+
 set ::user(background_colour) #e4e4e4
 set ::user(forground_colour) #2b6084
 set ::user(button_label_colour) #fff
