@@ -1,4 +1,4 @@
-set ::skin_version 0.43
+set ::skin_version 0.44
 set ::skin_heading DSx2
 
 #### header
@@ -148,11 +148,8 @@ dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 400] [expr 
 dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 100] [expr 50 + $::skin(button_y_espresso)] [expr $::skin(button_x_espresso) + 104] [expr $::skin(button_y_espresso) + 150] -tags stop_espresso_stop_s2 -width 0 -fill $::skin_background_colour
 
 add_icon_label_button stop_steam steam $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_steam)} {[steam_stop_label]} {skin_start idle}; set_button stop_steam icon_fill $::skin_selected_colour
-
 add_icon_label_button stop_flush flush $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_flush)} {[translate "stop"]} {skin_start idle}; set_button stop_flush icon_fill $::skin_selected_colour
-
 add_icon_label_button stop_water water $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_water)} {[translate "stop"]} {skin_start idle}; set_button stop_water icon_fill $::skin_selected_colour
-
 add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
 
 ### sleep power page
@@ -184,8 +181,6 @@ blt::vector create skin_espresso_temperature_basket skin_espresso_temperature_mi
 blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_state_change
 
 set ::key_font_size [fixed_size 14]
-#dui add variable "espresso" 1950 [expr $::skin(graph_key_y) + 12] -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor e -textvariable {[skin_espresso_elapsed_timer]s}
-
 dui add canvas_item oval "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags pressure_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags flow_icon
 dui add canvas_item oval "off espresso flush water" [expr $::skin(graph_key_x) + 446 + 80] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 446 + 42 + 80] [expr $::skin(graph_key_y) + 18] -outline $::skin_brown -fill $::skin_brown -tags weight_icon
@@ -330,7 +325,6 @@ dui add variable "off" [expr $::skin(graph_key_x) + 1580 + 38 + 200] [expr $::sk
 dui add dbutton off [expr $::skin(graph_key_x) + 1580 + 38] [expr $::skin(graph_key_y) ] \
     -bwidth 200 -bheight 110 -initial_state normal -tags main_graph_toggle_button \
     -command {toggle_main_graph}
-
 
 dui add canvas_item oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon
 dui add canvas_item oval steam [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon

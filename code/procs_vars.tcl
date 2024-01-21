@@ -84,7 +84,9 @@ set ::fav_label_fav3 $::skin(fav_label_fav3)
 set ::fav_label_fav4 $::skin(fav_label_fav4)
 set ::fav_label_fav5 $::skin(fav_label_fav5)
 
-set ::skin(auto_tare_negative_reading) 1
+if {![info exist ::skin(auto_tare_negative_reading)]} {
+    set ::skin(auto_tare_negative_reading) 0
+}
 
 proc create_settings_dir {} {
     if {[file exists [skin_directory]/settings] != 1} {
@@ -2319,6 +2321,7 @@ proc toggle_auto_tare {} {
     } else {
         set ::skin(auto_tare_negative_reading) 1
     }
+    skin_save skin
 }
 
 proc auto_tare_button_colour {} {
