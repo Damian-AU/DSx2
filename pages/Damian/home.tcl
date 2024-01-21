@@ -1,4 +1,4 @@
-set ::skin_version 0.44
+set ::skin_version 0.45
 set ::skin_heading DSx2
 
 #### header
@@ -89,7 +89,6 @@ dui add variable "steam" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_
 dui add variable "flush" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font 40] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_flush_timer]}
 
 add_clear_button settings_button off 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {set ::settings(active_settings_tab) settings_3; show_settings}
-add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 40] 350 300 {} {skin_start idle}
 
 # extend timers
 add_colour_button flush_extend flush [expr $::skin(button_x_machine) - 20] [expr $::skin(button_y_machine) - 220] 100 100 {+5s} {flush_extend}
@@ -150,7 +149,8 @@ dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 100] [expr 
 add_icon_label_button stop_steam steam $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_steam)} {[steam_stop_label]} {skin_start idle}; set_button stop_steam icon_fill $::skin_selected_colour
 add_icon_label_button stop_flush flush $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_flush)} {[translate "stop"]} {skin_start idle}; set_button stop_flush icon_fill $::skin_selected_colour
 add_icon_label_button stop_water water $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 {$::skin(icon_water)} {[translate "stop"]} {skin_start idle}; set_button stop_water icon_fill $::skin_selected_colour
-add_clear_button settings_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
+add_clear_button machine_stop_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
+
 
 ### sleep power page
 
