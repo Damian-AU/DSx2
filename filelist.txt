@@ -11,7 +11,7 @@ colour_theme/Eran/green.txt
 colour_theme/Eran/pink.txt
 colour_theme/Eran/sand.txt
 colour_theme/default.txt
-fonts/D-fonts.otf
+fonts/D-font.otf
 fonts/Font Awesome 5 Pro-Light-300.otf
 fonts/Font Awesome 5 Pro-Regular-400.otf
 fonts/icomoon.ttf
