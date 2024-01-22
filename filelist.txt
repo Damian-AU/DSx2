@@ -28,5 +28,5 @@ fonts/PB-Icons-Regular.otf
 fonts/PD-Bold-Bold.otf
 pages/Damian/graphs.tcl
 pages/Damian/home.tcl
-plugins/pizza
+plugins/pizza.tcl
 skin.tcl
