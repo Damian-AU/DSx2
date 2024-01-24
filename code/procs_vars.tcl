@@ -1,4 +1,5 @@
-set ::skin_version 1.03
+set ::skin_version 1.04
+
 
 set ::user(background_colour) #e4e4e4
 set ::user(forground_colour) #2b6084
@@ -18,6 +19,7 @@ set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
 set ::user(graph_grid_colour) $::user(forground_colour)
 set ::user(mini_graph_grid_colour) #bbb
+set ::user(disabled_colour) #2b6084
 
 if {[file exists "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"] == 1} {
     array set ::user [encoding convertfrom utf-8 [read_binary_file "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"]]
@@ -43,6 +45,7 @@ set ::skin_y_axis_colour $::user(y_axis)
 set ::skin_y2_axis_colour $::skin_red
 set ::skin_grid_colour $::user(graph_grid_colour)
 set ::skin_mini_grid_colour $::user(mini_graph_grid_colour)
+set ::skin_disabled_colour $::user(disabled_colour)
 set ::skin_home_pages "off espresso steam water flush"
 set ::skin_action_pages "espresso steam water flush"
 set ::skin_blink2 1
@@ -416,10 +419,29 @@ proc skin_return_weight_measurement {in} {
 	}
 }
 
-proc skin_water_button_text {} {
+set ::skin_water_dial "volume"
+proc skin_water_dial_text {} {
+    if {$::skin_water_dial == "temperature"} {
+        if {$::settings(enable_fahrenheit) == 1} {
+            set wt [round_to_integer [celsius_to_fahrenheit $::settings(water_temperature)]]\u00B0F
+        } else {
+            set wt [round_to_integer $::settings(water_temperature)]\u00B0C
+        }
+        return $wt
+    } else {
+        if {$::settings(scale_bluetooth_address) != ""} {
+            set wv [skin_return_weight_measurement $::settings(water_volume)]
+        } else {
+            set wv [skin_return_liquid_measurement $::settings(water_volume)]
+        }
+        return $wv
+    }
+}
+
+proc water_button_text {} {
     set l [translate "Water"]
     set s " "
-    if {$::skin(water_dial) == "volume"} {
+    if {$::skin_water_dial == "volume"} {
         if {$::settings(enable_fahrenheit) == 1} {
             set wt [round_to_integer [celsius_to_fahrenheit $::settings(water_temperature)]]\u00B0F
         } else {
@@ -433,6 +455,14 @@ proc skin_water_button_text {} {
             set wv [skin_return_liquid_measurement $::settings(water_volume)]
         }
         return $l$s$wv
+    }
+}
+
+proc adjust_water_toggle {} {
+    if {$::skin_water_dial == "volume"} {
+        set ::skin_water_dial "temperature"
+    } else {
+        set ::skin_water_dial "volume"
     }
 }
 
@@ -1049,7 +1079,7 @@ proc jug_size_data {} {
     } elseif {$::skin(jug_size) == "m"} {
         return [translate "medium jug"]
     } elseif {$::skin(jug_size) == "l"} {
-        return [[translate "large jug"]
+        return [translate "large jug"]
     } else {
         return [translate "no jug set"]
     }
@@ -2013,45 +2043,39 @@ proc skin_temperature_units {in} {
 	}
 }
 
-##################### to be removed pending DYE ##############################################
-blt::vector create skin_espresso_temperature_basket skin_espresso_temperature_mix skin_espresso_temperature_goal
-proc clear_temp_data {args} {
-	skin_espresso_temperature_basket length 0
-    skin_espresso_temperature_basket append [skin_temperature_units $::settings(espresso_temperature)]
-    skin_espresso_temperature_mix length 0
-    skin_espresso_temperature_mix append [skin_temperature_units $::settings(espresso_temperature)]
-    skin_espresso_temperature_goal length 0
-    skin_espresso_temperature_goal append [skin_temperature_units $::settings(espresso_temperature)]
-}
+##################### patch for older app versions ##############################################
 
-rename ::clear_espresso_chart ::skin::clear_espresso_chart_orig
-proc ::clear_espresso_chart {args} {
-	clear_temp_data
-	::skin::clear_espresso_chart_orig {*}$args
-}
-
-rename ::gui::update::append_live_data_to_espresso_chart \
-    ::skin::append_live_data_to_espresso_chart_orig
-
-proc ::gui::update::append_live_data_to_espresso_chart {event_dict args} {
-    if { ! [::de1::state::is_flow_state \
-            [dict get $event_dict this_state] \
-            [dict get $event_dict this_substate]] } { return }
-    ::skin::append_live_data_to_espresso_chart_orig $event_dict {*}$args
-    dict with event_dict {
-        # resistance
-        set ::espresso_resistance(end) \
-            [round_to_two_digits \
-                 [expr { $GroupFlow > 0 &&  $GroupPressure > 0 ? \
-                         (1/$GroupFlow)*($GroupPressure) : 0 }]]
-        skin_espresso_temperature_basket append \
-            [skin_temperature_units $HeadTemp]
-
-        skin_espresso_temperature_goal append \
-            [skin_temperature_units $SetHeadTemp]
-
-        skin_espresso_temperature_mix append \
-            [skin_temperature_units $MixTemp]
+if {[ package vcompare [package version de1app] 1.42.1.128 ] < 0} {
+    blt::vector create espresso_temperature_basket10th espresso_temperature_goal10th
+    proc clear_temp_data {args} {
+        espresso_temperature_basket10th length 0
+        espresso_temperature_basket10th append [skin_temperature_units $::settings(espresso_temperature)]
+        espresso_temperature_goal10th length 0
+        espresso_temperature_goal10th append [skin_temperature_units $::settings(espresso_temperature)]
+    }
+    rename ::clear_espresso_chart ::skin::clear_espresso_chart_orig
+    proc ::clear_espresso_chart {args} {
+        clear_temp_data
+        ::skin::clear_espresso_chart_orig {*}$args
+    }
+    rename ::gui::update::append_live_data_to_espresso_chart \
+        ::skin::append_live_data_to_espresso_chart_orig
+    proc ::gui::update::append_live_data_to_espresso_chart {event_dict args} {
+        if { ! [::de1::state::is_flow_state \
+                [dict get $event_dict this_state] \
+                [dict get $event_dict this_substate]] } { return }
+        ::skin::append_live_data_to_espresso_chart_orig $event_dict {*}$args
+        dict with event_dict {
+            # resistance
+            set ::espresso_resistance(end) \
+                [round_to_two_digits \
+                     [expr { $GroupFlow > 0 &&  $GroupPressure > 0 ? \
+                             (1/$GroupFlow)*($GroupPressure) : 0 }]]
+            espresso_temperature_basket10th append \
+                [skin_temperature_units $HeadTemp]
+            espresso_temperature_goal10th append \
+                [skin_temperature_units $SetHeadTemp]
+        }
     }
 }
 ##########################################################################################
@@ -2061,6 +2085,8 @@ proc check_graph {} {
         restore_graphs
     }
 }
+
+set ::skin_data_curve_size 10
 
 proc toggle_graph {curve} {
     if {$curve == "steam_pressure" || $curve == "steam_temperature" || $curve == "steam_flow"} {
@@ -2100,26 +2126,28 @@ proc toggle_graph {curve} {
             }
             $::home_espresso_graph element configure home_${curve} -linewidth 0
             $::home_espresso_graph_espresso element configure home_${curve} -linewidth 0
-            dui item config espresso ${curve}_data -fill $::skin_text_colour
-            dui item config $::skin_home_pages ${curve}_icon -fill $::skin_text_colour -outline $::skin_text_colour
+            dui item config espresso ${curve}_data -fill $::skin_disabled_colour
+            dui item config "off flush water" ${curve}_text -fill $::skin_disabled_colour
+            dui item config $::skin_home_pages ${curve}_icon -fill $::skin_disabled_colour -outline $::skin_disabled_colour
         } else {
             set ::skin($curve) 1
             if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
-                $::home_espresso_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 5]
-                $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth [rescale_x_skin 5]
+                $::home_espresso_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
+                $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
             }
             if {$curve == "steps"} {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 2]
                 $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 2]
                 $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin 2]
             } else {
-                $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 10]
-                $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin 10]
+                $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin $::skin_data_curve_size]
+                $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin $::skin_data_curve_size]
             }
             if {$curve == "pressure" || $curve == "flow" || $curve == "weight"} {
                 $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 4]
             }
             dui item config espresso ${curve}_data -fill $::skin_text_colour
+            dui item config "off flush water" ${curve}_text -fill $::skin_text_colour
             if {$curve == "pressure"} {
                 dui item config $::skin_home_pages ${curve}_icon -fill $::skin_green -outline $::skin_green
             }

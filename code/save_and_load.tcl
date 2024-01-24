@@ -149,7 +149,7 @@ proc skin_load {key} {
                 set ::fav_skin_test($k) $skin($k)
             }
             check_current_jug
-            set_fav_colour $key
+            #set_fav_colour $key
             workflow $::skin(workflow)
             set ::de1(steam_disable_toggle) [expr {!$::settings(steam_disabled)}]
             setup_steam_switch_state
@@ -163,6 +163,7 @@ proc skin_load {key} {
             de1_send_steam_hotwater_settings
             set ::settings(profile_has_changed) 0
             profile_has_changed_set_colors
+            set_fav_colour $key
             update_de1_explanation_chart
             fill_profiles_listbox
             skin_save skin
