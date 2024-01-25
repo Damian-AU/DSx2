@@ -232,6 +232,7 @@ proc initial_icon_cal_check {} {
         set_button edit_heading_button state normal
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
+        set_button edit_theme_button state normal
         hide_graph
         set_button close_heading_settings state normal
         set_button exit_heading_settings state normal
@@ -972,6 +973,12 @@ proc wf_steam_button_list {} {
 }
 
 proc show_jug {option} {
+    foreach size {jug_s jug_m jug_l} {
+        set_button ${size}_edit state normal
+        set_button ${size}_x_button state hidden
+        set_button ${size}_tick_button state hidden
+        set_button ${size}_weight state hidden
+    }
     set_button ${option}_edit state hidden
     set_button ${option}_x_button state normal
     set_button ${option}_tick_button state normal
@@ -1475,6 +1482,7 @@ proc header_settings {} {
         set_button edit_heading_button state normal
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
+        set_button edit_theme_button state normal
         hide_graph
         set_button close_heading_settings state normal
         set_button exit_heading_settings state normal
@@ -1493,6 +1501,7 @@ proc hide_header_settings {} {
     set_button edit_heading_button state hidden
     set_button edit_colour_theme_button state hidden
     set_button edit_icon_size_button state hidden
+    set_button edit_theme_button state hidden
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
     dui item moveto off heading_entry 450 -1001

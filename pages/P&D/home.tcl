@@ -21,19 +21,23 @@ if {$::skin(colour_theme) == "default"} {
 }
 
 
-### sleep power page
 
-dui add variable "skin_power" 1280 840 -font [skin_font font_bold 24] -fill $::skin_text_colour -anchor center -justify center -width 880 -textvariable {[translate "Going to sleep in"]... [skin_power_off_timer]}
-add_clear_button power_cancel skin_power 0 0 2560 1600 {} {set_next_page off off; start_idle}
-add_icon_label_button power_sleep skin_power 950 600 260 100 {$::skin(icon_sleep)} {sleep} {skin_sleep}; set_button power_sleep icon_font [skin_font awesome_light [fixed_size 26]]
-add_icon_label_button power_exit skin_power 1370 600 260 100 {$::skin(icon_x)} {exit} {skin_exit}; set_button power_exit icon_font [skin_font awesome_light [fixed_size 26]]
-
-### screen saver page
-dui add dbutton saver 0 0 \
-    -bwidth 2560 -bheight 1600 \
-    -command {set_next_page off off; start_idle}
-
-
+proc PD_set_button {button_name property value} {
+    set z ::${button_name}(pages)
+    set pages [set $z]
+    if {$property == "fill"} {dui item config $pages bb_${button_name}* -fill $value}
+    if {$property == "label_fill"} {dui item config $pages l_${button_name} -fill $value}
+    if {$property == "font"} {dui item config $pages l_${button_name} -font $value}
+    if {$property == "icon_font"} {dui item config $pages li_${button_name} -font $value}
+    if {$property == "icon_fill"} {dui item config $pages li_${button_name} -fill $value}
+    if {$property == "state"} {
+        dui item config $pages s_${button_name} -initial_state $value -state $value
+        dui item config $pages bb_${button_name}* -initial_state $value -state $value
+        dui item config $pages l_${button_name} -initial_state $value -state $value
+        dui item config $pages li_${button_name} -initial_state $value -state $value
+        dui item config $pages b_${button_name}* -initial_state $value -state $value
+    }
+}
 
 
 proc PD_profile_title {} {
@@ -45,13 +49,21 @@ proc PD_profile_title {} {
     return $::settings(profile_title)$a
 }
 
+if {[ghc_required]} {
+    dui add dbutton $::skin_home_pages 40 40 \
+        -bwidth 1010 -bheight 1520 \
+        -shape round -radius 30 -fill $::skin_forground_colour
 
-dui add dbutton $::skin_home_pages 40 40 \
-    -bwidth 1010 -bheight 1520 \
-    -shape round -radius 30 -fill $::skin_forground_colour
+    dui add canvas_item line $::skin_home_pages 100 172 970 172 -fill $::skin_outline_colour -width 2
+    dui add canvas_item line $::skin_home_pages 100 1116 970 1116 -fill $::skin_outline_colour -width 2
+} else {
+    dui add dbutton $::skin_home_pages 40 40 \
+        -bwidth 1010 -bheight 1076 \
+        -shape round -radius 30 -fill $::skin_forground_colour
 
-dui add canvas_item line $::skin_home_pages 100 172 970 172 -fill $::skin_outline_colour -width 2
-dui add canvas_item line $::skin_home_pages 100 1116 970 1116 -fill $::skin_outline_colour -width 2
+    dui add canvas_item line $::skin_home_pages 100 172 970 172 -fill $::skin_outline_colour -width 2
+}
+
 
 dui add dtext $::skin_home_pages 104 110 -text [translate "PROFILE"] -font [skin_font font_bold 20] -fill $::skin_button_label_colour -anchor w -justify left
 dui add variable $::skin_home_pages 970 110 -font [skin_font font_bold 20] -fill $::skin_button_label_colour -anchor e -justify right -tags skin_profile_title -width 650 -textvariable {[PD_profile_title]}
@@ -116,7 +128,7 @@ proc set_fav_colour {fav} {
 proc clear_fav_colour {} {
     foreach fav {fav1 fav2 fav3 fav4 fav5 fav6} {
         dui item config $::skin_home_pages PD_${fav}_button_on* -initial_state hidden -state hidden
-        dui item config $::skin_home_pages PD_${fav}_label -fill $::skin_button_label_colour
+        dui item config $::skin_home_pages PD_${fav}_label -fill $::skin_text_colour
     }
     dui item config $::skin_home_pages skin_profile_title -fill $::skin_button_label_colour
 }
@@ -219,7 +231,29 @@ proc PD_settings {} {
 }
 
 
+proc PD_skin_scale_disconnected {} {
+    if {[skin_bean_weight] != "" } {
+        dui item config $::skin_home_pages scale_btl_icon -state hidden
+    }
+	if {[ifexists ::settings(scale_bluetooth_address)] == ""} {
+		dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
+		return "No Scale"
+	}
+	if {$::device::scale::_watchdog_id == ""} {
+		dui item config $::skin_home_pages scale_btl_icon -fill $::skin_red
+		if {$::connect_blink == 1} {
+		    after 300 {set ::connect_blink 0}
+		    return [translate "Reconnect"]
+		} else {
+		    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
+		    set ::connect_blink 1
+		    return ""
+		}
+	}
+	return "Scale Connected"
+    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
 
+}
 
 
 backup_settings
@@ -471,20 +505,20 @@ set ::skin_fav6_colour $::skin_outline_colour
 
 ###################### FAVS 
 #### upper row favourites
-dui add variable $::skin_home_pages 240 1250 -font [skin_font font 16] -fill $::skin_button_label_colour -width 250 -anchor center -justify center -tags PD_fav1_label -textvariable {$::fav_label_fav1}
+dui add variable $::skin_home_pages 240 1250 -font [skin_font font 16] -fill $::skin_text_colour -width 250 -anchor center -justify center -tags PD_fav1_label -textvariable {$::fav_label_fav1}
 dui add dbutton $::skin_home_pages 104 1180 \
     -bwidth 272 -bheight 140 -tags PD_fav1_button \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
+    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
     -command {skin_load fav1;} -longpress_cmd {P&D_fav_setup fav1}
 dui add dbutton $::skin_home_pages 104 1180 \
     -bwidth 272 -bheight 140 -tags PD_fav1_button_on -initial_state hidden \
     -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
     -command {skin_load fav1} -longpress_cmd {P&D_fav_setup fav1}
 
-dui add variable $::skin_home_pages 540 1250 -font [skin_font font 16] -fill $::skin_button_label_colour -width 250 -anchor center -justify center -tags PD_fav2_label -textvariable {$::fav_label_fav2}
+dui add variable $::skin_home_pages 540 1250 -font [skin_font font 16] -fill $::skin_text_colour -width 250 -anchor center -justify center -tags PD_fav2_label -textvariable {$::fav_label_fav2}
 dui add dbutton $::skin_home_pages 404 1180 \
     -bwidth 272 -bheight 140 -tags PD_fav2_button \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
+    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
     -command {skin_load fav2} -longpress_cmd {P&D_fav_setup fav2}
 dui add dbutton $::skin_home_pages 404 1180 \
     -bwidth 272 -bheight 140 -tags PD_fav2_button_on -initial_state hidden \
@@ -492,48 +526,92 @@ dui add dbutton $::skin_home_pages 404 1180 \
     -command {skin_load fav2} -longpress_cmd {P&D_fav_setup fav2}
 
 
-dui add variable $::skin_home_pages 840 1250 -font [skin_font font 16] -fill $::skin_button_label_colour -width 250 -anchor center -justify center -tags PD_fav3_label -textvariable {$::fav_label_fav3}
+dui add variable $::skin_home_pages 840 1250 -font [skin_font font 16] -fill $::skin_text_colour -width 250 -anchor center -justify center -tags PD_fav3_label -textvariable {$::fav_label_fav3}
 dui add dbutton $::skin_home_pages 704 1180 \
     -bwidth 272 -bheight 140 -tags PD_fav3_button \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
+    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
     -command {skin_load fav3} -longpress_cmd {P&D_fav_setup fav3}
 dui add dbutton $::skin_home_pages 704 1180 \
     -bwidth 272 -bheight 140 -tags PD_fav3_button_on -initial_state hidden \
     -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
     -command {skin_load fav3} -longpress_cmd {P&D_fav_setup fav3}
 
+
+
+
 #### lower row favourites
-dui add variable $::skin_home_pages 240 1440 -font [skin_font font 16] -fill $::skin_button_label_colour -width 250 -anchor center -justify center -tags PD_fav4_label -textvariable {$::fav_label_fav4}
-dui add dbutton $::skin_home_pages 104 1370 \
-    -bwidth 272 -bheight 140 -tags PD_fav4_button \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
-    -command {skin_load fav4} -longpress_cmd {P&D_fav_setup fav4}
-dui add dbutton $::skin_home_pages 104 1370 \
-    -bwidth 272 -bheight 140 -tags PD_fav4_button_on -initial_state hidden \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
-    -command {skin_load fav4} -longpress_cmd {P&D_fav_setup fav4}
 
-dui add variable $::skin_home_pages 540 1440 -font [skin_font font 16] -fill $::skin_button_label_colour -width 250 -anchor center -justify center -tags PD_fav5_label -textvariable {$::fav_label_fav5}
-dui add dbutton $::skin_home_pages 404 1370 \
-    -bwidth 272 -bheight 140 -tags PD_fav5_button \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
-    -command {skin_load fav5} -longpress_cmd {P&D_fav_setup fav5}
-dui add dbutton $::skin_home_pages 404 1370 \
-    -bwidth 272 -bheight 140 -tags PD_fav5_button_on -initial_state hidden \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
-    -command {skin_load fav5} -longpress_cmd {P&D_fav_setup fav5}
+if {[ghc_required]} {
+    dui add variable $::skin_home_pages 240 1440 -font [skin_font font 16] -fill $::skin_text_colour -width 250 -anchor center -justify center -tags PD_fav4_label -textvariable {$::fav_label_fav4}
+    dui add dbutton $::skin_home_pages 104 1370 \
+        -bwidth 272 -bheight 140 -tags PD_fav4_button \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
+        -command {skin_load fav4} -longpress_cmd {P&D_fav_setup fav4}
+    dui add dbutton $::skin_home_pages 104 1370 \
+        -bwidth 272 -bheight 140 -tags PD_fav4_button_on -initial_state hidden \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
+        -command {skin_load fav4} -longpress_cmd {P&D_fav_setup fav4}
 
-dui add variable $::skin_home_pages 840 1440 -font [skin_font font 16] -fill $::skin_button_label_colour -width 250 -anchor center -justify center -tags PD_fav6_label -textvariable {$::fav_label_fav6}
-dui add dbutton $::skin_home_pages 704 1370 \
-    -bwidth 272 -bheight 140 -tags PD_fav6_button \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
-    -command {skin_load fav6} -longpress_cmd {P&D_fav_setup fav6}
-dui add dbutton $::skin_home_pages 704 1370 \
-    -bwidth 272 -bheight 140 -tags PD_fav6_button_on -initial_state hidden \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
-    -command {skin_load fav6} -longpress_cmd {P&D_fav_setup fav6}
+    dui add variable $::skin_home_pages 540 1440 -font [skin_font font 16] -fill $::skin_text_colour -width 250 -anchor center -justify center -tags PD_fav5_label -textvariable {$::fav_label_fav5}
+    dui add dbutton $::skin_home_pages 404 1370 \
+        -bwidth 272 -bheight 140 -tags PD_fav5_button \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
+        -command {skin_load fav5} -longpress_cmd {P&D_fav_setup fav5}
+    dui add dbutton $::skin_home_pages 404 1370 \
+        -bwidth 272 -bheight 140 -tags PD_fav5_button_on -initial_state hidden \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
+        -command {skin_load fav5} -longpress_cmd {P&D_fav_setup fav5}
 
+    dui add variable $::skin_home_pages 840 1440 -font [skin_font font 16] -fill $::skin_text_colour -width 250 -anchor center -justify center -tags PD_fav6_label -textvariable {$::fav_label_fav6}
+    dui add dbutton $::skin_home_pages 704 1370 \
+        -bwidth 272 -bheight 140 -tags PD_fav6_button \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
+        -command {skin_load fav6} -longpress_cmd {P&D_fav_setup fav6}
+    dui add dbutton $::skin_home_pages 704 1370 \
+        -bwidth 272 -bheight 140 -tags PD_fav6_button_on -initial_state hidden \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_selected_colour \
+        -command {skin_load fav6} -longpress_cmd {P&D_fav_setup fav6}
 
+} else {
+    dui add dbutton $::skin_home_pages 104 1370 \
+        -bwidth 870 -bheight 190  \
+        -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour_2 \
+        -command {do_nothing}
+    dui add canvas_item line off 322 1370 322 1560 -fill $::skin_outline_colour_2 -width 2
+    dui add canvas_item line off 540 1370 540 1560 -fill $::skin_outline_colour_2 -width 2
+    dui add canvas_item line off 762 1370 762 1560 -fill $::skin_outline_colour_2 -width 2
+
+    dui add variable off 214 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {Coffee}
+    dui add variable off 432 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {Water}
+    dui add variable off 650 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {Steam}
+    dui add variable off 872 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {Flush}
+
+    dui add dbutton off 104 1370 \
+        -bwidth 218 -bheight 190  \
+        -labelvariable {\Ue915} -label_font [skin_font icomoon 56] -label_fill $::skin_text_colour -label_pos {0.5 0.34} \
+        -command {skin_start espresso}
+    dui add dbutton off 322 1370 \
+        -bwidth 218 -bheight 190  \
+        -labelvariable {\Ue918} -label_font [skin_font icomoon 56] -label_fill $::skin_text_colour -label_pos {0.5 0.34} \
+        -command {skin_start water}
+    dui add dbutton off 540 1370 \
+        -bwidth 218 -bheight 190  \
+        -labelvariable {\Ue917} -label_font [skin_font icomoon 56] -label_fill $::skin_text_colour -label_pos {0.5 0.34} \
+        -command {skin_start steam}
+    dui add dbutton off 762 1370 \
+        -bwidth 218 -bheight 190  \
+        -labelvariable {\Ue916} -label_font [skin_font icomoon 56] -label_fill $::skin_text_colour -label_pos {0.5 0.34} \
+        -command {skin_start flush}
+
+    dui add variable "espresso" 540 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {[translate "Stop Coffee"]}
+    dui add variable "water" 540 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {[translate "Stop Water"]}
+    dui add variable "steam" 540 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {[translate "Stop Steam"]}
+    dui add variable "flush" 540 1530 -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {[translate "Stop Flush"]}
+    dui add dbutton "espresso steam water flush" 104 1370 \
+        -bwidth 870 -bheight 190  \
+        -labelvariable {\Ue903} -label_font [skin_font icomoon 56] -label_fill $::skin_red -label_pos {0.5 0.34} \
+        -command {skin_start idle}
+}
 
 
 
@@ -651,7 +729,9 @@ set ::skin_data_curve_size 6
 add_de1_widget "off flush water" graph 1130 350 {
     set ::home_espresso_graph $widget
     bind $widget [platform_button_press] {
-
+        #set_next_page off off_zoomed;
+        #set_next_page espresso espresso_zoomed;
+        #page_show $::de1(current_context);
     }
 
     $widget element create compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 4] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -678,6 +758,9 @@ add_de1_widget "off flush water" graph 1130 350 {
 add_de1_widget "espresso" graph 1130 350 {
     set ::home_espresso_graph_espresso $widget
     bind $widget [platform_button_press] {
+        #set_next_page off off_zoomed;
+        #set_next_page espresso espresso_zoomed;
+        #page_show $::de1(current_context);
     }
     $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
     $widget element create home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0  -dashes {2 2};
@@ -694,6 +777,38 @@ add_de1_widget "espresso" graph 1130 350 {
     $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
 } -plotbackground $::skin_forground_colour -width [rescale_x_skin 1350] -height [rescale_y_skin 740] -borderwidth 1 -background $::skin_forground_colour -plotrelief flat -initial_state normal -tags main_graph
 
+# Steam graph
+add_de1_widget "steam" graph 1130 350 {
+    set ::home_steam_graph $widget
+    bind $widget [platform_button_press] {
+    }
+    $widget element create home_steam_pressure -xdata steam_elapsed -ydata steam_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_green -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_steam_flow -xdata steam_elapsed -ydata steam_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_steam_temperature -xdata steam_elapsed -ydata steam_temperature100th -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_red  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font [fixed_size 14]] -min 0.0;
+    $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font [fixed_size 14]] -min 0.0 -subdivisions 1
+    #$widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
+    $widget grid configure -color $::skin_grid_colour -dashes {4 12} -linewidth 1
+} -plotbackground $::skin_forground_colour -width [rescale_x_skin 1350] -height [rescale_y_skin 740] -borderwidth 1 -background $::skin_forground_colour -plotrelief flat -initial_state normal -tags steam_graph
+
+
+add_de1_widget "off" graph 1130 350 {
+    set ::main_graph_steam $widget
+    bind $widget [platform_button_press] {
+    }
+    $widget element create home_steam_pressure -xdata steam_elapsed -ydata steam_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_green -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_steam_flow -xdata steam_elapsed -ydata steam_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_steam_temperature -xdata steam_elapsed -ydata steam_temperature100th -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_red  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font 14] -min 0.0;
+    $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 14] -min 0.0 -subdivisions 1
+    #$widget axis configure y2 -color $::skin_red -tickfont [skin_font font 14] -min 130 -max 180 -majorticks {130 135 140 145 150 155 160 165 170 175 180} -hide 0
+    $widget grid configure -color $::skin_grid_colour -dashes {4 12} -linewidth 1
+} -plotbackground $::skin_forground_colour -width [rescale_x_skin 1350] -height [rescale_y_skin 740] -borderwidth 1 -background $::skin_forground_colour -plotrelief flat -initial_state normal -tags main_graph_steam
+
+.can itemconfigure main_graph_steam -state hidden
+dui item config off main_graph_steam -initial_state hidden
+#######################################################
+
 
 dui add dbutton $::skin_home_pages 1090 1180 \
     -bwidth 590 -bheight 140 \
@@ -702,8 +817,10 @@ dui add canvas_item line $::skin_home_pages 1396 1180 1396 1320 -fill $::skin_ou
 dui add canvas_item line $::skin_home_pages 1544 1180 1544 1320 -fill $::skin_outline_colour_2 -width 2
 
 dui add variable $::skin_home_pages 1140 1230 -font [skin_font font_bold 20] -fill $::skin_text_colour -anchor w -justify center -textvariable {[round_to_one_digits $::de1(scale_sensor_weight)]g}
-dui add variable $::skin_home_pages 1140 1280 -font [skin_font font 13] -fill $::skin_text_colour -anchor w -justify center -textvariable {[skin_scale_disconnected]}
+dui add variable $::skin_home_pages 1140 1280 -font [skin_font font 13] -fill $::skin_text_colour -anchor w -justify center -textvariable {[PD_skin_scale_disconnected]}
 
+dui add variable off 1466 1200 -font [skin_font font 14] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_bean_weight]}
+dui add variable off 1614 1200 -font [skin_font font 14] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_milk_weight]}
 
 dui add dbutton $::skin_home_pages 1090 1180 \
     -bwidth 300 -bheight 140 \
@@ -884,22 +1001,21 @@ dui add dbutton $::skin_home_pages 2200 820 \
     -labelvariable {[translate "save"]} -label_font [skin_font font 16] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
     -command {P&D_fav_setup_save}
 
+### colour change message
+dui add variable "restart_message" 1280 600 -font [skin_font font_bold 28] -fill $::skin_text_colour -anchor center -justify center -textvariable {[translate "Restart the app for your changes to take effect"]\r\r\r[translate "Tap anywhere to exit"]}
+add_clear_button restart_message restart_message 0 0 2560 1600 {} {skin_exit}
 
+### sleep power page
 
+dui add variable "skin_power" 1280 840 -font [skin_font font_bold 24] -fill $::skin_text_colour -anchor center -justify center -width 880 -textvariable {[translate "Going to sleep in"]... [skin_power_off_timer]}
+add_clear_button power_cancel skin_power 0 0 2560 1600 {} {set_next_page off off; start_idle}
+add_icon_label_button power_sleep skin_power 950 600 260 100 {$::skin(icon_sleep)} {sleep} {skin_sleep}; PD_set_button power_sleep icon_font [skin_font awesome_light [fixed_size 26]]
+add_icon_label_button power_exit skin_power 1370 600 260 100 {$::skin(icon_x)} {exit} {skin_exit}; PD_set_button power_exit icon_font [skin_font awesome_light [fixed_size 26]]
 
-dui add dbutton PD_settings 1910 820 \
-    -bwidth 260 -bheight 100 \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
-    -labelvariable {[translate "cancel"]} -label_font [skin_font font 16] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
-    -command {set_next_page off off; page_show off}
-
-dui add dbutton PD_settings 2200 820 \
-    -bwidth 260 -bheight 100 \
-    -shape outline -width 2 -arc_offset 20 -outline $::skin_outline_colour \
-    -labelvariable {[translate "save"]} -label_font [skin_font font 16] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
-    -command {set_next_page off off; page_show off}
-
-
+### screen saver page
+dui add dbutton saver 0 0 \
+    -bwidth 2560 -bheight 1600 \
+    -command {set_next_page off off; start_idle}
 
 
 setup_home_espresso_graph
