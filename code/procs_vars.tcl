@@ -1,4 +1,4 @@
-set ::skin_version 1.05
+set ::skin_version 1.06
 
 
 set ::user(background_colour) #e4e4e4
@@ -1744,7 +1744,7 @@ proc adjust {var value} {
     }
     if {$var == "dose"} {
         set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::settings(grinder_dose_weight) + $value]]
-        if {$::settings(grinder_dose_weight) < 6} {set ::settings(grinder_dose_weight) 6}
+        if {$::settings(grinder_dose_weight) < 2} {set ::settings(grinder_dose_weight) 2}
         if {$::settings(grinder_dose_weight) > 40} {set ::settings(grinder_dose_weight) 40}
         skin_save settings
     }
