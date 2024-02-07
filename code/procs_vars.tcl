@@ -1,4 +1,4 @@
-set ::skin_version 1.06
+set ::skin_version 1.07
 
 
 set ::user(background_colour) #e4e4e4
@@ -19,7 +19,7 @@ set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
 set ::user(graph_grid_colour) $::user(forground_colour)
 set ::user(mini_graph_grid_colour) #bbb
-set ::user(disabled_colour) #2b6084
+set ::user(disabled_colour) #ddd
 
 if {[file exists "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"] == 1} {
     array set ::user [encoding convertfrom utf-8 [read_binary_file "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"]]
@@ -250,6 +250,9 @@ proc initial_icon_cal_check {} {
 proc fixed_size { size } {
     if {$::skin(icon_size) == 1} {
         set ::skin_icon_size 0.8
+    }
+    if {$::skin(icon_size) == 1.5} {
+        set ::skin_icon_size 0.88
     }
     if {$::skin(icon_size) == 2} {
         set ::skin_icon_size 0.95
@@ -1284,7 +1287,7 @@ proc move_workflow_button {button_name} {
         dui item moveto off b_${button_name}_index_button* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
         dui item moveto $pages ${button_name}_data_line_1 [expr $::skin(button_x_${button_name}) + 170] [expr $::skin(button_y_${button_name}) + 120]
         foreach f {espresso steam flush water} {
-            dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 540
+            dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 534
         }
     }
 }
@@ -1564,6 +1567,26 @@ proc skin_espresso_elapsed_timer {} {
     }
 }
 
+proc skin_water_live_data {} {
+    set piv [round_to_integer $::de1(preinfusion_volume)]
+    set pv [round_to_integer $::de1(pour_volume)]
+    set tv [expr {[round_to_integer $::de1(preinfusion_volume)] + [round_to_integer $::de1(pour_volume)]}]
+
+    if {$piv >= 1} {
+        return "$piv + $pv = $tv"
+    } else {
+        return "$tv"
+    }
+}
+
+proc skin_water_data {} {
+    if {$::skin_graphs(live_graph_pi_water) >= 1} {
+        return "$::skin_graphs(live_graph_pi_water) + $::skin_graphs(live_graph_pour_water) = $::skin_graphs(live_graph_water)"
+    } else {
+        return "$::skin_graphs(live_graph_water)"
+    }
+}
+
 proc skin_graph_info {} {
     set p $::skin_graphs(live_graph_profile)
     set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
@@ -1574,10 +1597,12 @@ proc skin_graph_info {} {
     set t $::skin_graphs(live_graph_shot_time)
     set s { }
     set g {     }
-    return ${p}${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s
+    set v [skin_water_data]
+    return ${p}${g}${s}${v}ml${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})
 }
 
 proc skin_graph_live_info {} {
+    set v [skin_water_live_data]
     set p $::settings(profile_title)
     set b $::settings(grinder_dose_weight)
     set w [round_to_one_digits $::de1(scale_weight)]
@@ -1587,7 +1612,7 @@ proc skin_graph_live_info {} {
     set t [espresso_elapsed_timer]
     set s { }
     set g {     }
-    return ${p}${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s
+    return ${p}${g}${s}${v}ml${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})
 }
 
 proc cancel_auto_stop {} {
@@ -1799,20 +1824,37 @@ proc adjust {var value} {
         }
         skin_save settings
     }
-    if {$var == "icon_size"} {
-        set ::skin(icon_size) [expr $::skin(icon_size) + $value]
-        if {$::skin(icon_size) < 1} {set ::skin(icon_size) 1}
-        if {$::skin(icon_size) > 5} {set ::skin(icon_size) 5}
-        dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
-        resize_fixed_icons
-        skin_save skin
-    }
     if {$var == "wsaw_offset"} {
         set ::skin(wsaw_offset) [expr $::skin(wsaw_offset) + $value]
         set ::settings(water_volume) [expr $::settings(water_volume) - $value]
         if {$::skin(wsaw_offset) < - 10} {set ::skin(wsaw_offset) -10; set ::settings(water_volume) [expr $::settings(water_volume) + $value]}
         if {$::skin(wsaw_offset) > 10} {set ::skin(wsaw_offset) 10; set ::settings(water_volume) [expr $::settings(water_volume) + $value]}
     }
+}
+
+proc adjust_icon_size_up {} {
+    if {$::skin(icon_size) == 5} {return}
+    if {$::skin(icon_size) == 4} {set ::skin(icon_size) 5}
+    if {$::skin(icon_size) == 3} {set ::skin(icon_size) 4}
+    if {$::skin(icon_size) == 2} {set ::skin(icon_size) 3}
+    if {$::skin(icon_size) == 1.5} {set ::skin(icon_size) 2}
+    if {$::skin(icon_size) == 1} {set ::skin(icon_size) 1.5}
+    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
+    resize_fixed_icons
+    skin_save skin
+}
+
+proc adjust_icon_size_down {} {
+    if {$::skin(icon_size) == 1} {return}
+    if {$::skin(icon_size) == 1.5} {set ::skin(icon_size) 1}
+    if {$::skin(icon_size) == 2} {set ::skin(icon_size) 1.5}
+    if {$::skin(icon_size) == 3} {set ::skin(icon_size) 2}
+    if {$::skin(icon_size) == 4} {set ::skin(icon_size) 3}
+    if {$::skin(icon_size) == 5} {set ::skin(icon_size) 4}
+
+    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
+    resize_fixed_icons
+    skin_save skin
 }
 
 proc resize_fixed_icons {} {
@@ -2231,12 +2273,19 @@ set ::skin_sleep_countdown 0
 set ::skin_sleep_timer_on 0
 
 proc skin_power {} {
+    if {[info exists ::saw_backup]} {
+        set ::skin(saw_backup) $::saw_backup
+    }
     set_next_page off power;
     set ::skin_sleep_timer_start [expr [clock seconds] + 5]
     set ::skin_sleep_timer_on 1
     skin_power_off_timer
     page_show skin_power;
     skin_save skin
+}
+
+if {[info exists ::skin(saw_backup)]} {
+   set ::saw_backup $::skin(saw_backup)
 }
 
 proc skin_power_off_timer {} {
