@@ -1,4 +1,4 @@
-set ::skin_version 1.07
+set ::skin_version 1.08
 
 
 set ::user(background_colour) #e4e4e4
@@ -232,6 +232,7 @@ proc initial_icon_cal_check {} {
         set_button edit_heading_button state normal
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
+        set_button edit_flow_rate_cal_button state normal
         set_button edit_theme_button state normal
         hide_graph
         set_button close_heading_settings state normal
@@ -1485,6 +1486,7 @@ proc header_settings {} {
         set_button edit_heading_button state normal
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
+        set_button edit_flow_rate_cal_button state normal
         set_button edit_theme_button state normal
         hide_graph
         set_button close_heading_settings state normal
@@ -1504,6 +1506,7 @@ proc hide_header_settings {} {
     set_button edit_heading_button state hidden
     set_button edit_colour_theme_button state hidden
     set_button edit_icon_size_button state hidden
+    set_button edit_flow_rate_cal_button state hidden
     set_button edit_theme_button state hidden
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
@@ -2671,6 +2674,73 @@ proc load_graph_cache {} {
 
 proc skin_load_fav { args } {
     skin_load $::skin(auto_load_fav)
+}
+
+proc skin_orig_flow_cal {} {
+    if {[info exist ::skin_flow_cal_backup]} {
+        return $::skin_flow_cal_backup
+    } else {
+        return $::settings(calibration_flow_multiplier)
+    }
+}
+
+proc skin_flow_cal_up {} {
+    if {$::settings(calibration_flow_multiplier) <= 0.35} {
+        borg toast [translate "minimum setting reached"]
+        return
+    }
+    set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) + 0.01]]
+    espresso_flow length 0
+    foreach flow $::skin_graphs(live_graph_espresso_flow) {
+        espresso_flow append [expr $::settings(calibration_flow_multiplier) * $flow / $::skin_flow_cal_backup]
+    }
+}
+
+proc skin_flow_cal_down {} {
+    if {$::settings(calibration_flow_multiplier) >= 1.65} {
+        borg toast [translate "maximum setting reached"]
+        return
+    }
+    set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) - 0.01]]
+    espresso_flow length 0
+    foreach flow $::skin_graphs(live_graph_espresso_flow) {
+        espresso_flow append [expr $::settings(calibration_flow_multiplier) * $flow / $::skin_flow_cal_backup]
+    }
+}
+
+proc skin_show_flow_cal {} {
+    if {![info exist ::skin_flow_cal_backup]} {
+        set ::skin_flow_cal_backup $::settings(calibration_flow_multiplier)
+    }
+    dui item config off skin_flow_cal_dui_items -initial_state normal -state normal
+    set_button skin_flow_cal_up state normal
+    set_button skin_flow_cal_down state normal
+    set_button skin_flow_cal_cancel state normal
+    set_button skin_flow_cal_save state normal
+}
+
+proc skin_hide_flow_cal {} {
+    unset -nocomplain ::skin_flow_cal_backup
+    dui item config off skin_flow_cal_dui_items -initial_state hidden -state hidden
+    set_button skin_flow_cal_up state hidden
+    set_button skin_flow_cal_down state hidden
+    set_button skin_flow_cal_cancel state hidden
+    set_button skin_flow_cal_save state hidden
+}
+
+proc skin_cancel_flow_cal {} {
+    set ::settings(calibration_flow_multiplier) $::skin_flow_cal_backup
+    espresso_flow length 0
+    foreach flow $::skin_graphs(live_graph_espresso_flow) {
+        espresso_flow append $flow
+    }
+    skin_hide_flow_cal
+}
+
+proc skin_save_flow_cal {} {
+    skin_save settings
+    set_calibration_flow_multiplier $::settings(calibration_flow_multiplier)
+    skin_hide_flow_cal
 }
 
 rename backup_settings backup_settings_orig
