@@ -604,6 +604,7 @@ set_button jug_s_tick_button label_fill $::skin_green
 
 add_icon_label_button wf_steam_jug_m off 710 740 280 100 {$::skin(icon_jug)} {medium} {set_jug m}
 add_icon_button jug_m_edit off 610 740 100 100 {$::skin(icon_edit)} {show_jug jug_m}
+
 set_button jug_m_edit font [skin_font awesome_light [fixed_size 28]]
 add_colour_button jug_m_weight off 710 740 280 100 {current $::skin(jug_m)g\r new [round_to_one_digits $::de1(scale_sensor_weight)]g} {}
 set_button jug_m_weight font [skin_font font 16]
@@ -622,6 +623,14 @@ set_button jug_l_x_button label_fill $::skin_red
 add_icon_button jug_l_tick_button off 510 860 100 100 {$::skin(icon_tick)} {skin_save jug_l}
 set_button jug_l_tick_button label_fill $::skin_green
 
+dui add variable off 1010 670 -tags {jug_s_number jug_numbers} -anchor w -fill $::skin_text_colour -font [skin_font D-font [fixed_size 24]] -textvariable {$::jug_s_number}
+dui add variable off 1010 790 -tags {jug_m_number jug_numbers} -anchor w -fill $::skin_text_colour -font [skin_font D-font [fixed_size 24]] -textvariable {$::jug_m_number}
+dui add variable off 1010 910 -tags {jug_l_number jug_numbers} -anchor w -fill $::skin_text_colour -font [skin_font D-font [fixed_size 24]] -textvariable {$::jug_l_number}
+dui add dbutton off 1000 610 \
+    -tags {jug_number_button jug_numbers} \
+    -bwidth 120 -bheight 380 \
+    -command {toggle_jug_number}
+dui item config off jug_numbers -initial_state hidden -state hidden
 
 dui add dtext off 1340 580 -tags wf_heading_steam_timer -text [translate "Steam timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_steam_timer_minus_10 off 1230 620 100 100 {\Uf106} {adjust steam 10}; set_button wf_steam_timer_minus_10 font [skin_font awesome_light [fixed_size 34]]
@@ -630,18 +639,23 @@ add_colour_button wf_steam_timer_minus off 1350 620 100 100 {\Uf106} {adjust ste
 add_colour_button wf_steam_timer_plus off 1350 820 100 100 {\Uf107} {adjust steam -1}; set_button wf_steam_timer_plus font [skin_font awesome_light [fixed_size 34]]
 dui add variable off 1340 770 -fill $::skin_text_colour  -font [skin_font font_bold 24] -tags wf_steam_timer_setting -anchor center -textvariable {[round_to_integer $::settings(steam_timeout)]s}
 
-dui add dtext off 180 1160 -tags wf_heading_steam_calibrate -text [translate "Calibrate steam timer by weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
-dui add dtext off 180 1400 -tags wf_milk_weight_text_line_1 -width 1400 -text [translate "1: Place the empty jug on the scale, tap the pencil next to the respective jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
-dui add dtext off 180 1470 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
-dui add dtext off 180 1520 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1200 -tags wf_heading_steam_calibrate -text [translate "Calibrate steam timer by weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1430 -tags wf_milk_weight_text_line_1 -width 1400 -text [translate "1: Place the empty jug on the scale, tap the pencil next to the respective jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1500 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
+dui add dtext off 180 1550 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
 
-add_icon_label_button wf_steam_jug_milk off 180 1230 280 100 {$::skin(icon_milk)} {[round_to_integer $::skin(milk_g)]g} {set ::skin(milk_g) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
-add_icon_button wf_steam_cal_time_minus off 600 1230 100 100 {$::skin(icon_minus)} {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) - 1]]; if {$::skin(milk_s) < 5} {set ::skin(milk_s) 5}}; set_button wf_steam_cal_time_minus font [skin_font D-font [fixed_size 34]]
-add_icon_label_button wf_steam_jug_time off 700 1230 280 100 {$::skin(icon_timer)} {[round_to_integer $::skin(milk_s)]s} {set ::skin(milk_s) [steam_pour_timer]}; set_button wf_steam_jug_time icon_font [skin_font awesome_light [fixed_size 34]]
-add_icon_button wf_steam_cal_time_plus off 975 1230 100 100 {$::skin(icon_plus)} {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) + 1]]; if {$::skin(milk_s) > 120} {set ::skin(milk_s) 120}}; set_button wf_steam_cal_time_plus font [skin_font D-font [fixed_size 34]]
+add_icon_label_button wf_steam_jug_milk off 180 1260 280 100 {$::skin(icon_milk)} {[round_to_integer $::skin(milk_g)]g} {set ::skin(milk_g) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
+add_icon_button wf_steam_cal_time_minus off 600 1260 100 100 {$::skin(icon_minus)} {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) - 1]]; if {$::skin(milk_s) < 5} {set ::skin(milk_s) 5}}; set_button wf_steam_cal_time_minus font [skin_font D-font [fixed_size 34]]
+add_icon_label_button wf_steam_jug_time off 700 1260 280 100 {$::skin(icon_timer)} {[round_to_integer $::skin(milk_s)]s} {set ::skin(milk_s) [steam_pour_timer]}; set_button wf_steam_jug_time icon_font [skin_font awesome_light [fixed_size 34]]
+add_icon_button wf_steam_cal_time_plus off 975 1260 100 100 {$::skin(icon_plus)} {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) + 1]]; if {$::skin(milk_s) > 120} {set ::skin(milk_s) 120}}; set_button wf_steam_cal_time_plus font [skin_font D-font [fixed_size 34]]
 
-dui add variable off 840 1210 -fill $::skin_text_colour  -font [skin_font font 16] -tags wf_last_steam_time -anchor center -textvariable {[translate "last steam"] [steam_pour_timer]s}
+dui add variable off 840 1240 -fill $::skin_text_colour  -font [skin_font font 16] -tags wf_last_steam_time -anchor center -textvariable {[translate "last steam"] [steam_pour_timer]s}
 
+add_icon_label_button wf_steam_jug_auto off 710 1030 280 100 {$::skin(icon_jug)} {Auto} {toggle_jug_auto}
+dui add dtext off 1340 1240 -tags wf_steam_jug_auto_weight_heading -text [translate "milk per drink"] -font [skin_font font 16] -fill $::skin_text_colour -anchor center
+add_colour_button wf_steam_jug_auto_weight off 1250 1270 180 100 {[round_to_integer $::skin(single_drink_milk_volume)]g} {set ::skin(single_drink_milk_volume) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
+add_icon_button wf_steam_jug_auto_weight_minus off 1150 1260 100 100 {$::skin(icon_minus)} {set ::skin(single_drink_milk_volume) [round_to_integer [expr $::skin(single_drink_milk_volume) - 10]]; if {$::skin(single_drink_milk_volume) < 50} {set ::skin(single_drink_milk_volume) 50}}; set_button wf_steam_jug_auto_weight_minus font [skin_font D-font [fixed_size 34]]
+add_icon_button wf_steam_jug_auto_weight_plus off 1425 1260 100 100 {$::skin(icon_plus)} {set ::skin(single_drink_milk_volume) [round_to_integer [expr $::skin(single_drink_milk_volume) + 10]]; if {$::skin(single_drink_milk_volume) > 300} {set ::skin(single_drink_milk_volume) 300}}; set_button wf_steam_jug_auto_weight_plus font [skin_font D-font [fixed_size 34]]
 
 hide_steam_settings
 

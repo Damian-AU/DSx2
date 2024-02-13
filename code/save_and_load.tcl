@@ -17,7 +17,7 @@ proc fav_settings_vars {} {
 
 proc fav_skin_vars {} {
     return {
-        workflow jug_size
+        workflow jug_size jug_auto
     }
 }
 
@@ -122,7 +122,7 @@ proc skin_save {key} {
         write_file [skin_directory]/settings/$key.txt $data
         update_de1_explanation_chart
 
-
+        check_wf_steam_jug_auto_weight
         skin_save skin
         rest_fav_buttons
         show_graph
@@ -144,10 +144,14 @@ proc skin_load {key} {
             }
             array set skin $fav_settings(skin)
             set skin_vars [fav_skin_vars]
+
             foreach k $skin_vars {
-                set ::skin($k) $skin($k)
-                set ::fav_skin_test($k) $skin($k)
+                if {[info exists skin($k)] == 1} {
+                    set ::skin($k) $skin($k)
+                    set ::fav_skin_test($k) $skin($k)
+                }
             }
+            check_wf_steam_jug_auto_weight
             check_current_jug
             #set_fav_colour $key
             workflow $::skin(workflow)

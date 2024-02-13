@@ -1,4 +1,4 @@
-set ::skin_version 1.08
+set ::skin_version 1.09
 
 
 set ::user(background_colour) #e4e4e4
@@ -91,6 +91,18 @@ set ::fav_label_fav5 $::skin(fav_label_fav5)
 
 if {![info exist ::skin(auto_tare_negative_reading)]} {
     set ::skin(auto_tare_negative_reading) 0
+}
+
+if {![info exist ::skin(jug_auto)]} {
+    set ::skin(jug_auto) 0
+}
+
+if {![info exist ::skin(single_drink_milk_volume)]} {
+    set ::skin(single_drink_milk_volume) 160
+}
+
+if {![info exist ::skin(jug_single)]} {
+    set ::skin(jug_single) "jug_m"
 }
 
 proc create_settings_dir {} {
@@ -1023,8 +1035,8 @@ proc show_steam_settings {} {
         set_button wf_steam_${s} state normal
         set_button ${s}_edit state normal
     }
-
-
+    set_button wf_steam_jug_auto state normal
+    check_wf_steam_jug_auto_weight
 }
 
 proc wf_steam_set_list {} {
@@ -1061,9 +1073,11 @@ proc hide_steam_settings {} {
             hide_jug $u
             set_button ${u}_edit state hidden
         }
+    set_button wf_steam_jug_auto state hidden
+    hide_wf_steam_jug_auto_weight
     }
-
 }
+
 
 proc set_jug {j} {
     set ::skin(jug_size) $j
@@ -1071,7 +1085,9 @@ proc set_jug {j} {
     set_button wf_steam_jug_s icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_m icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_l icon_fill $::skin_button_label_colour
-    set_button wf_steam_jug_${j} icon_fill $::skin_selected_colour
+    if {$::skin(jug_auto) != 1} {
+        set_button wf_steam_jug_${j} icon_fill $::skin_selected_colour
+    }
     skin_save skin
 }
 
@@ -1081,22 +1097,113 @@ proc check_current_jug {} {
     set_button wf_steam_jug_s icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_m icon_fill $::skin_button_label_colour
     set_button wf_steam_jug_l icon_fill $::skin_button_label_colour
-    set_button wf_steam_jug_${j} icon_fill $::skin_selected_colour
-}
-
-proc jug_size_data {} {
-    if {$::skin(jug_size) == "s"} {
-        return [translate "small jug"]
-    } elseif {$::skin(jug_size) == "m"} {
-        return [translate "medium jug"]
-    } elseif {$::skin(jug_size) == "l"} {
-        return [translate "large jug"]
-    } else {
-        return [translate "no jug set"]
+    if {$::skin(jug_auto) != 1} {
+        set_button wf_steam_jug_${j} icon_fill $::skin_selected_colour
     }
 }
 
+proc jug_size_data {} {
+    if {$::skin(jug_auto) == 1 } {
+        if {$::skin(jug_size) == "s"} {
+            return "[translate "auto jug"] (S)"
+        } elseif {$::skin(jug_size) == "m"} {
+            return "[translate "auto jug"] (M)"
+        } elseif {$::skin(jug_size) == "l"} {
+            return "[translate "auto jug"] (L)"
+        } else {
+            return [translate "no jug set"]
+        }
+    } else {
+        if {$::skin(jug_size) == "s"} {
+            return [translate "small jug"]
+        } elseif {$::skin(jug_size) == "m"} {
+            return [translate "medium jug"]
+        } elseif {$::skin(jug_size) == "l"} {
+            return [translate "large jug"]
+        } else {
+            return [translate "no jug set"]
+        }
+    }
+}
+
+proc toggle_jug_auto {} {
+    set ::skin(jug_auto) [expr {!$::skin(jug_auto)}]
+    check_wf_steam_jug_auto_weight
+    check_current_jug
+}
+
+proc hide_wf_steam_jug_auto_weight {} {
+    dui item config off wf_steam_jug_auto_weight_heading -initial_state hidden -state hidden
+    set_button wf_steam_jug_auto_weight state hidden
+    set_button wf_steam_jug_auto_weight_plus state hidden
+    set_button wf_steam_jug_auto_weight_minus state hidden
+    dui item config off jug_numbers -initial_state hidden -state hidden
+}
+
+proc show_wf_steam_jug_auto_weight {} {
+    dui item config off wf_steam_jug_auto_weight_heading -initial_state normal -state normal
+    set_button wf_steam_jug_auto_weight state normal
+    set_button wf_steam_jug_auto_weight_plus state normal
+    set_button wf_steam_jug_auto_weight_minus state normal
+    dui item config off jug_numbers -initial_state normal -state normal
+}
+
+proc check_wf_steam_jug_auto_weight {} {
+    if {![info exist ::skin(jug_auto)]} {
+        return
+    }
+    if {$::skin(jug_auto) == 1} {
+        show_wf_steam_jug_auto_weight
+        set_button wf_steam_jug_auto icon_fill $::skin_selected_colour
+    } else {
+        hide_wf_steam_jug_auto_weight
+        set_button wf_steam_jug_auto icon_fill $::skin_button_label_colour
+    }
+    check_jug_number
+}
+
+proc toggle_jug_number {} {
+    if {$::skin(jug_single) == "jug_s"} {
+        set ::skin(jug_single) "jug_m"
+    } else {
+        set ::skin(jug_single) "jug_s"
+    }
+    check_jug_number
+}
+proc check_jug_number {} {
+    if {$::skin(jug_single) == "jug_m"} {
+        set ::jug_s_number ""
+        set ::jug_m_number $::skin(icon_espresso)
+        set ::jug_l_number $::skin(icon_espresso)$::skin(icon_espresso)
+    } else {
+        set ::jug_s_number $::skin(icon_espresso)
+        set ::jug_m_number $::skin(icon_espresso)$::skin(icon_espresso)
+        set ::jug_l_number ""
+    }
+}
+
+check_jug_number
+
 proc skin_steam_time_calc {} {
+    if {$::skin(jug_auto) == 1} {
+        if {$::skin(jug_single) == "jug_s"} {
+            set_jug s
+            if {$::de1(scale_sensor_weight) > [expr (1.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_s)]} {
+                set_jug m
+            }
+            if {$::de1(scale_sensor_weight) > [expr (2.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_m)]} {
+                set_jug l
+            }
+        } else {
+            set_jug s
+            if {$::de1(scale_sensor_weight) > [expr (0.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_s)]} {
+                set_jug m
+            }
+            if {$::de1(scale_sensor_weight) > [expr (1.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_m)]} {
+                set_jug l
+            }
+        }
+    }
     if {$::skin(pre_tare) != 1} {
         if {$::skin(jug_g) == { } || $::skin(jug_g) < 2 || $::skin(milk_g) < 2 || $::skin(milk_g) == { } || $::skin(milk_s) < 2 || $::skin(milk_s) == { }} {
             return
@@ -1137,6 +1244,25 @@ proc skin_steam_time_calc {} {
 }
 
 proc skin_milk_weight {} {
+    if {$::skin(jug_auto) == 1} {
+        if {$::skin(jug_single) == "jug_s"} {
+            set_jug s
+            if {$::de1(scale_sensor_weight) > [expr (1.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_s)]} {
+                set_jug m
+            }
+            if {$::de1(scale_sensor_weight) > [expr (2.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_m)]} {
+                set_jug l
+            }
+        } else {
+            set_jug s
+            if {$::de1(scale_sensor_weight) > [expr (0.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_s)]} {
+                set_jug m
+            }
+            if {$::de1(scale_sensor_weight) > [expr (1.7 * $::skin(single_drink_milk_volume)) + $::skin(jug_m)]} {
+                set_jug l
+            }
+        }
+    }
     set milk [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]
     if {[expr ($::de1(scale_sensor_weight) > $::skin(jug_g))] && $::skin(jug_g) > 20 && $::skin(pre_tare) != 1} {
         set g g
