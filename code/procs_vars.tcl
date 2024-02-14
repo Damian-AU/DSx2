@@ -1,4 +1,4 @@
-set ::skin_version 1.11
+set ::skin_version 1.12
 
 
 set ::user(background_colour) #e4e4e4
@@ -1152,7 +1152,7 @@ proc check_wf_steam_jug_auto_weight {} {
     if {![info exist ::skin(jug_auto)]} {
         return
     }
-    if {$::skin(jug_auto) == 1} {
+    if {$::skin(jug_auto) == 1 && $::wf_steam_set_showing == 1} {
         show_wf_steam_jug_auto_weight
         set_button wf_steam_jug_auto icon_fill $::skin_selected_colour
     } else {
