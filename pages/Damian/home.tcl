@@ -31,8 +31,8 @@ add_de1_widget "off" entry 450 -1001 {
 
 add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]\r$::skin(colour_theme)} {skin_colour_theme_selection}; set_button edit_colour_theme_button state hidden
 add_colour_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state [translate "icon"]\r[translate "calibration"]} {toggle_icon_size_settings}; set_button edit_icon_size_button state hidden
-
-add_colour_button edit_flow_rate_cal_button off 100 1010 340 100 {[translate "flow rate"]\r[translate "calibrator"]} {hide_header_settings; show_graph; skin_show_flow_cal}; set_button edit_flow_rate_cal_button state hidden
+set ::skin_flow_cal_ui_added 0
+add_colour_button edit_flow_rate_cal_button off 100 1010 340 100 {[translate "flow rate"]\r[translate "calibrator"]} {add_cal_controller; hide_header_settings; show_graph; skin_show_flow_cal}; set_button edit_flow_rate_cal_button state hidden
 
 add_colour_button edit_theme_button off 100 1140 340 100 {[translate "switch to"]\r[translate "P&D style"]} {set ::skin(theme) "P&D"; skin_save skin; after 500 skin_exit}; set_button edit_theme_button state hidden
 
@@ -706,19 +706,28 @@ dui add variable off 1390 770 -fill $::skin_text_colour  -font [skin_font font_b
 hide_water_settings
 
 ###Flow rate calibrator
-dui add shape rect off 1960 450 2560 1560 -fill $::skin_background_colour -outline $::skin_background_colour -tags {skin_flow_cal_bg skin_flow_cal_dui_items}
-dui add dbutton off 0 0 -bwidth 2560 -bheight 1600 -tags {skin_flow_cal_button_block skin_flow_cal_dui_items} -command {do_nothing}
-dui add dbutton off 2000 600 -bwidth 520 -bheight 740 -width 2 -shape outline -outline $::skin_forground_colour -tags {skin_flow_cal_frame skin_flow_cal_dui_items} -command {do_nothing}
-dui add dtext off 2260 660 -font [skin_font font_bold 20] -text [translate "flow rate calibrator"] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_title skin_flow_cal_dui_items}
-dui add dtext off 2160 750 -font [skin_font font 18] -text [translate "current"] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_current_title skin_flow_cal_dui_items}
-dui add dtext off 2360 750 -font [skin_font font 18] -text [translate "showing"] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_showing_title skin_flow_cal_dui_items}
-dui add variable off 2160 790 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_current_variable skin_flow_cal_dui_items} -textvariable {[skin_orig_flow_cal]}
-dui add variable off 2360 790 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_showing_variable skin_flow_cal_dui_items} -textvariable {$::settings(calibration_flow_multiplier)}
-add_colour_button skin_flow_cal_up off 2210 850 100 100 {\Uf106} {skin_flow_cal_up}; set_button skin_flow_cal_up font [skin_font awesome_light [fixed_size 34]]
-add_colour_button skin_flow_cal_down off 2210 960 100 100 {\Uf107} {skin_flow_cal_down}; set_button skin_flow_cal_down font [skin_font awesome_light [fixed_size 34]]
-add_icon_button skin_flow_cal_cancel off 2110 1200 100 100 {$::skin(icon_x)} {skin_cancel_flow_cal}; set_button skin_flow_cal_cancel label_fill $::skin_red
-add_icon_button skin_flow_cal_save off 2310 1200 100 100 {$::skin(icon_tick)} {skin_save_flow_cal}; set_button skin_flow_cal_save label_fill $::skin_green
-dui add dtext off 2260 1420 -font [skin_font font 18] -text [translate "Only adjust flow rate data for where the pressure curve is flat"] -width 480 -fill $::skin_selected_colour -anchor center -justify center -tags {skin_flow_cal_showing_instructions skin_flow_cal_dui_items}
+
+
+proc add_cal_controller {} {
+    if {$::skin_flow_cal_ui_added == 0} {
+        dui add shape rect off 1960 450 2560 1560 -fill $::skin_background_colour -outline $::skin_background_colour -tags {skin_flow_cal_bg skin_flow_cal_dui_items}
+        dui add dbutton off 0 0 -bwidth 2560 -bheight 1600 -tags {skin_flow_cal_button_block skin_flow_cal_dui_items} -command {do_nothing}
+        dui add dbutton off 2000 600 -bwidth 520 -bheight 740 -width 2 -shape outline -outline $::skin_forground_colour -tags {skin_flow_cal_frame skin_flow_cal_dui_items} -command {do_nothing}
+        dui add dtext off 2260 660 -font [skin_font font_bold 20] -text [translate "flow rate calibrator"] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_title skin_flow_cal_dui_items}
+        dui add dtext off 2160 750 -font [skin_font font 18] -text [translate "current"] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_current_title skin_flow_cal_dui_items}
+        dui add dtext off 2360 750 -font [skin_font font 18] -text [translate "showing"] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_showing_title skin_flow_cal_dui_items}
+        dui add variable off 2160 790 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_current_variable skin_flow_cal_dui_items} -textvariable {[skin_orig_flow_cal]}
+        dui add variable off 2360 790 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -tags {skin_flow_cal_showing_variable skin_flow_cal_dui_items} -textvariable {$::settings(calibration_flow_multiplier)}
+
+        add_colour_button skin_flow_cal_up off 2210 850 100 100 {\Uf106} {skin_flow_cal_up}; set_button skin_flow_cal_up font [skin_font awesome_light [fixed_size 34]]
+        add_colour_button skin_flow_cal_down off 2210 960 100 100 {\Uf107} {skin_flow_cal_down}; set_button skin_flow_cal_down font [skin_font awesome_light [fixed_size 34]]
+        add_icon_button skin_flow_cal_cancel off 2110 1200 100 100 {$::skin(icon_x)} {skin_cancel_flow_cal}; set_button skin_flow_cal_cancel label_fill $::skin_red
+        add_icon_button skin_flow_cal_save off 2310 1200 100 100 {$::skin(icon_tick)} {skin_save_flow_cal}; set_button skin_flow_cal_save label_fill $::skin_green
+        dui add dtext off 2260 1420 -font [skin_font font 18] -text [translate "Only adjust flow rate data for where the pressure curve is flat"] -width 480 -fill $::skin_selected_colour -anchor center -justify center -tags {skin_flow_cal_showing_instructions skin_flow_cal_dui_items}
+
+    }
+    set ::skin_flow_cal_ui_added 1
+}
 
 skin_hide_flow_cal
 

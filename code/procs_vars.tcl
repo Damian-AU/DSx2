@@ -1,4 +1,4 @@
-set ::skin_version 1.09
+set ::skin_version 1.10
 
 
 set ::user(background_colour) #e4e4e4
@@ -2835,6 +2835,9 @@ proc skin_flow_cal_down {} {
 }
 
 proc skin_show_flow_cal {} {
+    if {![info exist ::skin_flow_cal_up(pages)]} {
+        return
+    }
     if {![info exist ::skin_flow_cal_backup]} {
         set ::skin_flow_cal_backup $::settings(calibration_flow_multiplier)
     }
@@ -2846,6 +2849,9 @@ proc skin_show_flow_cal {} {
 }
 
 proc skin_hide_flow_cal {} {
+    if {![info exist ::skin_flow_cal_up(pages)]} {
+        return
+    }
     unset -nocomplain ::skin_flow_cal_backup
     dui item config off skin_flow_cal_dui_items -initial_state hidden -state hidden
     set_button skin_flow_cal_up state hidden
