@@ -1,4 +1,4 @@
-set ::skin_version 1.12
+set ::skin_version 1.13
 
 
 set ::user(background_colour) #e4e4e4
@@ -2192,18 +2192,31 @@ proc backup_live_graph {} {
 
 # dui add variable "espresso" 0 -10 -font [skin_font font 1] -textvariable {[backup_live_graph]}
 
+proc restore_live_graphs_default_vectors {} {
+    $::home_espresso_graph element configure home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal
+    $::home_espresso_graph element configure home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal
+    $::home_espresso_graph element configure home_temperature_goal -xdata espresso_elapsed -ydata espresso_temperature_goal10th
+    $::home_espresso_graph element configure home_pressure -xdata espresso_elapsed -ydata espresso_pressure
+    $::home_espresso_graph element configure home_flow  -xdata espresso_elapsed -ydata espresso_flow
+    $::home_espresso_graph element configure home_weight  -xdata espresso_elapsed -ydata espresso_flow_weight
+    $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th
+    $::home_espresso_graph element configure home_resistance  -xdata espresso_elapsed -ydata espresso_resistance
+    $::home_espresso_graph element configure home_steps -xdata espresso_elapsed -ydata espresso_state_change
+    restore_live_graphs
+}
+
 proc restore_live_graphs {} {
-	set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]
-	if {$last_elapsed_time_index > 1} {
-	    return
-	}
-	foreach lg [live_graph_list] {
-		$lg length 0
-		if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
-			$lg append $::skin_graphs(live_graph_$lg)
-		}
-	}
-	if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
+    set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]
+    if {$last_elapsed_time_index > 1} {
+        return
+    }
+    foreach lg [live_graph_list] {
+        $lg length 0
+        if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+            $lg append $::skin_graphs(live_graph_$lg)
+        }
+    }
+    if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
         set ::skin_graphs(live_graph_beverage_type) "espresso"
     }
 }
