@@ -103,8 +103,8 @@ dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 190] [expr $
 
 add_colour_button scale_bg_shape $::skin_home_pages $::skin(button_x_scale) $::skin(button_y_scale) 380 110 {} {do_nothing}
 dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 108] [expr $::skin(button_y_scale) + 26] -font [skin_font D-font [fixed_size 19]] -fill $::skin_button_label_colour -tags scale_btl_icon -anchor w -textvariable {$::skin(icon_bluetooth)}
-dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 112] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor w -textvariable {[skin_bean_weight]}
-dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 270] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor e -textvariable {[skin_milk_weight]}
+dui add variable off [expr $::skin(button_x_scale) + 112] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor w -textvariable {[skin_bean_weight]}
+dui add variable off [expr $::skin(button_x_scale) + 270] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor e -textvariable {[skin_milk_weight]}
 dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 190] [expr $::skin(button_y_scale) + 64] -font [skin_font font_bold 20] -fill $::skin_button_label_colour -anchor center -textvariable {[round_to_one_digits $::de1(scale_sensor_weight)]g}
 
 add_clear_button scale $::skin_home_pages [expr $::skin(button_x_scale) + 100] $::skin(button_y_scale) 180 110 {} {scale_tare; catch {ble_connect_to_scale}}; set_button scale font [skin_font font_bold 18]; set_button scale label_fill $::skin_button_label_colour
@@ -535,6 +535,7 @@ add_clear_button wf_close off 150 450 1490 130 {[translate "tap here to close"]}
 #########################################################
 ### espresso
 dui add dtext off 310 580 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add variable "off" 310 770 -tags wf_heading_profile_type -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {$::settings(beverage_type)}
 add_colour_button select_profile off 200 620 220 100 {[translate "select"]} {goto_profile_list}
 add_colour_button edit_profile off 200 820 220 100 {[translate "edit"]} {goto_profile_wizard}
 
@@ -575,14 +576,8 @@ dui add dtext off 180 800 -tags {wf_dose_cup_text_line_3 wf_espresso_info} -text
 dui add dtext off 900 580 -tags {wf_dose_cup_text_line_4 wf_espresso_info} -width 1400 -text [translate "tap to close"] -font [skin_font font 18] -fill $::skin_text_colour -anchor center -initial_state hidden
 add_clear_button {wf_espresso_info_close_button wf_espresso_info} off 100 560 1600 340 {} {hide_wf_espresso_info}; set_button {wf_espresso_info_close_button wf_espresso_info} state hidden
 
-### profile notes
-#dui add dtext off 230 1050 -tags wf_heading_profile_notes -text [translate "Profile Notes"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw
-#dui add variable off 230 1110 -fill $::skin_text_colour  -font [skin_font font 18] -tags wf_profile_notes -anchor nw -justify left -width 1230 -textvariable {$::settings(profile_notes)}
-
-
 hide_espresso_settings
 ###########################################################
-
 
 ### steam
 dui add dtext off 340 580 -tags wf_heading_steam_heater -text [translate "Steam heater"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
@@ -807,5 +802,5 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         page_show flush
     }
 }
-dui add variable "off" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(beverage_type)   $::settings(skin) v${::skin_version}}
+dui add variable "off" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
 

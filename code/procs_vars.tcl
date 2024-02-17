@@ -1,4 +1,4 @@
-set ::skin_version 1.13
+set ::skin_version 1.14
 
 
 set ::user(background_colour) #e4e4e4
@@ -290,7 +290,7 @@ proc fixed_size { size } {
 proc skin_low_water {} {
     if {[expr $::de1(water_level) < {$::settings(water_refill_point) + 3}]} {
         if {$::skin_blink2 == 1} {
-                after 400 {set ::skinx_blink2 0}
+                after 400 {set ::skin_blink2 0}
                 return ""
             } else {
                 set ::skin_blink2 1
@@ -882,7 +882,7 @@ proc wf_profile_button_list {} {
 
 proc show_espresso_settings {} {
     set ::wf_espresso_set_showing 1
-    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
+    foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_profile_type wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_profile_button_list] {
@@ -898,7 +898,7 @@ set ::wf_espresso_set_showing 1
 proc hide_espresso_settings {} {
     if {$::wf_espresso_set_showing == 1} {
         set ::wf_espresso_set_showing 0
-        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
+        foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_profile_type wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
         foreach s [wf_profile_button_list] {
@@ -1623,7 +1623,9 @@ proc header_settings {} {
         dui item config off fav_edit_buttons -initial_state hidden -state hidden
 
     } else {
+        hide_header_settings
         show_graph
+        skin_save skin
     }
 }
 
@@ -2700,7 +2702,7 @@ proc shift_graphs { args } {
     if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
         set ::skin_graphs(live_graph_beverage_type) "espresso"
     }
-    if {$::skin_graphs(live_graph_beverage_type) != "cleaning"} {
+    if {$::skin_graphs(live_graph_beverage_type) != "cleaning" && $::skin_graphs(live_graph_beverage_type) != "calibrate"} {
         foreach lg [shift_graph_list] {
             if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
                 set ::graph_cache(graph_d_$lg) $::graph_cache(graph_c_$lg)
