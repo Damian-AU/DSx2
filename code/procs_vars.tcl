@@ -1,4 +1,4 @@
-set ::skin_version 1.14
+set ::skin_version 1.15
 
 
 set ::user(background_colour) #e4e4e4
@@ -17,6 +17,7 @@ set ::user(yellow) #eae83d
 set ::user(orange) #fe7e00
 set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
+set ::user(y2_axis) #2b6084
 set ::user(graph_grid_colour) $::user(forground_colour)
 set ::user(mini_graph_grid_colour) #bbb
 set ::user(disabled_colour) #ddd
@@ -42,7 +43,7 @@ set ::skin_orange $::user(orange)
 set ::skin(help_colour) #fc2ff5
 set ::skin_x_axis_colour $::user(x_axis)
 set ::skin_y_axis_colour $::user(y_axis)
-set ::skin_y2_axis_colour $::skin_red
+set ::skin_y2_axis_colour $::user(y2_axis)
 set ::skin_grid_colour $::user(graph_grid_colour)
 set ::skin_mini_grid_colour $::user(mini_graph_grid_colour)
 set ::skin_disabled_colour $::user(disabled_colour)
@@ -88,6 +89,8 @@ set ::fav_label_fav2 $::skin(fav_label_fav2)
 set ::fav_label_fav3 $::skin(fav_label_fav3)
 set ::fav_label_fav4 $::skin(fav_label_fav4)
 set ::fav_label_fav5 $::skin(fav_label_fav5)
+set ::wf_dose_x 160
+set ::skin(graph_update_delay) 10
 
 if {![info exist ::skin(auto_tare_negative_reading)]} {
     set ::skin(auto_tare_negative_reading) 0
@@ -638,6 +641,8 @@ proc hide_graph {} {
 
     dui item config off main_graph_toggle_label -initial_state hidden -state hidden
     dui item config off main_graph_toggle_button* -initial_state hidden -state hidden
+    dui item config off main_graph_toggle_view_label -initial_state hidden -state hidden
+    dui item config off main_graph_toggle_view_button* -initial_state hidden -state hidden
 }
 
 proc show_graph {} {
@@ -679,6 +684,8 @@ proc show_graph {} {
     }
     dui item config off main_graph_toggle_label -initial_state normal -state normal
     dui item config off main_graph_toggle_button* -initial_state normal -state normal
+    dui item config off main_graph_toggle_view_label -initial_state hidden -state normal
+    dui item config off main_graph_toggle_view_button* -initial_state hidden -state normal
 }
 
 
@@ -719,6 +726,7 @@ proc toggle_main_graph {} {
         set ::main_graph_showing "show steam"
     }
 }
+
 
 proc do_nothing {} {
     return
@@ -2180,19 +2188,46 @@ proc backup_live_graph {} {
 	}
 }
 
-::de1::event::listener::on_major_state_change_add [lambda {event_dict} {
-    if { [dict get $event_dict previous_state] == "Espresso" } {
+::register_state_change_handler Espresso Idle update_live_graph
+
+proc update_live_graph {args} {
+    if {$::shift_graphs_conditions_met == 1} {
         backup_live_graph
         skin_save skin_graphs
+        set ::shift_graphs_conditions_met 0
+    } else {
+        after 3000 {
+            foreach lg [live_graph_list] {
+                $lg length 0
+                if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+                    $lg append $::skin_graphs(live_graph_$lg)
+                }
+            }
+        }
     }
-}]
+}
 
-
-::register_state_change_handler Idle Espresso shift_graphs
-::register_state_change_handler Idle Espresso save_graph_cache
-
-
-# dui add variable "espresso" 0 -10 -font [skin_font font 1] -textvariable {[backup_live_graph]}
+set ::shift_graphs_conditions_met 0
+set ::shift_graphs_timer_count 0
+::register_state_change_handler Idle Espresso shift_graphs_timer
+proc shift_graphs_timer {args} {
+    if {$::de1(state) != 4} {
+        set ::shift_graphs_timer_count 0
+        return
+    }
+    if {$::settings(beverage_type) == "cleaning" || $::settings(beverage_type) == "calibrate"} {
+        return
+    }
+    if {$::shift_graphs_timer_count < [expr $::skin(graph_update_delay) - 1]} {
+        incr ::shift_graphs_timer_count
+        after 1000 shift_graphs_timer
+    } else {
+        set ::shift_graphs_conditions_met 1
+        shift_graphs
+        save_graph_cache
+        set ::shift_graphs_timer_count 0
+    }
+}
 
 proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal
@@ -2204,6 +2239,9 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th
     $::home_espresso_graph element configure home_resistance  -xdata espresso_elapsed -ydata espresso_resistance
     $::home_espresso_graph element configure home_steps -xdata espresso_elapsed -ydata espresso_state_change
+    $::home_espresso_graph element configure home_flow_goal_2x  -xdata espresso_elapsed -ydata espresso_flow_goal_2x
+    $::home_espresso_graph element configure home_flow_2x  -xdata espresso_elapsed -ydata espresso_flow_2x
+    $::home_espresso_graph element configure home_weight_2x  -xdata espresso_elapsed -ydata espresso_flow_weight_2x
     restore_live_graphs
 }
 
@@ -2393,6 +2431,60 @@ proc setup_home_espresso_graph {} {
         }
     }
 }
+
+if {![info exist ::skin(show_y2_axis)]} {
+    set ::skin(show_y2_axis) 1
+}
+
+proc check_graph_axis {} {
+    if {$::skin(show_y2_axis) == 1} {
+        $::home_espresso_graph axis configure y -title "[translate "pressure"]  &  [translate "temperature"]"
+        $::home_espresso_graph axis configure y2 -hide 0
+        $::home_espresso_graph element configure home_flow_goal -hide 1
+        $::home_espresso_graph element configure home_flow -hide 1
+        $::home_espresso_graph element configure home_weight -hide 1
+        $::home_espresso_graph element configure home_flow_goal_2x -hide 0
+        $::home_espresso_graph element configure home_flow_2x -hide 0
+        $::home_espresso_graph element configure home_weight_2x -hide 0
+
+        $::home_espresso_graph_espresso axis configure y -title "[translate "pressure"]  &  [translate "temperature"]"
+        $::home_espresso_graph_espresso axis configure y2 -hide 0
+        $::home_espresso_graph_espresso element configure home_flow_goal -hide 1
+        $::home_espresso_graph_espresso element configure home_flow -hide 1
+        $::home_espresso_graph_espresso element configure home_weight -hide 1
+        $::home_espresso_graph_espresso element configure home_flow_goal_2x -hide 0
+        $::home_espresso_graph_espresso element configure home_flow_2x -hide 0
+        $::home_espresso_graph_espresso element configure home_weight_2x -hide 0
+    } else {
+        $::home_espresso_graph axis configure y -title ""
+        $::home_espresso_graph axis configure y2 -hide 1
+        $::home_espresso_graph element configure home_flow_goal -hide 0
+        $::home_espresso_graph element configure home_flow -hide 0
+        $::home_espresso_graph element configure home_weight -hide 0
+        $::home_espresso_graph element configure home_flow_goal_2x -hide 1
+        $::home_espresso_graph element configure home_flow_2x -hide 1
+        $::home_espresso_graph element configure home_weight_2x -hide 1
+
+        $::home_espresso_graph_espresso axis configure y -title ""
+        $::home_espresso_graph_espresso axis configure y2 -hide 1
+        $::home_espresso_graph_espresso element configure home_flow_goal -hide 0
+        $::home_espresso_graph_espresso element configure home_flow -hide 0
+        $::home_espresso_graph_espresso element configure home_weight -hide 0
+        $::home_espresso_graph_espresso element configure home_flow_goal_2x -hide 1
+        $::home_espresso_graph_espresso element configure home_flow_2x -hide 1
+        $::home_espresso_graph_espresso element configure home_weight_2x -hide 1
+    }
+}
+
+proc toggle_main_graph_view {} {
+    set ::skin(show_y2_axis) [expr !{$::skin(show_y2_axis)}]
+    check_graph_axis
+    skin_save skin
+}
+
+
+
+
 
 proc skin_clock {} {
     set date [clock format [clock seconds] -format " %a %e %b"]
@@ -2702,29 +2794,27 @@ proc shift_graphs { args } {
     if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
         set ::skin_graphs(live_graph_beverage_type) "espresso"
     }
-    if {$::skin_graphs(live_graph_beverage_type) != "cleaning" && $::skin_graphs(live_graph_beverage_type) != "calibrate"} {
-        foreach lg [shift_graph_list] {
-            if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
-                set ::graph_cache(graph_d_$lg) $::graph_cache(graph_c_$lg)
-            }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_c_$lg)] == 1} {
+            set ::graph_cache(graph_d_$lg) $::graph_cache(graph_c_$lg)
         }
-        foreach lg [shift_graph_list] {
-            if {[info exists ::graph_cache(graph_b_$lg)] == 1} {
-                set ::graph_cache(graph_c_$lg) $::graph_cache(graph_b_$lg)
-            }
-        }
-        foreach lg [shift_graph_list] {
-            if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
-                set ::graph_cache(graph_b_$lg) $::graph_cache(graph_a_$lg)
-            }
-        }
-        foreach lg [shift_graph_list] {
-            if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
-                set ::graph_cache(graph_a_$lg) $::skin_graphs(live_graph_$lg)
-            }
-        }
-        restore_cache_graphs
     }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_b_$lg)] == 1} {
+            set ::graph_cache(graph_c_$lg) $::graph_cache(graph_b_$lg)
+        }
+    }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::graph_cache(graph_a_$lg)] == 1} {
+            set ::graph_cache(graph_b_$lg) $::graph_cache(graph_a_$lg)
+        }
+    }
+    foreach lg [shift_graph_list] {
+        if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+            set ::graph_cache(graph_a_$lg) $::skin_graphs(live_graph_$lg)
+        }
+    }
+    restore_cache_graphs
 }
 
 proc save_graph_cache { args } {
@@ -2835,6 +2925,10 @@ proc skin_flow_cal_up {} {
     foreach flow $::skin_graphs(live_graph_espresso_flow) {
         espresso_flow append [expr $::settings(calibration_flow_multiplier) * $flow / $::skin_flow_cal_backup]
     }
+    espresso_flow_2x length 0
+    foreach flow_2x $::skin_graphs(live_graph_espresso_flow_2x) {
+        espresso_flow_2x append [expr $::settings(calibration_flow_multiplier) * $flow_2x / $::skin_flow_cal_backup]
+    }
 }
 
 proc skin_flow_cal_down {} {
@@ -2846,6 +2940,10 @@ proc skin_flow_cal_down {} {
     espresso_flow length 0
     foreach flow $::skin_graphs(live_graph_espresso_flow) {
         espresso_flow append [expr $::settings(calibration_flow_multiplier) * $flow / $::skin_flow_cal_backup]
+    }
+    espresso_flow_2x length 0
+    foreach flow_2x $::skin_graphs(live_graph_espresso_flow_2x) {
+        espresso_flow_2x append [expr $::settings(calibration_flow_multiplier) * $flow_2x / $::skin_flow_cal_backup]
     }
 }
 
