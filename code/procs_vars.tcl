@@ -1,4 +1,4 @@
-set ::skin_version 1.15
+set ::skin_version 1.16
 
 
 set ::user(background_colour) #e4e4e4
@@ -684,8 +684,8 @@ proc show_graph {} {
     }
     dui item config off main_graph_toggle_label -initial_state normal -state normal
     dui item config off main_graph_toggle_button* -initial_state normal -state normal
-    dui item config off main_graph_toggle_view_label -initial_state hidden -state normal
-    dui item config off main_graph_toggle_view_button* -initial_state hidden -state normal
+    dui item config off main_graph_toggle_view_label -initial_state normal -state normal
+    dui item config off main_graph_toggle_view_button* -initial_state normal -state normal
 }
 
 
@@ -710,6 +710,7 @@ proc show_steam_graph {} {
     }
     dui item config off main_graph_toggle_label -initial_state normal -state normal
     dui item config off main_graph_toggle_button* -initial_state normal -state normal
+
 }
 
 set ::main_graph_showing "show steam"
