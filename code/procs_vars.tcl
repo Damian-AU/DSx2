@@ -1,5 +1,4 @@
-set ::skin_version 1.16
-
+set ::skin_version 1.17
 
 set ::user(background_colour) #e4e4e4
 set ::user(forground_colour) #2b6084
