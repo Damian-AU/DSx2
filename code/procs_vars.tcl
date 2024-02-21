@@ -1,4 +1,4 @@
-set ::skin_version 1.17
+set ::skin_version 1.18
 
 set ::user(background_colour) #e4e4e4
 set ::user(forground_colour) #2b6084
@@ -2482,10 +2482,6 @@ proc toggle_main_graph_view {} {
     skin_save skin
 }
 
-
-
-
-
 proc skin_clock {} {
     set date [clock format [clock seconds] -format " %a %e %b"]
     #set date [clock format [clock seconds] -format "%a  "]
@@ -2998,7 +2994,6 @@ proc backup_settings {} {
     }
 }
 
-#trace add execution start_sleep leave skin_load_fav
 ::register_state_change_handler Sleep Idle skin_load_fav
 
 ###################################################

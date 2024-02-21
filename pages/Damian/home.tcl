@@ -29,19 +29,14 @@ add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colo
 add_colour_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state [translate "icon"]\r[translate "calibration"]} {toggle_icon_size_settings}; set_button edit_icon_size_button state hidden
 set ::skin_flow_cal_ui_added 0
 add_colour_button edit_flow_rate_cal_button off 100 1010 340 100 {[translate "flow rate"]\r[translate "calibrator"]} {add_cal_controller; restore_live_graphs_default_vectors; hide_header_settings; show_graph; skin_show_flow_cal}; set_button edit_flow_rate_cal_button state hidden
-
 add_colour_button edit_theme_button off 100 1140 340 100 {[translate "switch to"]\r[translate "P&D style"]} {set ::skin(theme) "P&D"; skin_save skin; after 500 skin_exit}; set_button edit_theme_button state hidden
-
 add_colour_button exit_heading_settings off 100 1330 260 100 {[translate "close"]} {hide_header_settings; show_graph; skin_save skin}; set_button exit_heading_settings state hidden
-
 dui add variable off 50 540 -fill $::skin_selected_colour -font [skin_font font_bold 24] -anchor w -textvariable {$::skin_initial_setup}
-
 dui add dbutton off 500 760 -bwidth 600 -bheight 560 -tags {icon_size_outline icon_size_set} -shape outline -width 2 -outline $::skin_selected_colour -initial_state hidden -command {do_nothing}
 dui add dtext off 800 880 -tags {heading_icon_size icon_size_set} -text [translate "Adjust so the star tips touch the square"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -justify center -initial_state hidden
 add_colour_button icon_size_minus off 640 940 100 100 {\Uf106} {adjust_icon_size_up}; set_button icon_size_minus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_minus state hidden
 add_colour_button icon_size_plus off 640 1140 100 100 {\Uf107} {adjust_icon_size_down}; set_button icon_size_plus font [skin_font awesome_light [fixed_size 34]]; set_button icon_size_plus state hidden
 dui add variable off 690 1090 -fill $::skin_text_colour -font [skin_font font_bold 24] -tags {icon_size_value icon_size_set} -anchor center -initial_state hidden -textvariable {$::skin(icon_size)}
-
 dui add shape rect off 850 1040 950 1140 -width 2 -outline $::skin_text_colour -fill $::skin_background_colour -tags {icon_size_shape icon_size_set} -initial_state hidden
 dui add variable off 900 1090 -font [skin_font awesome_light [fixed_size 50]] -fill $::skin_text_colour -anchor center -initial_state hidden -tags {skin_icon_size_test icon_size_set} -textvariable {$::skin(icon_fav)}
 
@@ -66,7 +61,6 @@ set_button fav4_edit font [skin_font awesome_light [fixed_size 28]]
 set_button fav5_edit font [skin_font awesome_light [fixed_size 28]]
 
 set_favs_showing
-
 
 ### machine
 dui add variable $::skin_home_pages 2410 [expr $::skin(button_y_machine) + 92] -font [skin_font D-font [fixed_size 264]] -fill $::skin_forground_colour -tags decent_icon -anchor e -textvariable {D}
