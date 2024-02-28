@@ -169,7 +169,7 @@ add_de1_variable "off espresso steam" 0 2000 -font [skin_font font 6] -fill #000
     [profile_type_text]
 }
 
-blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_state_change
+blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_flow_2x compare_espresso_flow_weight_2x compare_espresso_state_change
 
 set ::key_font_size [fixed_size 14]
 dui add shape oval "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {pressure_icon graph_key_shape}
@@ -213,61 +213,16 @@ set ::main_graph_height [rescale_y_skin 1010]
 add_de1_widget "off flush water" graph 30 520 {
     set ::home_espresso_graph $widget
     bind $widget [platform_button_press] {
-        if {$::main_graph_height == [rescale_y_skin 1010]} {
-            set ::main_graph_height [rescale_y_skin 840]
-            $::home_espresso_graph configure -height [rescale_y_skin 840]
-            .can itemconfigure graph_a -state normal
-            .can itemconfigure graph_b -state normal
-            .can itemconfigure graph_c -state normal
-            .can itemconfigure graph_d -state normal
-            dui item config off graph_a -initial_state normal
-            dui item config off graph_b -initial_state normal
-            dui item config off graph_c -initial_state normal
-            dui item config off graph_d -initial_state normal
-            dui item config off live_graph_data -initial_state hidden -state hidden
-
-            dui item config off cga_p -initial_state normal -state normal
-            dui item config off cgb_p -initial_state normal -state normal
-            dui item config off cgc_p -initial_state normal -state normal
-            dui item config off cgd_p -initial_state normal -state normal
-            dui item config off cga_d -initial_state normal -state normal
-            dui item config off cgb_d -initial_state normal -state normal
-            dui item config off cgc_d -initial_state normal -state normal
-            dui item config off cgd_d -initial_state normal -state normal
-        } else {
-            set ::main_graph_height [rescale_y_skin 1010]
-            $::home_espresso_graph configure -height [rescale_y_skin 1010]
-            .can itemconfigure graph_a -state hidden
-            .can itemconfigure graph_b -state hidden
-            .can itemconfigure graph_c -state hidden
-            .can itemconfigure graph_d -state hidden
-            dui item config off graph_a -initial_state hidden
-            dui item config off graph_b -initial_state hidden
-            dui item config off graph_c -initial_state hidden
-            dui item config off graph_d -initial_state hidden
-            dui item config off live_graph_data -initial_state normal -state normal
-
-            dui item config off cga_p -initial_state hidden -state hidden
-            dui item config off cgb_p -initial_state hidden -state hidden
-            dui item config off cgc_p -initial_state hidden -state hidden
-            dui item config off cgd_p -initial_state hidden -state hidden
-            dui item config off cga_d -initial_state hidden -state hidden
-            dui item config off cgb_d -initial_state hidden -state hidden
-            dui item config off cgc_d -initial_state hidden -state hidden
-            dui item config off cgd_d -initial_state hidden -state hidden
-
-            set ::cache_graph_compare 0
-            $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
-            $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
-            $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
-            $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
-        }
+        toggle_cache_graphs
     }
 
     $widget element create compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 4] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 4] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 4] -color #a2693d -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color #a2a293  -pixels 0;
+
+    $widget element create compare_flow_2x -xdata compare_espresso_elapsed -ydata compare_espresso_flow_2x -symbol none -label "" -linewidth [rescale_x_skin 4] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create compare_weight_2x -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight_2x -symbol none -label "" -linewidth [rescale_x_skin 4] -color #a2693d -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
 
 
     $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};

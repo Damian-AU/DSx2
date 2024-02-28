@@ -1,4 +1,4 @@
-set ::skin_version 1.18
+set ::skin_version 1.19
 
 set ::user(background_colour) #e4e4e4
 set ::user(forground_colour) #2b6084
@@ -2416,10 +2416,67 @@ proc toggle_graph_compare { graph } {
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
-        $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
-        $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_state_change
+        if {$::skin(show_y2_axis) == 0} {
+            $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
+            $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight
+        } else {
+            $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_2x
+            $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight_2x
+        }
     }
+}
+
+proc toggle_cache_graphs {} {
+    if {$::main_graph_height == [rescale_y_skin 1010]} {
+            set ::main_graph_height [rescale_y_skin 840]
+            $::home_espresso_graph configure -height [rescale_y_skin 840]
+            .can itemconfigure graph_a -state normal
+            .can itemconfigure graph_b -state normal
+            .can itemconfigure graph_c -state normal
+            .can itemconfigure graph_d -state normal
+            dui item config off graph_a -initial_state normal
+            dui item config off graph_b -initial_state normal
+            dui item config off graph_c -initial_state normal
+            dui item config off graph_d -initial_state normal
+            dui item config off live_graph_data -initial_state hidden -state hidden
+
+            dui item config off cga_p -initial_state normal -state normal
+            dui item config off cgb_p -initial_state normal -state normal
+            dui item config off cgc_p -initial_state normal -state normal
+            dui item config off cgd_p -initial_state normal -state normal
+            dui item config off cga_d -initial_state normal -state normal
+            dui item config off cgb_d -initial_state normal -state normal
+            dui item config off cgc_d -initial_state normal -state normal
+            dui item config off cgd_d -initial_state normal -state normal
+        } else {
+            set ::main_graph_height [rescale_y_skin 1010]
+            $::home_espresso_graph configure -height [rescale_y_skin 1010]
+            .can itemconfigure graph_a -state hidden
+            .can itemconfigure graph_b -state hidden
+            .can itemconfigure graph_c -state hidden
+            .can itemconfigure graph_d -state hidden
+            dui item config off graph_a -initial_state hidden
+            dui item config off graph_b -initial_state hidden
+            dui item config off graph_c -initial_state hidden
+            dui item config off graph_d -initial_state hidden
+            dui item config off live_graph_data -initial_state normal -state normal
+
+            dui item config off cga_p -initial_state hidden -state hidden
+            dui item config off cgb_p -initial_state hidden -state hidden
+            dui item config off cgc_p -initial_state hidden -state hidden
+            dui item config off cgd_p -initial_state hidden -state hidden
+            dui item config off cga_d -initial_state hidden -state hidden
+            dui item config off cgb_d -initial_state hidden -state hidden
+            dui item config off cgc_d -initial_state hidden -state hidden
+            dui item config off cgd_d -initial_state hidden -state hidden
+
+            set ::cache_graph_compare 0
+            $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
+            $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
+            $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+            $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
+        }
 }
 
 
@@ -2455,6 +2512,29 @@ proc check_graph_axis {} {
         $::home_espresso_graph_espresso element configure home_flow_goal_2x -hide 0
         $::home_espresso_graph_espresso element configure home_flow_2x -hide 0
         $::home_espresso_graph_espresso element configure home_weight_2x -hide 0
+
+
+        $::cache_graph_a element configure cache_a_espresso_flow -hide 1
+        $::cache_graph_a element configure cache_a_espresso_flow_weight -hide 1
+        $::cache_graph_a element configure cache_a_espresso_flow_2x -hide 0
+        $::cache_graph_a element configure cache_a_espresso_flow_weight_2x -hide 0
+        $::cache_graph_a axis configure y2 -hide 0
+        $::cache_graph_b element configure cache_b_espresso_flow -hide 1
+        $::cache_graph_b element configure cache_b_espresso_flow_weight -hide 1
+        $::cache_graph_b element configure cache_b_espresso_flow_2x -hide 0
+        $::cache_graph_b element configure cache_b_espresso_flow_weight_2x -hide 0
+        $::cache_graph_b axis configure y2 -hide 0
+        $::cache_graph_c element configure cache_c_espresso_flow -hide 1
+        $::cache_graph_c element configure cache_c_espresso_flow_weight -hide 1
+        $::cache_graph_c element configure cache_c_espresso_flow_2x -hide 0
+        $::cache_graph_c element configure cache_c_espresso_flow_weight_2x -hide 0
+        $::cache_graph_c axis configure y2 -hide 0
+        $::cache_graph_d element configure cache_d_espresso_flow -hide 1
+        $::cache_graph_d element configure cache_d_espresso_flow_weight -hide 1
+        $::cache_graph_d element configure cache_d_espresso_flow_2x -hide 0
+        $::cache_graph_d element configure cache_d_espresso_flow_weight_2x -hide 0
+        $::cache_graph_d axis configure y2 -hide 0
+
     } else {
         $::home_espresso_graph axis configure y -title ""
         $::home_espresso_graph axis configure y2 -hide 1
@@ -2473,7 +2553,32 @@ proc check_graph_axis {} {
         $::home_espresso_graph_espresso element configure home_flow_goal_2x -hide 1
         $::home_espresso_graph_espresso element configure home_flow_2x -hide 1
         $::home_espresso_graph_espresso element configure home_weight_2x -hide 1
+
+
+        $::cache_graph_a element configure cache_a_espresso_flow -hide 0
+        $::cache_graph_a element configure cache_a_espresso_flow_weight -hide 0
+        $::cache_graph_a element configure cache_a_espresso_flow_2x -hide 1
+        $::cache_graph_a element configure cache_a_espresso_flow_weight_2x -hide 1
+        $::cache_graph_a axis configure y2 -hide 1
+        $::cache_graph_b element configure cache_b_espresso_flow -hide 0
+        $::cache_graph_b element configure cache_b_espresso_flow_weight -hide 0
+        $::cache_graph_b element configure cache_b_espresso_flow_2x -hide 1
+        $::cache_graph_b element configure cache_b_espresso_flow_weight_2x -hide 1
+        $::cache_graph_b axis configure y2 -hide 1
+        $::cache_graph_c element configure cache_c_espresso_flow -hide 0
+        $::cache_graph_c element configure cache_c_espresso_flow_weight -hide 0
+        $::cache_graph_c element configure cache_c_espresso_flow_2x -hide 1
+        $::cache_graph_c element configure cache_c_espresso_flow_weight_2x -hide 1
+        $::cache_graph_c axis configure y2 -hide 1
+        $::cache_graph_d element configure cache_d_espresso_flow -hide 0
+        $::cache_graph_d element configure cache_d_espresso_flow_weight -hide 0
+        $::cache_graph_d element configure cache_d_espresso_flow_2x -hide 1
+        $::cache_graph_d element configure cache_d_espresso_flow_weight_2x -hide 1
+        $::cache_graph_d axis configure y2 -hide 1
     }
+    set a $::cache_graph_compare
+    set ::cache_graph_compare 0
+    toggle_graph_compare $a
 }
 
 proc toggle_main_graph_view {} {
@@ -2769,17 +2874,17 @@ set {} {
 
 # programming stuff
 
-blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_state_change
-blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_state_change
-blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_state_change
-blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_state_change
+blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change
+blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change
+blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change
+blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change
 
 proc shift_graph_list {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_state_change profile time]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change profile time]
 }
 
 proc shift_graph_list_vectors {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_state_change]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change]
 }
 
 proc shift_graph_list_variables {} {
