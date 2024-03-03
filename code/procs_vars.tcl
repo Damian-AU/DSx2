@@ -1,7 +1,7 @@
-set ::skin_version 1.19
+set ::skin_version 1.20
 
 set ::user(background_colour) #e4e4e4
-set ::user(forground_colour) #2b6084
+set ::user(foreground_colour) #2b6084
 set ::user(button_label_colour) #fff
 set ::user(text_colour) #2b6084
 set ::user(selected_colour) #fe7e00
@@ -17,16 +17,43 @@ set ::user(orange) #fe7e00
 set ::user(x_axis) #2b6084
 set ::user(y_axis) #2b6084
 set ::user(y2_axis) #2b6084
-set ::user(graph_grid_colour) $::user(forground_colour)
+set ::user(graph_grid_colour) $::user(foreground_colour)
 set ::user(mini_graph_grid_colour) #bbb
-set ::user(disabled_colour) #ddd
+set ::user(disabled_colour) #ccc
+
+set ::user(background_2_colour) #e4e4e4
+set ::user(foreground_2_colour) #2b6084
+set ::user(button_label_2_colour) #fff
+set ::user(button_label_disabled_colour) $::user(disabled_colour)
+set ::user(button_label_highlight_colour) #fe7e00
+set ::user(text_2_colour) #2b6084
+set ::user(text_3_colour) #2b6084
+set ::user(text_disabled_colour) $::user(disabled_colour)
+set ::user(text_highlight_colour) #fe7e00
+set ::user(button_press_colour) #eae83d
 
 if {[file exists "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"] == 1} {
     array set ::user [encoding convertfrom utf-8 [read_binary_file "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"]]
 }
 
+set ::skin_background_2_colour $::user(background_2_colour)
+set ::skin_foreground_2_colour $::user(foreground_2_colour)
+set ::skin_button_label_2_colour $::user(button_label_2_colour)
+set ::skin_button_label_disabled_colour $::user(button_label_disabled_colour)
+set ::skin_button_label_highlight_colour $::user(button_label_highlight_colour)
+set ::skin_text_2_colour $::user(text_2_colour)
+set ::skin_text_3_colour $::user(text_3_colour)
+set ::skin_text_disabled_colour $::user(text_disabled_colour)
+set ::skin_text_highlight_colour $::user(text_highlight_colour)
+set ::skin_button_press_colour $::user(button_press_colour)
+
+if {[info exists ::user(forground_colour)] == 1} {
+    set ::user(foreground_colour) $::user(forground_colour)
+}
+set ::skin_foreground_colour $::user(foreground_colour)
+set ::skin_forground_colour $::user(foreground_colour)
+
 set ::skin_background_colour $::user(background_colour)
-set ::skin_forground_colour $::user(forground_colour)
 set ::skin_button_label_colour $::user(button_label_colour)
 set ::skin_text_colour $::user(text_colour)
 set ::skin_selected_colour $::user(selected_colour)
@@ -69,7 +96,7 @@ set ::skin(button_x_stop_espresso) $::skin(button_x_espresso)
 set ::skin(button_x_stop_steam) $::skin(button_x_espresso)
 set ::skin(button_x_stop_flush) $::skin(button_x_espresso)
 set ::skin(button_x_stop_water) $::skin(button_x_espresso)
-set ::skin(graph_key_x) 120
+set ::skin(graph_key_x) 80
 set ::skin(graph_key_y) 470
 set ::skin(button_x_fav) 2080
 set ::skin(button_y_fav) 1100
@@ -529,7 +556,7 @@ proc set_button {button_name property value} {
 proc add_colour_button {button_name pages x y width height tv command } {
     set ::${button_name}(pages) $pages
 
-    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_forground_colour -outline $::skin_forground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
@@ -554,7 +581,7 @@ proc add_icon_button {button_name pages x y width height tv command {extra_tags 
 
 proc add_icon_label_button {button_name pages x y width height tvi tv command } {
     set ::${button_name}(pages) $pages
-    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_forground_colour -outline $::skin_forground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
     dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
     dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
@@ -601,9 +628,9 @@ proc set_arrow {arrow value} {
 
 set ::graph_hidden 0
 proc hide_graph {} {
-    if {$::main_graph_showing == "show espresso"} {
+    if {$::main_graph_showing == "espresso"} {
         hide_steam_graph
-        set ::main_graph_showing "show steam"
+        set ::main_graph_showing "steam"
     }
     set ::graph_hidden 1
     set_favs_showing
@@ -712,18 +739,18 @@ proc show_steam_graph {} {
 
 }
 
-set ::main_graph_showing "show steam"
+set ::main_graph_showing "steam"
 
 proc toggle_main_graph {} {
-    if {$::main_graph_showing == "show steam"} {
+    if {$::main_graph_showing == "steam"} {
         hide_graph
         set_button auto_tare state hidden
         show_steam_graph
-        set ::main_graph_showing "show espresso"
+        set ::main_graph_showing "espresso"
     } else {
         hide_steam_graph
         show_graph
-        set ::main_graph_showing "show steam"
+        set ::main_graph_showing "steam"
     }
 }
 
@@ -2322,6 +2349,7 @@ proc check_graph {} {
 set ::skin_data_curve_size 10
 
 proc toggle_graph {curve} {
+
     if {$curve == "steam_pressure" || $curve == "steam_temperature" || $curve == "steam_flow"} {
         if {$::skin($curve) > 0} {
             set ::skin($curve) 0
@@ -2353,8 +2381,13 @@ proc toggle_graph {curve} {
             if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
                 $::home_espresso_graph element configure home_${curve}_goal -linewidth 0
                 $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth 0
+
+                if {$curve == "flow" && $::skin(show_y2_axis) == 1} {
+                    $::home_espresso_graph_espresso element configure home_${curve}_goal_2x -linewidth 0
+                    $::home_espresso_graph element configure home_${curve}_goal_2x -linewidth 0
+                }
             }
-            if {$curve == "pressure" || $curve == "weight" || $curve == "flow" || $curve == "steps"} {
+            if {$curve == "pressure" || $curve == "weight" || $curve == "flow" || $curve == "steps" || $curve == "temperature" || $curve == "resistance"} {
                 $::home_espresso_graph element configure compare_${curve} -linewidth 0
             }
             $::home_espresso_graph element configure home_${curve} -linewidth 0
@@ -2362,11 +2395,19 @@ proc toggle_graph {curve} {
             dui item config espresso ${curve}_data -fill $::skin_disabled_colour
             dui item config "off flush water" ${curve}_text -fill $::skin_disabled_colour
             dui item config $::skin_home_pages ${curve}_icon -fill $::skin_disabled_colour -outline $::skin_disabled_colour
+            if {$curve == "flow" || $curve == "weight" && $::skin(show_y2_axis) == 1} {
+                $::home_espresso_graph_espresso element configure home_${curve}_2x -linewidth 0
+                $::home_espresso_graph element configure home_${curve}_2x -linewidth 0
+            }
         } else {
             set ::skin($curve) 1
             if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
                 $::home_espresso_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
                 $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
+                if {$curve == "flow" && $::skin(show_y2_axis) == 1} {
+                    $::home_espresso_graph_espresso element configure home_${curve}_goal_2x -linewidth [rescale_x_skin 4]
+                    $::home_espresso_graph element configure home_${curve}_goal_2x -linewidth [rescale_x_skin 4]
+                }
             }
             if {$curve == "steps"} {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin 2]
@@ -2376,7 +2417,7 @@ proc toggle_graph {curve} {
                 $::home_espresso_graph element configure home_${curve} -linewidth [rescale_x_skin $::skin_data_curve_size]
                 $::home_espresso_graph_espresso element configure home_${curve} -linewidth [rescale_x_skin $::skin_data_curve_size]
             }
-            if {$curve == "pressure" || $curve == "flow" || $curve == "weight"} {
+            if {$curve == "pressure" || $curve == "flow" || $curve == "weight" || $curve == "temperature" || $curve == "resistance"} {
                 $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 4]
             }
             dui item config espresso ${curve}_data -fill $::skin_text_colour
@@ -2399,6 +2440,10 @@ proc toggle_graph {curve} {
             if {$curve == "steps"} {
                 dui item config $::skin_home_pages ${curve}_icon -fill $::skin_grey -outline $::skin_grey
             }
+            if {$curve == "flow" || $curve == "weight" && $::skin(show_y2_axis) == 1} {
+                $::home_espresso_graph_espresso element configure home_${curve}_2x -linewidth 5
+                $::home_espresso_graph element configure home_${curve}_2x -linewidth 5
+            }
             $::home_espresso_graph axis configure y -max $::skin(zoomed_y_axis_max) -min $::skin(zoomed_y_axis_min)
         }
     }
@@ -2413,10 +2458,14 @@ proc toggle_graph_compare { graph } {
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
+        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
         $::home_espresso_graph element configure compare_steps -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_state_change
+        $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_resistance -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_resistance
         if {$::skin(show_y2_axis) == 0} {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
             $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight
@@ -2476,6 +2525,8 @@ proc toggle_cache_graphs {} {
             $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
             $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
             $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
+            $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+            $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
         }
 }
 
@@ -2576,6 +2627,31 @@ proc check_graph_axis {} {
         $::cache_graph_d element configure cache_d_espresso_flow_weight_2x -hide 1
         $::cache_graph_d axis configure y2 -hide 1
     }
+    if {$::skin(goal) > 0} {
+        $::home_espresso_graph element configure home_pressure_goal -linewidth 0
+        $::home_espresso_graph element configure home_temperature_goal -linewidth 0
+        $::home_espresso_graph element configure home_flow_goal -linewidth 0
+        $::home_espresso_graph element configure home_flow_goal_2x -linewidth 0
+        $::home_espresso_graph_espresso element configure home_pressure_goal -linewidth 0
+        $::home_espresso_graph_espresso element configure home_temperature_goal -linewidth 0
+        $::home_espresso_graph_espresso element configure home_flow_goal -linewidth 0
+        $::home_espresso_graph_espresso element configure home_flow_goal_2x -linewidth 0
+    } else {
+        if {$::skin(pressure) == 1} {
+        $::home_espresso_graph element configure home_pressure_goal -linewidth [rescale_x_skin 4]
+        $::home_espresso_graph_espresso element configure home_pressure_goal -linewidth [rescale_x_skin 4]
+        }
+        if {$::skin(temperature) > 0} {
+        $::home_espresso_graph element configure home_temperature_goal -linewidth [rescale_x_skin 4]
+        $::home_espresso_graph_espresso element configure home_temperature_goal -linewidth [rescale_x_skin 4]
+        }
+        if {$::skin(flow) == 1} {
+        $::home_espresso_graph element configure home_flow_goal -linewidth [rescale_x_skin 4]
+        $::home_espresso_graph element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
+        $::home_espresso_graph_espresso element configure home_flow_goal -linewidth [rescale_x_skin 4]
+        $::home_espresso_graph_espresso element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
+        }
+    }
     set a $::cache_graph_compare
     set ::cache_graph_compare 0
     toggle_graph_compare $a
@@ -2586,6 +2662,13 @@ proc toggle_main_graph_view {} {
     check_graph_axis
     skin_save skin
 }
+
+proc toggle_main_graph_goal {} {
+    set ::skin(goal) [expr !{$::skin(goal)}]
+    check_graph_axis
+    skin_save skin
+}
+
 
 proc skin_clock {} {
     set date [clock format [clock seconds] -format " %a %e %b"]
@@ -2874,17 +2957,17 @@ set {} {
 
 # programming stuff
 
-blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change
-blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change
-blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change
-blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change
+blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket10th graph_a_espresso_resistance
+blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket10th graph_b_espresso_resistance
+blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket10th graph_c_espresso_resistance
+blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket10th graph_d_espresso_resistance
 
 proc shift_graph_list {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change profile time]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket10th espresso_resistance profile time]
 }
 
 proc shift_graph_list_vectors {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket10th espresso_resistance]
 }
 
 proc shift_graph_list_variables {} {

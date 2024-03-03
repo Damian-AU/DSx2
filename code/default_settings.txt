@@ -78,6 +78,7 @@ temperature 10
 flow 10
 weight 10
 resistance 0
+goal 5
 
 steps 10
 steam_pressure 10
