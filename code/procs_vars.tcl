@@ -1,4 +1,4 @@
-set ::skin_version 1.20
+set ::skin_version 1.21
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -11,7 +11,7 @@ set ::user(green) #0CA581
 set ::user(blue) #49a2e8
 set ::user(red) #DA515E
 set ::user(brown) #A1663A
-set ::user(grey) #7C7C7C
+set ::user(grey) #c1c1c1
 set ::user(yellow) #eae83d
 set ::user(orange) #fe7e00
 set ::user(x_axis) #2b6084
@@ -19,7 +19,7 @@ set ::user(y_axis) #2b6084
 set ::user(y2_axis) #2b6084
 set ::user(graph_grid_colour) $::user(foreground_colour)
 set ::user(mini_graph_grid_colour) #bbb
-set ::user(disabled_colour) #ccc
+set ::user(disabled_colour) #c1c1c1
 
 set ::user(background_2_colour) #e4e4e4
 set ::user(foreground_2_colour) #2b6084
@@ -255,6 +255,8 @@ proc skin_font {font_name size} {
 }
 
 set ::icon_cal_check 0
+
+set ::skin_initial_setup ""
 if {[info exists ::skin(icon_size)] != 1} {
     set ::skin(icon_size) 3
     if {$::settings(screen_size_width) == 2800} {
@@ -265,7 +267,6 @@ if {[info exists ::skin(icon_size)] != 1} {
     }
     set ::icon_cal_check 1
 }
-set ::skin_initial_setup ""
 proc initial_icon_cal_check {} {
     if {$::icon_cal_check == 1} {
         set ::skin_initial_setup [translate "First time start up, please check icon calibration"]
@@ -561,12 +562,6 @@ proc add_colour_button {button_name pages x y width height tv command } {
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
-#proc add_clear_button {button_name pages x y width height tv command } {
-#    set ::${button_name}(pages) $pages
-#    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
-#    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
-#}
-
 proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
@@ -628,6 +623,7 @@ proc set_arrow {arrow value} {
 
 set ::graph_hidden 0
 proc hide_graph {} {
+    hide_zoom_temperature
     if {$::main_graph_showing == "espresso"} {
         hide_steam_graph
         set ::main_graph_showing "steam"
@@ -637,6 +633,7 @@ proc hide_graph {} {
     dui item moveto off heading_entry 450 -1001
     .can itemconfigure main_graph -state hidden
     dui item config off main_graph -initial_state hidden
+    set ::zoom_temperature 0
     set_button auto_tare state normal
     set_button favs_number state normal
     set pages {off espresso hotwaterrinse water}
@@ -669,9 +666,12 @@ proc hide_graph {} {
     dui item config off main_graph_toggle_button* -initial_state hidden -state hidden
     dui item config off main_graph_toggle_view_label -initial_state hidden -state hidden
     dui item config off main_graph_toggle_view_button* -initial_state hidden -state hidden
+    dui item config off main_graph_toggle_goal_label -initial_state hidden -state hidden
+    dui item config off main_graph_toggle_goal_button* -initial_state hidden -state hidden
 }
 
 proc show_graph {} {
+    check_graph_axis
     set ::graph_hidden 0
     rest_fav_buttons
     .can itemconfigure main_graph -state normal
@@ -712,6 +712,8 @@ proc show_graph {} {
     dui item config off main_graph_toggle_button* -initial_state normal -state normal
     dui item config off main_graph_toggle_view_label -initial_state normal -state normal
     dui item config off main_graph_toggle_view_button* -initial_state normal -state normal
+    dui item config off main_graph_toggle_goal_label -initial_state normal -state normal
+    dui item config off main_graph_toggle_goal_button* -initial_state normal -state normal
 }
 
 
@@ -736,7 +738,7 @@ proc show_steam_graph {} {
     }
     dui item config off main_graph_toggle_label -initial_state normal -state normal
     dui item config off main_graph_toggle_button* -initial_state normal -state normal
-
+    set ::zoom_temperature 0
 }
 
 set ::main_graph_showing "steam"
@@ -2264,6 +2266,7 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_flow  -xdata espresso_elapsed -ydata espresso_flow
     $::home_espresso_graph element configure home_weight  -xdata espresso_elapsed -ydata espresso_flow_weight
     $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th
+    $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket
     $::home_espresso_graph element configure home_resistance  -xdata espresso_elapsed -ydata espresso_resistance
     $::home_espresso_graph element configure home_steps -xdata espresso_elapsed -ydata espresso_state_change
     $::home_espresso_graph element configure home_flow_goal_2x  -xdata espresso_elapsed -ydata espresso_flow_goal_2x
@@ -2286,6 +2289,7 @@ proc restore_live_graphs {} {
     if {![info exists ::skin_graphs(live_graph_beverage_type)]} {
         set ::skin_graphs(live_graph_beverage_type) "espresso"
     }
+    hide_zoom_temperature
 }
 
 proc restore_graphs {} {
@@ -2349,7 +2353,6 @@ proc check_graph {} {
 set ::skin_data_curve_size 10
 
 proc toggle_graph {curve} {
-
     if {$curve == "steam_pressure" || $curve == "steam_temperature" || $curve == "steam_flow"} {
         if {$::skin($curve) > 0} {
             set ::skin($curve) 0
@@ -2401,12 +2404,14 @@ proc toggle_graph {curve} {
             }
         } else {
             set ::skin($curve) 1
-            if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
-                $::home_espresso_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
-                $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
-                if {$curve == "flow" && $::skin(show_y2_axis) == 1} {
-                    $::home_espresso_graph_espresso element configure home_${curve}_goal_2x -linewidth [rescale_x_skin 4]
-                    $::home_espresso_graph element configure home_${curve}_goal_2x -linewidth [rescale_x_skin 4]
+            if {$::skin(goal) != 0} {
+                if {$curve == "pressure" || $curve == "temperature" || $curve == "flow"} {
+                    $::home_espresso_graph element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
+                    $::home_espresso_graph_espresso element configure home_${curve}_goal -linewidth [rescale_x_skin 4]
+                    if {$curve == "flow" && $::skin(show_y2_axis) == 1} {
+                        $::home_espresso_graph_espresso element configure home_${curve}_goal_2x -linewidth [rescale_x_skin 4]
+                        $::home_espresso_graph element configure home_${curve}_goal_2x -linewidth [rescale_x_skin 4]
+                    }
                 }
             }
             if {$curve == "steps"} {
@@ -2459,12 +2464,14 @@ proc toggle_graph_compare { graph } {
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
         $::home_espresso_graph element configure compare_steps -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_state_change
         $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_resistance
         if {$::skin(show_y2_axis) == 0} {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
@@ -2526,6 +2533,7 @@ proc toggle_cache_graphs {} {
             $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
             $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
             $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+            $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
             $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
         }
 }
@@ -2545,6 +2553,7 @@ if {![info exist ::skin(show_y2_axis)]} {
 }
 
 proc check_graph_axis {} {
+    hide_zoom_temperature
     if {$::skin(show_y2_axis) == 1} {
         $::home_espresso_graph axis configure y -title "[translate "pressure"]  &  [translate "temperature"]"
         $::home_espresso_graph axis configure y2 -hide 0
@@ -2563,7 +2572,6 @@ proc check_graph_axis {} {
         $::home_espresso_graph_espresso element configure home_flow_goal_2x -hide 0
         $::home_espresso_graph_espresso element configure home_flow_2x -hide 0
         $::home_espresso_graph_espresso element configure home_weight_2x -hide 0
-
 
         $::cache_graph_a element configure cache_a_espresso_flow -hide 1
         $::cache_graph_a element configure cache_a_espresso_flow_weight -hide 1
@@ -2585,8 +2593,9 @@ proc check_graph_axis {} {
         $::cache_graph_d element configure cache_d_espresso_flow_2x -hide 0
         $::cache_graph_d element configure cache_d_espresso_flow_weight_2x -hide 0
         $::cache_graph_d axis configure y2 -hide 0
-
+        dui item config "off espresso flush water" main_graph_toggle_view_label -fill $::skin_text_colour
     } else {
+        dui item config "off espresso flush water" main_graph_toggle_view_label -fill $::skin_disabled_colour
         $::home_espresso_graph axis configure y -title ""
         $::home_espresso_graph axis configure y2 -hide 1
         $::home_espresso_graph element configure home_flow_goal -hide 0
@@ -2627,7 +2636,7 @@ proc check_graph_axis {} {
         $::cache_graph_d element configure cache_d_espresso_flow_weight_2x -hide 1
         $::cache_graph_d axis configure y2 -hide 1
     }
-    if {$::skin(goal) > 0} {
+    if {$::skin(goal) == 0} {
         $::home_espresso_graph element configure home_pressure_goal -linewidth 0
         $::home_espresso_graph element configure home_temperature_goal -linewidth 0
         $::home_espresso_graph element configure home_flow_goal -linewidth 0
@@ -2636,20 +2645,22 @@ proc check_graph_axis {} {
         $::home_espresso_graph_espresso element configure home_temperature_goal -linewidth 0
         $::home_espresso_graph_espresso element configure home_flow_goal -linewidth 0
         $::home_espresso_graph_espresso element configure home_flow_goal_2x -linewidth 0
+        dui item config "off espresso flush water" main_graph_toggle_goal_label -fill $::skin_disabled_colour
     } else {
-        if {$::skin(pressure) == 1} {
-        $::home_espresso_graph element configure home_pressure_goal -linewidth [rescale_x_skin 4]
-        $::home_espresso_graph_espresso element configure home_pressure_goal -linewidth [rescale_x_skin 4]
+        dui item config "off espresso flush water" main_graph_toggle_goal_label -fill $::skin_text_colour
+        if {$::skin(pressure) > 0} {
+            $::home_espresso_graph element configure home_pressure_goal -linewidth [rescale_x_skin 4]
+            $::home_espresso_graph_espresso element configure home_pressure_goal -linewidth [rescale_x_skin 4]
         }
         if {$::skin(temperature) > 0} {
-        $::home_espresso_graph element configure home_temperature_goal -linewidth [rescale_x_skin 4]
-        $::home_espresso_graph_espresso element configure home_temperature_goal -linewidth [rescale_x_skin 4]
+            $::home_espresso_graph element configure home_temperature_goal -linewidth [rescale_x_skin 4]
+            $::home_espresso_graph_espresso element configure home_temperature_goal -linewidth [rescale_x_skin 4]
         }
-        if {$::skin(flow) == 1} {
-        $::home_espresso_graph element configure home_flow_goal -linewidth [rescale_x_skin 4]
-        $::home_espresso_graph element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
-        $::home_espresso_graph_espresso element configure home_flow_goal -linewidth [rescale_x_skin 4]
-        $::home_espresso_graph_espresso element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
+        if {$::skin(flow) > 0} {
+            $::home_espresso_graph element configure home_flow_goal -linewidth [rescale_x_skin 4]
+            $::home_espresso_graph element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
+            $::home_espresso_graph_espresso element configure home_flow_goal -linewidth [rescale_x_skin 4]
+            $::home_espresso_graph_espresso element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
         }
     }
     set a $::cache_graph_compare
@@ -2669,6 +2680,40 @@ proc toggle_main_graph_goal {} {
     skin_save skin
 }
 
+set ::zoom_temperature 0
+proc hide_zoom_temperature {} {
+    if {$::zoom_temperature == 0} {
+        return
+    }
+    set ::zoom_temperature 0
+    if {$::skin(show_y2_axis) == 1} {
+        $::home_espresso_graph axis configure y2 -hide 0
+    }
+    $::home_espresso_graph axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font [fixed_size 14]] -title "[translate "pressure"]  &  [translate "temperature"]" -titlecolor $::skin_y_axis_colour -titlefont [skin_font font [fixed_size 14]]  -min 0.0 -max 10 -subdivisions 1 -majorticks {0  2  4  6  8  10  12} -hide 0;
+    dui item config off zoom_temperature_state -state normal
+    dui item config off zoom_temperature_key_button* -state hidden
+}
+
+set ::zoom_temperature_key_button 0
+
+proc zoom_temperature {} {
+    if {$::zoom_temperature == 1} {
+        check_graph_axis
+
+    } else {
+        set ::zoom_temperature 1
+        $::home_espresso_graph axis configure y2 -hide 1
+        $::home_espresso_graph axis configure y -color $::skin_red -tickfont [skin_font font [fixed_size 14]] -title "[translate "temperature"] °C" -titlecolor $::skin_red -titlefont [skin_font font [fixed_size 14]]  -min 70 -max 100 -subdivisions 1 -majorticks {70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100} -hide 0;
+        if {$::zoom_temperature_key_button == 0} {
+            set ::zoom_temperature_key_button
+            dui add dbutton "off flush water" 0 450 \
+                -bwidth 2000 -bheight 1200 -tags zoom_temperature_key_button -initial_state hidden \
+                -command {zoom_temperature} -longpress_cmd {zoom_temperature}
+        }
+        dui item config off zoom_temperature_state -state disabled
+        dui item config off zoom_temperature_key_button* -state normal
+    }
+}
 
 proc skin_clock {} {
     set date [clock format [clock seconds] -format " %a %e %b"]
@@ -2816,7 +2861,15 @@ proc check_app_extensions {} {
     }
     set ext {Tap on the screen to exit the app, the changes will be applied when you restart}
     set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r\r\r$ext
+    if {$show == 1} {
+        unset -nocomplain ::skin(icon_size)
+        skin_save skin
+    }
+    if {$show == 0} {
+        initial_icon_cal_check
+    }
     if {$show == 1} {after 2000 {page_show plugin_message}}
+
 }
 
 proc skin_negative_scale_tare {} {
@@ -2957,17 +3010,17 @@ set {} {
 
 # programming stuff
 
-blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket10th graph_a_espresso_resistance
-blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket10th graph_b_espresso_resistance
-blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket10th graph_c_espresso_resistance
-blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket10th graph_d_espresso_resistance
+blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket graph_a_espresso_temperature_basket10th graph_a_espresso_resistance
+blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket graph_b_espresso_temperature_basket10th graph_b_espresso_resistance
+blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket graph_c_espresso_temperature_basket10th graph_c_espresso_resistance
+blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket graph_d_espresso_temperature_basket10th graph_d_espresso_resistance
 
 proc shift_graph_list {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket10th espresso_resistance profile time]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time]
 }
 
 proc shift_graph_list_vectors {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket10th espresso_resistance]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance]
 }
 
 proc shift_graph_list_variables {} {

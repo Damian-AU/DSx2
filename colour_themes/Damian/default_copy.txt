@@ -4,15 +4,15 @@ foreground_colour #2b6084
 foreground_2_colour #2b6084
 button_label_colour #fff
 button_label_2_colour #fff
-button_label_disabled_colour #7C7C7C
+button_label_disabled_colour #c1c1c1
 button_label_highlight_colour #fe7e00
 button_press_colour #eae83d
 text_colour #2b6084
 text_2_colour #2b6084
 text_3_colour #2b6084
-text_disabled_colour #7C7C7C
+text_disabled_colour #c1c1c1
 text_highlight_colour #2b6084
-disabled_colour #7C7C7C
+disabled_colour #c1c1c1
 selected_colour #fe7e00
 machine_not_ready #DA515E
 machine_ready #0CA581
@@ -20,7 +20,7 @@ green #0CA581
 blue #49a2e8
 red #DA515E
 brown #A1663A
-grey #7C7C7C
+grey #c1c1c1
 yellow #eae83d
 orange #fe7e00
 x_axis #2b6084

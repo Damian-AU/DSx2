@@ -169,67 +169,72 @@ add_de1_variable "off espresso steam" 0 2000 -font [skin_font font 6] -fill #000
     [profile_type_text]
 }
 
-blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_flow_2x compare_espresso_flow_weight_2x compare_espresso_state_change compare_espresso_temperature_basket10th compare_espresso_resistance
+blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_flow_2x compare_espresso_flow_weight_2x compare_espresso_state_change compare_espresso_temperature_basket compare_espresso_temperature_basket10th compare_espresso_resistance
 
 
 
 set ::key_font_size [fixed_size 14]
-dui add shape oval "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {pressure_icon graph_key_shape}
-dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 250 + 30] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 250 + 40 + 30] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {flow_icon graph_key_shape}
-dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 500 + 60] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 500 + 40 + 60] [expr $::skin(graph_key_y) + 18] -outline $::skin_brown -fill $::skin_brown -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {weight_icon graph_key_shape}
+dui add shape oval "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {pressure_icon graph_key_shape zoom_temperature_state}
+dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 250 + 30] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 250 + 40 + 30] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {flow_icon graph_key_shape zoom_temperature_state}
+dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 500 + 60] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 500 + 40 + 60] [expr $::skin(graph_key_y) + 18] -outline $::skin_brown -fill $::skin_brown -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {weight_icon graph_key_shape zoom_temperature_state}
 dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 750 + 90] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 750 + 40 + 90] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {temperature_icon graph_key_shape}
-dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 1000 + 120] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 1000 + 40 + 120] [expr $::skin(graph_key_y) + 18] -outline $::skin_yellow -fill $::skin_yellow -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {resistance_icon graph_key_shape}
-#dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 1196 + 150] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 1196 + 40 + 150] [expr $::skin(graph_key_y) + 18] -outline $::::skin_grey -fill $::::skin_grey -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {steps_icon graph_key_shape}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "pressure"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 270 + 38 + 30] [expr $::skin(graph_key_y) + 12] -tags flow_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "flow rate"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags weight_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "scale rate"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 770 + 38 + 90] [expr $::skin(graph_key_y) + 12] -tags temperature_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "temperature"]}
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 1020 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags resistance_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "resistance"]}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 270 + 38 + 30] [expr $::skin(graph_key_y) + 12] -tags flow_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags weight_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(scale_weight_rate)]]g/s}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 770 + 38 + 90] [expr $::skin(graph_key_y) + 12] -tags temperature_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[group_head_heater_temperature_text]}
-dui add variable "espresso" [expr $::skin(graph_key_x) + 1020 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags resistance_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
+dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 1000 + 120] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 1000 + 40 + 120] [expr $::skin(graph_key_y) + 18] -outline $::skin_yellow -fill $::skin_yellow -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {resistance_icon graph_key_shape zoom_temperature_state}
+#dui add shape oval "off espresso flush water" [expr $::skin(graph_key_x) + 1196 + 150] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 1196 + 40 + 150] [expr $::skin(graph_key_y) + 18] -outline $::::skin_grey -fill $::::skin_grey -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags {steps_icon graph_key_shape zoom_temperature_state}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags {pressure_text  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[translate "pressure"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 270 + 38 + 30] [expr $::skin(graph_key_y) + 12] -tags {flow_text  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[translate "flow rate"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags {weight_text  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[translate "scale rate"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 770 + 38 + 90] [expr $::skin(graph_key_y) + 12] -tags temperature_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[translate "temperature"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 1020 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags {resistance_text  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[translate "resistance"]}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags pressure_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 270 + 38 + 30] [expr $::skin(graph_key_y) + 12] -tags flow_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags weight_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(scale_weight_rate)]]g/s}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 770 + 38 + 90] [expr $::skin(graph_key_y) + 12] -tags temperature_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[group_head_heater_temperature_text]}
+dui add variable "espresso" [expr $::skin(graph_key_x) + 1020 + 38 + 120] [expr $::skin(graph_key_y) + 12] -tags resistance_data -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -justify center -width 880 -textvariable {[translate "Resistance"]}
 dui add dbutton "off espresso flush water" $::skin(graph_key_x) [expr $::skin(graph_key_y) - 40] \
-    -bwidth 210 -bheight 110 -tags pressure_key_button \
+    -bwidth 210 -bheight 110 -tags {pressure_key_button  zoom_temperature_state} \
     -command {toggle_graph pressure}
 dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 250 + 30] [expr $::skin(graph_key_y) - 40] \
-    -bwidth 210 -bheight 110 -tags flow_key_button \
+    -bwidth 210 -bheight 110 -tags {flow_key_button  zoom_temperature_state} \
     -command {toggle_graph flow}
 dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 500 + 60] [expr $::skin(graph_key_y) - 40] \
-    -bwidth 210 -bheight 110 -tags weight_key_button \
+    -bwidth 210 -bheight 110 -tags {weight_key_button  zoom_temperature_state} \
     -command {toggle_graph weight}
-dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 750 + 90] [expr $::skin(graph_key_y) - 40] \
-    -bwidth 210 -bheight 110 -tags temperature_key_button \
+dui add dbutton "espresso" [expr $::skin(graph_key_x) + 750 + 90] [expr $::skin(graph_key_y) - 40] \
+    -bwidth 210 -bheight 110 -tags {temperature_key_button_espresso temperature_key_button} \
     -command {toggle_graph temperature}
+
+dui add dbutton "off flush water" [expr $::skin(graph_key_x) + 750 + 90] [expr $::skin(graph_key_y) - 40] \
+    -bwidth 210 -bheight 110 -tags {temperature_key_button_espresso temperature_key_button} \
+    -command {toggle_graph temperature} -longpress_cmd {zoom_temperature}
+
 dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 1000 + 120] [expr $::skin(graph_key_y) - 40] \
-    -bwidth 210 -bheight 110 -tags resistance_key_button \
+    -bwidth 210 -bheight 110 -tags {resistance_key_button  zoom_temperature_state} \
     -command {toggle_graph resistance}
 
-dui add variable "off flush water" [expr $::skin(graph_key_x) + 1350 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags steps_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor center -justify center -width 880 -textvariable {[translate "steps"]}
+dui add variable "off flush water" [expr $::skin(graph_key_x) + 1350 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags {steps_text  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -justify center -width 880 -textvariable {[translate "steps"]}
 dui add variable "espresso" [expr $::skin(graph_key_x) + 1350 + 38 + 60] [expr $::skin(graph_key_y) + 12] -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor center -justify center -width 880 -textvariable {[translate "steps"]}
 
 dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 1350 + 38] [expr $::skin(graph_key_y) - 40] \
-    -bwidth 120 -bheight 110 -tags steps_key_button \
+    -bwidth 120 -bheight 110 -tags {steps_key_button  zoom_temperature_state} \
     -command {toggle_graph steps}
 
 
-dui add variable "off espresso flush water" [expr $::skin(graph_key_x) + 1470 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags main_graph_toggle_goal_label -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor center -justify center -textvariable {[translate "goal"]}
+dui add variable "off espresso flush water" [expr $::skin(graph_key_x) + 1470 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags {main_graph_toggle_goal_label  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -justify center -textvariable {[translate "goals"]}
 
 dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 1470 + 38] [expr $::skin(graph_key_y)  - 40] \
-    -bwidth 120 -bheight 110 -initial_state normal -tags main_graph_toggle_goal_button \
+    -bwidth 120 -bheight 110 -initial_state normal -tags {main_graph_toggle_goal_button  zoom_temperature_state} \
     -command {toggle_main_graph_goal}
 
-dui add variable "off espresso flush water" [expr $::skin(graph_key_x) + 1590 + 36 + 60] [expr $::skin(graph_key_y) + 12] -tags main_graph_toggle_view_label -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor center -justify center -textvariable {[translate "axis"]}
+dui add variable "off espresso flush water" [expr $::skin(graph_key_x) + 1590 + 36 + 60] [expr $::skin(graph_key_y) + 12] -tags {main_graph_toggle_view_label  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -justify center -textvariable {[translate "y2 axis"]}
 
 dui add dbutton "off espresso flush water" [expr $::skin(graph_key_x) + 1590 + 38] [expr $::skin(graph_key_y)  - 40] \
-    -bwidth 120 -bheight 110 -initial_state normal -tags main_graph_toggle_view_button \
+    -bwidth 120 -bheight 110 -initial_state normal -tags {main_graph_toggle_view_button  zoom_temperature_state} \
     -command {toggle_main_graph_view}
 
-dui add variable "off" [expr $::skin(graph_key_x) + 1710 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags main_graph_toggle_label -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor center -justify center -textvariable {$::main_graph_showing}
+dui add variable "off" [expr $::skin(graph_key_x) + 1710 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags {main_graph_toggle_label  zoom_temperature_state} -font [skin_font font $::key_font_size] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -justify center -textvariable {$::main_graph_showing}
 
 dui add dbutton off [expr $::skin(graph_key_x) + 1710 + 38] [expr $::skin(graph_key_y)  - 40] \
-    -bwidth 120 -bheight 110 -initial_state normal -tags main_graph_toggle_button \
+    -bwidth 120 -bheight 110 -initial_state normal -tags {main_graph_toggle_button  zoom_temperature_state} \
     -command {toggle_main_graph}
 
 
@@ -251,6 +256,10 @@ add_de1_widget "off flush water" graph 30 520 {
 
     $widget element create compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+
+    $widget element create home_zoom_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket -symbol none -label ""  -linewidth [rescale_x_skin 9] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create home_zoom_temperature_goal -xdata espresso_elapsed -ydata espresso_temperature_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
 
     $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
     $widget element create home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0  -dashes {2 2};
@@ -300,15 +309,18 @@ add_de1_widget "espresso" graph 30 520 {
 
 add_de1_variable "espresso" 1950 1550 -font [skin_font font 15] -fill $::skin_text_colour -anchor e -textvariable {[skin_graph_live_info]}
 
+
+
+
 setup_home_espresso_graph
 
 
-dui add shape oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 42] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -tags steam_steam_pressure_icon
-dui add shape oval steam [expr $::skin(graph_key_x) + 196 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 196 + 42 + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -tags steam_steam_flow_icon
-dui add shape oval steam [expr $::skin(graph_key_x) + 446 + 80] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 446 + 42 + 80] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -tags steam_steam_temperature_icon
+dui add shape oval steam $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_pressure_icon_off
+dui add shape oval steam [expr $::skin(graph_key_x) + 250 + 30] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 250 + 40 + 30] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_flow_icon_off
+dui add shape oval steam [expr $::skin(graph_key_x) + 500 + 60] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 500 + 40 + 60] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_temperature_icon_off
 dui add variable "steam" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags steam_steam_pressure_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(pressure)]]bar}
-dui add variable "steam" [expr $::skin(graph_key_x) + 216 + 38 + 40] [expr $::skin(graph_key_y) + 12] -tags steam_steam_flow_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
-dui add variable "steam" [expr $::skin(graph_key_x) + 466 + 38 + 80] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[steamtemp_text]}
+dui add variable "steam" [expr $::skin(graph_key_x) + 270 + 38 + 30] [expr $::skin(graph_key_y) + 12] -tags steam_steam_flow_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[round_to_one_digits [expr $::de1(flow)]]ml/s}
+dui add variable "steam" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -textvariable {[steamtemp_text]}
 
 dui add dbutton steam $::skin(graph_key_x) [expr $::skin(graph_key_y) - 50] \
     -bwidth 210 -bheight 110 -initial_state normal -tags steam_steam_pressure_button \
@@ -340,11 +352,11 @@ add_de1_widget "steam" graph 30 520 {
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags steam_graph
 
 dui add shape oval off $::skin(graph_key_x) [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 40] [expr $::skin(graph_key_y) + 18] -outline $::skin_green -fill $::skin_green -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_pressure_icon_off -initial_state hidden
-dui add shape oval off [expr $::skin(graph_key_x) + 250 + 20] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 250 + 40 + 30] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_flow_icon_off -initial_state hidden
-dui add shape oval off [expr $::skin(graph_key_x) + 500 + 40] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 500 + 40 + 60] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_temperature_icon_off -initial_state hidden
+dui add shape oval off [expr $::skin(graph_key_x) + 250 + 30] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 250 + 40 + 30] [expr $::skin(graph_key_y) + 18] -outline $::skin_blue -fill $::skin_blue -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_flow_icon_off -initial_state hidden
+dui add shape oval off [expr $::skin(graph_key_x) + 500 + 60] [expr $::skin(graph_key_y) + 2] [expr $::skin(graph_key_x) + 500 + 40 + 60] [expr $::skin(graph_key_y) + 18] -outline $::skin_red -fill $::skin_red -disabledoutline $::skin_disabled_colour -disabledfill $::skin_disabled_colour -tags steam_steam_temperature_icon_off -initial_state hidden
 dui add variable "off" [expr $::skin(graph_key_x) + 58] [expr $::skin(graph_key_y) + 12] -tags steam_steam_pressure_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "pressure"]}
 dui add variable "off" [expr $::skin(graph_key_x) + 270 + 38 + 30] [expr $::skin(graph_key_y) + 12] -tags steam_steam_flow_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "flow rate"]}
-dui add variable "off" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "temp."]}
+dui add variable "off" [expr $::skin(graph_key_x) + 520 + 38 + 60] [expr $::skin(graph_key_y) + 12] -tags steam_steam_temperature_text_off -font [skin_font font $::key_font_size] -fill $::skin_text_colour -anchor w -justify center -width 880 -initial_state hidden -textvariable {[translate "temperature"]}
 
 dui add dbutton off $::skin(graph_key_x) [expr $::skin(graph_key_y) - 40] \
     -bwidth 210 -bheight 110 -initial_state hidden -tags steam_steam_pressure_button_off \
@@ -742,7 +754,6 @@ check_current_jug
 check_app_extensions
 workflow $::skin(workflow)
 dui add variable off 0 0 -fill $::skin_text_colour  -font [skin_font font 14] -tags loop -anchor center -textvariable {[skin_loop]}
-initial_icon_cal_check
 check_graph_axis
 
 # optional keyboard bindings
@@ -754,6 +765,7 @@ profile_has_changed_set_colors
 proc skins_page_change_due_to_de1_state_change { textstate } {
 	page_change_due_to_de1_state_change $textstate
 	if {$textstate == "Idle"} {
+        check_graph_axis
         if {$::flush_timer_backup > 0} {
             set ::settings(flush_seconds) $::flush_timer_backup
             set ::flush_timer_backup 0
