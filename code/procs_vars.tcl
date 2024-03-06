@@ -1,4 +1,4 @@
-set ::skin_version 1.21
+set ::skin_version 1.22
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -32,9 +32,19 @@ set ::user(text_disabled_colour) $::user(disabled_colour)
 set ::user(text_highlight_colour) #fe7e00
 set ::user(button_press_colour) #eae83d
 
+set ::user(button_radius) 30
+
+
 if {[file exists "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"] == 1} {
     array set ::user [encoding convertfrom utf-8 [read_binary_file "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"]]
 }
+
+set ::skin_button_radius $::user(button_radius)
+if {$::android != 1} {
+    set ::skin_button_radius [round_to_integer [expr $::user(button_radius) * 0.66]]
+}
+
+
 
 set ::skin_background_2_colour $::user(background_2_colour)
 set ::skin_foreground_2_colour $::user(foreground_2_colour)
@@ -118,6 +128,14 @@ set ::fav_label_fav5 $::skin(fav_label_fav5)
 set ::wf_dose_x 160
 set ::skin(graph_update_delay) 10
 
+if {$::skin_button_radius > 50} {
+    set ::skin_button_radius 50
+}
+
+if {$::skin_button_radius < 0} {
+    set ::skin_button_radius 0
+}
+
 if {![info exist ::skin(auto_tare_negative_reading)]} {
     set ::skin(auto_tare_negative_reading) 0
 }
@@ -179,7 +197,6 @@ proc skin_load_font {name fn pcsize {androidsize {}} } {
 }
 
 proc skin_font {font_name size} {
-
     if {$font_name == "font"} {
         if {[language] == "en"} {
             set font_name $::skin(font_name)
@@ -254,22 +271,9 @@ proc skin_font {font_name size} {
     return $font_key
 }
 
-set ::icon_cal_check 0
-
-set ::skin_initial_setup ""
-if {[info exists ::skin(icon_size)] != 1} {
-    set ::skin(icon_size) 3
-    if {$::settings(screen_size_width) == 2800} {
-        set ::skin(icon_size) 5
-    }
-    if {$::settings(screen_size_width) == 1340} {
-        set ::skin(icon_size) 1
-    }
-    set ::icon_cal_check 1
-}
 proc initial_icon_cal_check {} {
-    if {$::icon_cal_check == 1} {
-        set ::skin_initial_setup [translate "First time start up, please check icon calibration"]
+    if {$::skin(icon_cal_check) == 0} {
+        set ::skin_initial_setup [translate "Please check your icon calibration"]
         hide_skin_set
         set_button edit_heading_button state normal
         set_button edit_colour_theme_button state normal
@@ -287,28 +291,53 @@ proc initial_icon_cal_check {} {
         dui item config off icon_size_set -initial_state normal -state normal
         set_button icon_size_minus state normal
         set_button icon_size_plus state normal
+        set_button icon_size_minus_x10 state normal
+        set_button icon_size_plus_x10 state normal
     }
 }
 
-proc fixed_size { size } {
+if {![info exist ::skin(icon_cal_check)]} {
+    set ::skin(icon_cal_check) 0
+}
+
+set ::skin_initial_setup ""
+
+if {[info exist ::skin(icon_size)]} {
     if {$::skin(icon_size) == 1} {
-        set ::skin_icon_size 0.8
+        set ::skin(icon_factor) 0.8
     }
     if {$::skin(icon_size) == 1.5} {
-        set ::skin_icon_size 0.88
+        set ::skin(icon_factor) 0.88
     }
     if {$::skin(icon_size) == 2} {
-        set ::skin_icon_size 0.95
+        set ::skin(icon_factor) 0.95
     }
     if {$::skin(icon_size) == 3} {
-        set ::skin_icon_size 1
+        set ::skin(icon_factor) 1
     }
     if {$::skin(icon_size) == 4} {
-        set ::skin_icon_size 1.12
+        set ::skin(icon_factor) 1.12
     }
     if {$::skin(icon_size) == 5} {
-        set ::skin_icon_size 1.24
+        set ::skin(icon_factor) 1.24
     }
+    set ::skin(icon_cal_check) 0
+    unset -nocomplain ::skin(icon_size)
+}
+
+if {[info exists ::skin(icon_factor)] != 1} {
+    set ::skin(icon_factor) 1
+    if {$::settings(screen_size_width) == 2800} {
+        set ::skin(icon_factor) 1.24
+    }
+    if {$::settings(screen_size_width) == 1340} {
+        set ::skin(icon_factor) 0.8
+    }
+    set ::skin(icon_cal_check) 0
+}
+
+proc fixed_size { size } {
+    set ::skin_icon_size $::skin(icon_factor)
     if {$::android != 1} {
         set sys_size [expr $size * $::skin_icon_size]
     } else {
@@ -554,10 +583,10 @@ proc set_button {button_name property value} {
     }
 }
 
-proc add_colour_button {button_name pages x y width height tv command } {
+proc add_colour_button {button_name pages x y width height tv command} {
     set ::${button_name}(pages) $pages
 
-    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
@@ -576,7 +605,7 @@ proc add_icon_button {button_name pages x y width height tv command {extra_tags 
 
 proc add_icon_label_button {button_name pages x y width height tvi tv command } {
     set ::${button_name}(pages) $pages
-    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
     dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
     dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
@@ -885,7 +914,7 @@ proc set_auto_load {key} {
 
 proc show_skin_set {option} {
     hide_header_settings
-    #rest_fav_buttons
+    set ::skin(icon_cal_check) 1
     hide_skin_set
     if {$::graph_hidden == 0} {hide_graph}
     dui item config off index_shape -initial_state normal -state normal
@@ -899,6 +928,7 @@ proc show_skin_set {option} {
 }
 
 proc hide_skin_set {} {
+    set ::skin(icon_cal_check) 1
     dui item config off index_shape -initial_state hidden -state hidden
     hide_espresso_settings
     hide_flush_settings
@@ -1582,11 +1612,15 @@ proc toggle_icon_size_settings {} {
         dui item config off icon_size_set -initial_state hidden -state hidden
         set_button icon_size_minus state hidden
         set_button icon_size_plus state hidden
+        set_button icon_size_minus_x10 state hidden
+        set_button icon_size_plus_x10 state hidden
     } else {
         set ::icon_size_state "hide"
         dui item config off icon_size_set -initial_state normal -state normal
         set_button icon_size_minus state normal
         set_button icon_size_plus state normal
+        set_button icon_size_minus_x10 state normal
+        set_button icon_size_plus_x10 state normal
     }
 }
 
@@ -1680,6 +1714,8 @@ proc hide_header_settings {} {
     dui item config off icon_size_set -initial_state hidden -state hidden
     set_button icon_size_minus state hidden
     set_button icon_size_plus state hidden
+    set_button icon_size_minus_x10 state hidden
+    set_button icon_size_plus_x10 state hidden
 }
 
 proc wifi_status {} {
@@ -2001,26 +2037,28 @@ proc adjust {var value} {
 }
 
 proc adjust_icon_size_up {} {
-    if {$::skin(icon_size) == 5} {return}
-    if {$::skin(icon_size) == 4} {set ::skin(icon_size) 5}
-    if {$::skin(icon_size) == 3} {set ::skin(icon_size) 4}
-    if {$::skin(icon_size) == 2} {set ::skin(icon_size) 3}
-    if {$::skin(icon_size) == 1.5} {set ::skin(icon_size) 2}
-    if {$::skin(icon_size) == 1} {set ::skin(icon_size) 1.5}
-    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
+    set ::skin(icon_factor) [round_to_two_digits [expr $::skin(icon_factor) + 0.01]]
+    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 130]]
     resize_fixed_icons
     skin_save skin
 }
 
 proc adjust_icon_size_down {} {
-    if {$::skin(icon_size) == 1} {return}
-    if {$::skin(icon_size) == 1.5} {set ::skin(icon_size) 1}
-    if {$::skin(icon_size) == 2} {set ::skin(icon_size) 1.5}
-    if {$::skin(icon_size) == 3} {set ::skin(icon_size) 2}
-    if {$::skin(icon_size) == 4} {set ::skin(icon_size) 3}
-    if {$::skin(icon_size) == 5} {set ::skin(icon_size) 4}
+    set ::skin(icon_factor) [round_to_two_digits [expr $::skin(icon_factor) - 0.01]]
+    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 130]]
+    resize_fixed_icons
+    skin_save skin
+}
+proc adjust_icon_size_up_x10 {} {
+    set ::skin(icon_factor) [round_to_two_digits [expr $::skin(icon_factor) + 0.10]]
+    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 130]]
+    resize_fixed_icons
+    skin_save skin
+}
 
-    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 50]]
+proc adjust_icon_size_down_x10 {} {
+    set ::skin(icon_factor) [round_to_two_digits [expr $::skin(icon_factor) - 0.10]]
+    dui item config off skin_icon_size_test -font [skin_font awesome_light [fixed_size 130]]
     resize_fixed_icons
     skin_save skin
 }
@@ -2862,10 +2900,10 @@ proc check_app_extensions {} {
     set ext {Tap on the screen to exit the app, the changes will be applied when you restart}
     set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r\r\r$ext
     if {$show == 1} {
-        unset -nocomplain ::skin(icon_size)
+        set ::skin(icon_cal_check) 0
         skin_save skin
     }
-    if {$show == 0} {
+    if {$show == 0 && $::skin(icon_cal_check) == 0} {
         initial_icon_cal_check
     }
     if {$show == 1} {after 2000 {page_show plugin_message}}
