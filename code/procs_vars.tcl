@@ -1,4 +1,4 @@
-set ::skin_version 1.24
+set ::skin_version 1.25
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -2806,6 +2806,7 @@ proc hide_zoom_temperature {} {
         dui item config "off flush water" temperature_text -fill $::skin_disabled_colour
         dui item config $::skin_home_pages temperature_icon -fill $::skin_disabled_colour -outline $::skin_disabled_colour
     }
+    check_y_resolution
 }
 
 set ::zoom_temperature_key_button 0
