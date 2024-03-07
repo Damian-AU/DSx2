@@ -1,4 +1,4 @@
-set ::skin_version 1.25
+set ::skin_version 1.26
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -716,7 +716,8 @@ proc hide_graph {} {
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
-        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
+        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     }
 }
@@ -2323,17 +2324,17 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal
     $::home_espresso_graph element configure home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal
     $::home_espresso_graph element configure home_temperature_goal -xdata espresso_elapsed -ydata espresso_temperature_goal10th
+    $::home_espresso_graph element configure home_zoom_temperature_goal -xdata espresso_elapsed -ydata espresso_temperature_goal
     $::home_espresso_graph element configure home_pressure -xdata espresso_elapsed -ydata espresso_pressure
     $::home_espresso_graph element configure home_flow  -xdata espresso_elapsed -ydata espresso_flow
     $::home_espresso_graph element configure home_weight  -xdata espresso_elapsed -ydata espresso_flow_weight
     $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th
-    $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket
+    $::home_espresso_graph element configure home_zoom_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket
     $::home_espresso_graph element configure home_resistance  -xdata espresso_elapsed -ydata espresso_resistance
     $::home_espresso_graph element configure home_steps -xdata espresso_elapsed -ydata espresso_state_change
     $::home_espresso_graph element configure home_flow_goal_2x  -xdata espresso_elapsed -ydata espresso_flow_goal_2x
     $::home_espresso_graph element configure home_flow_2x  -xdata espresso_elapsed -ydata espresso_flow_2x
     $::home_espresso_graph element configure home_weight_2x  -xdata espresso_elapsed -ydata espresso_flow_weight_2x
-    restore_live_graphs
 }
 
 proc restore_live_graphs {} {
@@ -2524,13 +2525,15 @@ proc toggle_graph_compare { graph } {
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
-        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
+        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
         $::home_espresso_graph element configure compare_steps -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_state_change
-        $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket
+        $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_zoom_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_resistance
         if {$::skin(show_y2_axis) == 0} {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
@@ -2592,7 +2595,7 @@ proc toggle_cache_graphs {} {
             $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
             $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
             $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
-            $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
+            $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
             $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
         }
 }
