@@ -1,4 +1,4 @@
-set ::skin_version 1.23
+set ::skin_version 1.24
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -716,7 +716,6 @@ proc hide_graph {} {
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
-        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     }
@@ -1815,6 +1814,7 @@ proc skin_water_data {} {
 }
 
 proc skin_graph_info {} {
+    set time [cache_date_time_format $::skin_graphs(live_graph_time)]
     set p $::skin_graphs(live_graph_profile)
     set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
     set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
@@ -1825,7 +1825,7 @@ proc skin_graph_info {} {
     set s { }
     set g {     }
     set v [skin_water_data]
-    return ${p}${g}${s}${v}ml${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})
+    return ${p}${g}${s}${v}ml${g}${s}${pi}s${s}+${s}${pt}s${s}=${s}${t}s${g}${s}${b}g${s}:${s}${w}g${s}(1:${er})${g}${time}
 }
 
 proc skin_graph_live_info {} {
@@ -2524,14 +2524,12 @@ proc toggle_graph_compare { graph } {
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
-        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
         $::home_espresso_graph element configure compare_steps -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_state_change
-        $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_temperature -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_resistance
         if {$::skin(show_y2_axis) == 0} {
@@ -2727,13 +2725,25 @@ proc check_graph_axis {} {
 }
 
 proc toggle_cache_y2_axis {} {
-    if {$::skin(show_y2_axis) == 1} {
-        set ::skin(show_cache_y2_axis) [expr !{$::skin(show_cache_y2_axis)}]
+    incr ::skin(show_cache_y2_axis)
+    if {$::skin(show_y2_axis) == 0 && $::skin(show_cache_y2_axis) == 1} {
+        set ::skin(show_cache_y2_axis) 2
+    }
+    if {$::skin(show_cache_y2_axis) == 4} {
+        set ::skin(show_cache_y2_axis) 0
     }
     check_cache_y2_axis
 }
 
 proc check_cache_y2_axis {} {
+    $::cache_graph_a axis configure x -hide 0
+    $::cache_graph_b axis configure x -hide 0
+    $::cache_graph_c axis configure x -hide 0
+    $::cache_graph_d axis configure x -hide 0
+    $::cache_graph_a axis configure y -hide 0
+    $::cache_graph_b axis configure y -hide 0
+    $::cache_graph_c axis configure y -hide 0
+    $::cache_graph_d axis configure y -hide 0
     if {$::skin(show_cache_y2_axis) == 1 && $::skin(show_y2_axis) == 1} {
         $::cache_graph_a axis configure y2 -hide 0
         $::cache_graph_b axis configure y2 -hide 0
@@ -2745,6 +2755,27 @@ proc check_cache_y2_axis {} {
         $::cache_graph_c axis configure y2 -hide 1
         $::cache_graph_d axis configure y2 -hide 1
     }
+    if {$::skin(show_cache_y2_axis) == 2} {
+        $::cache_graph_a axis configure y -hide 1
+        $::cache_graph_b axis configure y -hide 1
+        $::cache_graph_c axis configure y -hide 1
+        $::cache_graph_d axis configure y -hide 1
+        $::cache_graph_a axis configure y2 -hide 1
+        $::cache_graph_b axis configure y2 -hide 1
+        $::cache_graph_c axis configure y2 -hide 1
+        $::cache_graph_d axis configure y2 -hide 1
+    }
+    if {$::skin(show_cache_y2_axis) == 3} {
+        $::cache_graph_a axis configure y -hide 1
+        $::cache_graph_b axis configure y -hide 1
+        $::cache_graph_c axis configure y -hide 1
+        $::cache_graph_d axis configure y -hide 1
+        $::cache_graph_a axis configure x -hide 1
+        $::cache_graph_b axis configure x -hide 1
+        $::cache_graph_c axis configure x -hide 1
+        $::cache_graph_d axis configure x -hide 1
+    }
+
 }
 
 proc toggle_main_graph_view {} {
