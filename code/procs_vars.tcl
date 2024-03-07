@@ -1,4 +1,4 @@
-set ::skin_version 1.22
+set ::skin_version 1.23
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -150,6 +150,18 @@ if {![info exist ::skin(single_drink_milk_volume)]} {
 
 if {![info exist ::skin(jug_single)]} {
     set ::skin(jug_single) "jug_m"
+}
+
+if {![info exist ::skin(y_res)]} {
+    set ::skin(y_res) 0
+}
+
+if {![info exist ::skin(show_y2_axis)]} {
+    set ::skin(show_y2_axis) 1
+}
+
+if {![info exist ::skin(show_cache_y2_axis)]} {
+    set ::skin(show_cache_y2_axis) $::skin(show_y2_axis)
 }
 
 proc create_settings_dir {} {
@@ -653,6 +665,7 @@ proc set_arrow {arrow value} {
 set ::graph_hidden 0
 proc hide_graph {} {
     hide_zoom_temperature
+    exit_highlight_curve
     if {$::main_graph_showing == "espresso"} {
         hide_steam_graph
         set ::main_graph_showing "steam"
@@ -697,6 +710,16 @@ proc hide_graph {} {
     dui item config off main_graph_toggle_view_button* -initial_state hidden -state hidden
     dui item config off main_graph_toggle_goal_label -initial_state hidden -state hidden
     dui item config off main_graph_toggle_goal_button* -initial_state hidden -state hidden
+    if {$::cache_graph_compare != 0} {
+        set ::cache_graph_compare 0
+        $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
+        $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
+        $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+        $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
+        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
+        $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
+        $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
+    }
 }
 
 proc show_graph {} {
@@ -2586,10 +2609,6 @@ proc setup_home_espresso_graph {} {
     }
 }
 
-if {![info exist ::skin(show_y2_axis)]} {
-    set ::skin(show_y2_axis) 1
-}
-
 proc check_graph_axis {} {
     hide_zoom_temperature
     if {$::skin(show_y2_axis) == 1} {
@@ -2701,9 +2720,31 @@ proc check_graph_axis {} {
             $::home_espresso_graph_espresso element configure home_flow_goal_2x -linewidth [rescale_x_skin 4]
         }
     }
+    check_cache_y2_axis
     set a $::cache_graph_compare
     set ::cache_graph_compare 0
     toggle_graph_compare $a
+}
+
+proc toggle_cache_y2_axis {} {
+    if {$::skin(show_y2_axis) == 1} {
+        set ::skin(show_cache_y2_axis) [expr !{$::skin(show_cache_y2_axis)}]
+    }
+    check_cache_y2_axis
+}
+
+proc check_cache_y2_axis {} {
+    if {$::skin(show_cache_y2_axis) == 1 && $::skin(show_y2_axis) == 1} {
+        $::cache_graph_a axis configure y2 -hide 0
+        $::cache_graph_b axis configure y2 -hide 0
+        $::cache_graph_c axis configure y2 -hide 0
+        $::cache_graph_d axis configure y2 -hide 0
+    } else {
+        $::cache_graph_a axis configure y2 -hide 1
+        $::cache_graph_b axis configure y2 -hide 1
+        $::cache_graph_c axis configure y2 -hide 1
+        $::cache_graph_d axis configure y2 -hide 1
+    }
 }
 
 proc toggle_main_graph_view {} {
@@ -2730,11 +2771,19 @@ proc hide_zoom_temperature {} {
     $::home_espresso_graph axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font [fixed_size 14]] -title "[translate "pressure"]  &  [translate "temperature"]" -titlecolor $::skin_y_axis_colour -titlefont [skin_font font [fixed_size 14]]  -min 0.0 -max 10 -subdivisions 1 -majorticks {0  2  4  6  8  10  12} -hide 0;
     dui item config off zoom_temperature_state -state normal
     dui item config off zoom_temperature_key_button* -state hidden
+    if {$::skin(temperature) == 0} {
+        dui item config "off flush water" temperature_text -fill $::skin_disabled_colour
+        dui item config $::skin_home_pages temperature_icon -fill $::skin_disabled_colour -outline $::skin_disabled_colour
+    }
 }
 
 set ::zoom_temperature_key_button 0
 
 proc zoom_temperature {} {
+    if {$::skin(temperature) == 0} {
+        dui item config "off flush water" temperature_text -fill $::skin_text_colour
+        dui item config $::skin_home_pages temperature_icon -fill $::skin_red -outline $::skin_red
+    }
     if {$::zoom_temperature == 1} {
         check_graph_axis
 
@@ -2743,7 +2792,7 @@ proc zoom_temperature {} {
         $::home_espresso_graph axis configure y2 -hide 1
         $::home_espresso_graph axis configure y -color $::skin_red -tickfont [skin_font font [fixed_size 14]] -title "[translate "temperature"] °C" -titlecolor $::skin_red -titlefont [skin_font font [fixed_size 14]]  -min 70 -max 100 -subdivisions 1 -majorticks {70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100} -hide 0;
         if {$::zoom_temperature_key_button == 0} {
-            set ::zoom_temperature_key_button
+            set ::zoom_temperature_key_button 1
             dui add dbutton "off flush water" 0 450 \
                 -bwidth 2000 -bheight 1200 -tags zoom_temperature_key_button -initial_state hidden \
                 -command {zoom_temperature} -longpress_cmd {zoom_temperature}
@@ -2753,6 +2802,119 @@ proc zoom_temperature {} {
     }
 }
 
+proc toggle_y_resolution {} {
+    if {$::skin(y_res) == 0} {
+        set ::skin(y_res) 1
+    } elseif {$::skin(y_res) == 1} {
+        set ::skin(y_res) 2
+    } else {
+        set ::skin(y_res) 0
+    }
+    skin_save skin
+    check_y_resolution
+}
+
+proc check_y_resolution {} {
+    if {$::skin(y_res) == 0} {
+        $::home_espresso_graph axis configure y -majorticks {0  2  4  6  8  10  12}
+        $::home_espresso_graph_espresso axis configure y -majorticks {0  2  4  6  8  10  12}
+        $::home_espresso_graph axis configure y2 -majorticks {0 1 2 3 4 5}
+        $::home_espresso_graph_espresso axis configure y2 -majorticks {0 1 2 3 4 5}
+    }
+    if {$::skin(y_res) == 1} {
+        $::home_espresso_graph axis configure y -majorticks {0 1 2 3 4 5 6 7 8 9 10}
+        $::home_espresso_graph_espresso axis configure y -majorticks {0 1 2 3 4 5 6 7 8 9 10}
+        $::home_espresso_graph axis configure y2 -majorticks {0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5}
+        $::home_espresso_graph_espresso axis configure y2 -majorticks {0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5}
+    }
+    if {$::skin(y_res) == 2} {
+        $::home_espresso_graph axis configure y -majorticks {0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10}
+        $::home_espresso_graph_espresso axis configure y -majorticks {0 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 5.5 6 6.5 7 7.5 8 8.5 9 9.5 10}
+        $::home_espresso_graph axis configure y2 -majorticks {0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5}
+        $::home_espresso_graph_espresso axis configure y2 -majorticks {0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3 3.25 3.5 3.75 4 4.25 4.5 4.75 5}
+    }
+}
+
+proc main_grap_elements {} {
+    return [list \
+    compare_pressure \
+    compare_flow \
+    compare_weight \
+    compare_steps \
+    compare_flow_2x \
+    compare_weight_2x \
+    compare_temperature \
+    compare_resistance \
+    home_zoom_temperature \
+    compare_zoom_temperature \
+    home_zoom_temperature_goal \
+    home_pressure_goal \
+    home_flow_goal \
+    home_temperature_goal \
+    home_pressure \
+    home_flow \
+    home_weight \
+    home_temperature \
+    home_resistance \
+    home_steps \
+    home_flow_goal_2x \
+    home_flow_2x \
+    home_weight_2x \
+    ]
+}
+
+set ::highlight_return_button 0
+
+proc highlight_curve { curve } {
+    if {$::skin($curve) == 0} {
+        return
+    }
+    hide_zoom_temperature
+    foreach e [main_grap_elements] {
+        $::home_espresso_graph element configure $e -hide 1
+    }
+    if {$curve == "pressure" || $curve == "resistance"} {
+        $::home_espresso_graph element configure home_${curve} -hide 0
+        $::home_espresso_graph element configure compare_${curve} -hide 0
+        if {$curve == "pressure"} {
+            $::home_espresso_graph element configure home_${curve}_goal -hide 0
+        }
+    }
+    if {$curve == "flow" || $curve == "weight"} {
+        if {$::skin(show_y2_axis) == 1} {
+            $::home_espresso_graph element configure home_${curve}_2x -hide 0
+            $::home_espresso_graph element configure compare_${curve} -hide 0
+            if {$curve == "flow"} {
+               $::home_espresso_graph element configure home_${curve}_goal_2x -hide 0
+            }
+        } else {
+            $::home_espresso_graph element configure home_${curve} -hide 0
+            $::home_espresso_graph element configure compare_${curve} -hide 0
+            if {$curve == "flow"} {
+               $::home_espresso_graph element configure home_${curve}_goal -hide 0
+            }
+        }
+    }
+    if {$::highlight_return_button == 0} {
+        set ::highlight_return_button 1
+        dui add dbutton "off flush water" 0 450 \
+            -bwidth 2000 -bheight 1200 -tags highlight_return_button -initial_state hidden \
+            -command {exit_highlight_curve} -longpress_cmd {exit_highlight_curve}
+    }
+    dui item config off key_buttons -state disabled
+    dui item config off ${curve}_icon -state normal
+    dui item config off ${curve}_text -state normal
+    dui item config off highlight_return_button* -state normal
+}
+
+proc exit_highlight_curve {} {
+    foreach e [main_grap_elements] {
+        $::home_espresso_graph element configure $e -hide 0
+    }
+    check_graph_axis
+    dui item config off key_buttons -state normal
+    dui item config off highlight_return_button* -state hidden
+}
 proc skin_clock {} {
     set date [clock format [clock seconds] -format " %a %e %b"]
     #set date [clock format [clock seconds] -format "%a  "]
@@ -3282,4 +3444,3 @@ proc skin_loop {} {
     restore_live_graphs
     check_fav
 }
-

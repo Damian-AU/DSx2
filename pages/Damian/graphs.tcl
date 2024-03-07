@@ -3,7 +3,12 @@ set ::skin_graph_multiplier .8
 add_de1_widget off graph 40 1350 {
     set ::cache_graph_a $widget
     bind $widget [platform_button_press] {
-        toggle_graph_compare graph_a
+        set x [translate_coordinates_finger_down_x %x]
+        if {$x < [rescale_y_skin 100]} {
+            toggle_cache_y2_axis
+        } else {
+            toggle_graph_compare graph_a
+        }
     }
     $widget element create cache_a_espresso_pressure -xdata graph_a_espresso_elapsed -ydata graph_a_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create cache_a_espresso_flow -xdata graph_a_espresso_elapsed -ydata graph_a_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -22,7 +27,12 @@ add_de1_widget off graph 40 1350 {
 add_de1_widget off graph 520 1350 {
     set ::cache_graph_b $widget
     bind $widget [platform_button_press] {
-        toggle_graph_compare graph_b
+set x [translate_coordinates_finger_down_x %x]
+        if {$x < [rescale_y_skin 100]} {
+            toggle_cache_y2_axis
+        } else {
+            toggle_graph_compare graph_b
+        }
     }
     $widget element create cache_b_espresso_pressure -xdata graph_b_espresso_elapsed -ydata graph_b_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create cache_b_espresso_flow -xdata graph_b_espresso_elapsed -ydata graph_b_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -41,7 +51,12 @@ add_de1_widget off graph 520 1350 {
 add_de1_widget off graph 1000 1350 {
     set ::cache_graph_c $widget
     bind $widget [platform_button_press] {
-        toggle_graph_compare graph_c
+        set x [translate_coordinates_finger_down_x %x]
+        if {$x < [rescale_y_skin 100]} {
+            toggle_cache_y2_axis
+        } else {
+            toggle_graph_compare graph_c
+        }
     }
     $widget element create cache_c_espresso_pressure -xdata graph_c_espresso_elapsed -ydata graph_c_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create cache_c_espresso_flow -xdata graph_c_espresso_elapsed -ydata graph_c_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -60,7 +75,12 @@ $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
 add_de1_widget off graph 1480 1350 {
     set ::cache_graph_d $widget
     bind $widget [platform_button_press] {
-        toggle_graph_compare graph_d
+        set x [translate_coordinates_finger_down_x %x]
+        if {$x < [rescale_y_skin 100]} {
+            toggle_cache_y2_axis
+        } else {
+            toggle_graph_compare graph_d
+        }
     }
     $widget element create cache_d_espresso_pressure -xdata graph_d_espresso_elapsed -ydata graph_d_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 6] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create cache_d_espresso_flow -xdata graph_d_espresso_elapsed -ydata graph_d_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 6] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
