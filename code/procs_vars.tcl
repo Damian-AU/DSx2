@@ -1,4 +1,4 @@
-set ::skin_version 1.26
+set ::skin_version 1.27
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -1619,7 +1619,10 @@ proc skin_water_timer {} {
 }
 
 proc toggle_heading {} {
-    set ::skin(show_heading) [expr {!$::skin(show_heading)}]
+    set ::skin(show_heading) [expr {$::skin(show_heading) - 1}]
+    if {$::skin(show_heading) < 0} {
+        set ::skin(show_heading) 3
+    }
     check_heading
     if {$::skin(show_heading) == 1} {
         dui item moveto off heading_entry 450 640
@@ -1628,6 +1631,7 @@ proc toggle_heading {} {
     }
     skin_save skin
 }
+
 set ::icon_size_state "show"
 proc toggle_icon_size_settings {} {
     if {$::icon_size_state == "hide"} {
@@ -1666,7 +1670,7 @@ proc skin_colour_theme_selection {} {
 }
 
 proc check_heading {} {
-   if {$::skin(show_heading) == 1} {
+    if {$::skin(show_heading) == 1} {
         set ::skin_heading $::skin(heading)
         dui item config off headerbar_heading -initial_state normal -state normal
         set ::start_button_y 150
@@ -1694,6 +1698,32 @@ proc check_heading {} {
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
+    }
+    if {$::skin(show_heading) == 2 || $::skin(show_heading) == 3} {
+        dui item config $::skin_home_pages headerar_bg0 -fill $::skin_background_colour
+        dui item config $::skin_home_pages headerbar_bg1 -outline $::skin_background_colour -fill $::skin_background_colour
+        dui item config $::skin_home_pages headerar_bg2 -fill $::skin_background_colour
+        dui item config $::skin_home_pages headerbar_bg3 -outline $::skin_background_colour -fill $::skin_background_colour
+        dui item config $::skin_home_pages headerbar_bg4 -outline $::skin_background_colour -fill $::skin_background_colour
+        dui item config $::skin_home_pages sleep_button -fill $::skin_text_colour
+        dui item config $::skin_home_pages headerbar_clock -fill $::skin_text_colour
+    } else {
+        dui item config $::skin_home_pages headerar_bg0 -fill $::skin_foreground_colour
+        dui item config $::skin_home_pages headerbar_bg1 -outline $::skin_foreground_colour -fill $::skin_foreground_colour
+        dui item config $::skin_home_pages headerar_bg2 -fill $::skin_foreground_colour
+        dui item config $::skin_home_pages headerbar_bg3 -outline $::skin_foreground_colour -fill $::skin_foreground_colour
+        dui item config $::skin_home_pages headerbar_bg4 -outline $::skin_foreground_colour -fill $::skin_foreground_colour
+        dui item config $::skin_home_pages sleep_button -fill $::skin_button_label_colour
+        dui item config $::skin_home_pages headerbar_clock -fill $::skin_button_label_colour
+    }
+    if {$::skin(show_heading) == 3} {
+        dui item config $::skin_home_pages headerbar_clock -initial_state hidden -state hidden
+        dui item config $::skin_home_pages wifi_icon  -initial_state hidden -state hidden
+        dui item config $::skin_home_pages battery_icon  -initial_state hidden -state hidden
+    } else {
+        dui item config $::skin_home_pages headerbar_clock -initial_state normal -state normal
+        dui item config $::skin_home_pages wifi_icon  -initial_state normal -state normal
+        dui item config $::skin_home_pages battery_icon  -initial_state normal -state normal
     }
 }
 
