@@ -1,0 +1,19 @@
+background_colour #212121
+forground_colour #4b4343
+button_label_colour #e6c8ac
+text_colour #fffbf8
+selected_colour #fff
+machine_not_ready #DA515E
+machine_ready #0CA581
+green #0ba581
+blue #1967d6
+red #d9515f
+brown #a06539
+grey #7C7C7C
+yellow #eae83d
+orange #fe7e00
+x_axis #222
+y_axis #222
+graph_grid_colour #666
+mini_graph_grid_colour #bbb
+

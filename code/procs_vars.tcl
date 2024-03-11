@@ -1,4 +1,4 @@
-set ::skin_version 1.27
+set ::skin_version 1.28
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -98,6 +98,10 @@ set ::skin(button_x_flush) [expr $::start_button_x + 1090]
 set ::skin(button_y_flush) $::start_button_y
 set ::skin(button_x_dye) [expr $::start_button_x + 1450]
 set ::skin(button_y_dye) $::start_button_y
+set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1450 + 250]
+set ::skin(button_x_history) [expr $::start_button_x + 1450 + 250]
+set ::skin(button_y_skin_history_button) $::start_button_y
+set ::skin(button_y_history) $::start_button_y
 set ::skin(button_y_stop_espresso) $::start_button_y
 set ::skin(button_y_stop_steam) $::start_button_y
 set ::skin(button_y_stop_flush) $::start_button_y
@@ -162,6 +166,14 @@ if {![info exist ::skin(show_y2_axis)]} {
 
 if {![info exist ::skin(show_cache_y2_axis)]} {
     set ::skin(show_cache_y2_axis) $::skin(show_y2_axis)
+}
+
+if {![info exist ::skin(show_history_button)]} {
+    set ::skin(show_history_button) 1
+}
+
+proc skin_history {} {
+    history_viewer open
 }
 
 proc create_settings_dir {} {
@@ -299,6 +311,7 @@ proc initial_icon_cal_check {} {
             dui item moveto off heading_entry 450 640
         }
         dui item config off fav_edit_buttons -initial_state hidden -state hidden
+        dui item config off settings_toggles -initial_state hidden -state hidden
         set ::icon_size_state "hide"
         dui item config off icon_size_set -initial_state normal -state normal
         set_button icon_size_minus state normal
@@ -346,6 +359,48 @@ if {[info exists ::skin(icon_factor)] != 1} {
         set ::skin(icon_factor) 0.8
     }
     set ::skin(icon_cal_check) 0
+}
+
+
+set ::next_saver_spot_y 1
+set ::next_saver_spots_per_column 8
+proc next_saver_spot_x {} {
+    set x 40
+    if {$::next_saver_spot_y > $::next_saver_spots_per_column} {
+        set x [expr 40 + (1 * 180)]
+    }
+    if {$::next_saver_spot_y > [expr 2 * $::next_saver_spots_per_column]} {
+        set x [expr 40 + (2 * 180)]
+    }
+    if {$::next_saver_spot_y > [expr 3 * $::next_saver_spots_per_column]} {
+        set x [expr 40 + (3 * 180)]
+    }
+    if {$::next_saver_spot_y > [expr 4 * $::next_saver_spots_per_column]} {
+        set x [expr 40 + (4 * 180)]
+    }
+    return $x
+}
+
+proc next_saver_spot_y {} {
+    if {$::next_saver_spot_y == 1} {
+        set y 40
+    } else {
+        set y [expr 40 + (($::next_saver_spot_y - 1) * 180)]
+    }
+    if {$::next_saver_spot_y > $::next_saver_spots_per_column} {
+        set y [expr 40 + (($::next_saver_spot_y - $::next_saver_spots_per_column - 1) * 180)]
+    }
+    if {$::next_saver_spot_y > [expr 2 * $::next_saver_spots_per_column]} {
+        set y [expr 40 + (($::next_saver_spot_y - (2 * $::next_saver_spots_per_column) - 1) * 180)]
+    }
+    if {$::next_saver_spot_y > [expr 3 * $::next_saver_spots_per_column]} {
+        set y [expr 40 + (($::next_saver_spot_y - (3 * $::next_saver_spots_per_column) - 1) * 180)]
+    }
+    if {$::next_saver_spot_y > [expr 4 * $::next_saver_spots_per_column]} {
+        set y [expr 40 + (($::next_saver_spot_y - (4 * $::next_saver_spots_per_column) - 1) * 180)]
+    }
+    incr ::next_saver_spot_y
+    return $y
 }
 
 proc fixed_size { size } {
@@ -662,19 +717,46 @@ proc set_arrow {arrow value} {
     dui item config $pages ${arrow}_info -initial_state $value -state $value
 }
 
+proc check_history_button_position {} {
+    if {$::skin(show_history_button) == 1} {
+        if {([.can itemcget l_dye_bg -state] eq "hidden" || "DYE" in $::settings(enabled_plugins) == 0) && $::dye_button_normally_hidden == 0} {
+            set ::dye_button_normally_hidden 1
+            workflow $::skin(workflow)
+        }
+        if {[.can itemcget l_dye_bg -state] eq "normal" && $::dye_button_normally_hidden == 1} {
+            set ::dye_button_normally_hidden 0
+            workflow $::skin(workflow)
+        }
+    }
+    after 500 check_history_button_position
+}
+
+proc hide_graph_2 {} {
+    set ::graph_hidden 1
+    .can itemconfigure main_graph -state hidden
+    dui item config off main_graph -initial_state hidden
+}
+proc show_graph_2 {} {
+    set ::graph_hidden 0
+    .can itemconfigure main_graph -state normal
+    dui item config off main_graph -initial_state normal
+}
+
+set ::dye_button_normally_hidden 1
 set ::graph_hidden 0
 proc hide_graph {} {
+    hide_graph_2
     hide_zoom_temperature
     exit_highlight_curve
     if {$::main_graph_showing == "espresso"} {
         hide_steam_graph
         set ::main_graph_showing "steam"
     }
-    set ::graph_hidden 1
+
     set_favs_showing
     dui item moveto off heading_entry 450 -1001
-    .can itemconfigure main_graph -state hidden
-    dui item config off main_graph -initial_state hidden
+
+
     set ::zoom_temperature 0
     set_button auto_tare state normal
     set_button favs_number state normal
@@ -720,14 +802,15 @@ proc hide_graph {} {
         $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     }
+    if {$::skin(show_history_button) == 1} {
+        set_button skin_history_button state hidden
+    }
 }
 
 proc show_graph {} {
+    show_graph_2
     check_graph_axis
-    set ::graph_hidden 0
     rest_fav_buttons
-    .can itemconfigure main_graph -state normal
-    dui item config off main_graph -initial_state normal
     set_button auto_tare state hidden
     set_button favs_number state hidden
     dui item config off live_graph_data -initial_state normal -state normal
@@ -766,6 +849,17 @@ proc show_graph {} {
     dui item config off main_graph_toggle_view_button* -initial_state normal -state normal
     dui item config off main_graph_toggle_goal_label -initial_state normal -state normal
     dui item config off main_graph_toggle_goal_button* -initial_state normal -state normal
+    if {$::skin(show_history_button) == 1} {
+        set_button skin_history_button state normal
+    }
+    if {$::skin(show_history_button) == 1} {
+        if {[.can itemcget l_dye_bg -state] eq "hidden" || "DYE" in $::settings(enabled_plugins) == 0} {
+            set ::dye_button_normally_hidden 1
+        } else {
+            set ::dye_button_normally_hidden 0
+        }
+        workflow $::skin(workflow)
+    }
 }
 
 
@@ -906,7 +1000,6 @@ proc edit {option} {
     set_button ${option}_x_button state normal
     set_button ${option}_tick_button state normal
     dui item moveto off ${option}_entry [expr $::beverage_type_x + 0] 350
-
 }
 
 proc cancel {option} {
@@ -1487,6 +1580,8 @@ proc move_workflow_button {button_name} {
         dui item moveto off b_${button_name}_bg* $::skin(button_x_dye) $::skin(button_y_dye)
 
         dui item moveto off launch_dye* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
+    } elseif {$button_name == "skin_history_button"} {
+        move_colour_button skin_history_button
     } else {
         set z ::${button_name}(pages)
         set pages [set $z]
@@ -1507,6 +1602,26 @@ proc move_workflow_button {button_name} {
             dui item moveto off ${button_name}_index [expr $::skin(button_x_${button_name}) + 170] 534
         }
     }
+}
+proc skin_screen_width_ratio {size} {
+    return [expr $size * 2560 / $::settings(screen_size_width)]
+}
+proc skin_screen_height_ratio {size} {
+    return [expr $size * 1600 / $::settings(screen_size_height)]
+}
+
+proc move_colour_button {button_name} {
+     set z ::${button_name}(pages)
+     set pages [set $z]
+     set offset 2
+     if {$button_name == "skin_history_button"} {set offset 0}
+     lassign [.can coords b_${button_name}] x0 y0 x1 y1
+     set width [expr [skin_screen_height_ratio $x1] - [skin_screen_width_ratio $x0]]
+     set height [expr [skin_screen_height_ratio $y1] - [skin_screen_height_ratio $y0]]
+     dui item moveto $pages bb_${button_name}* $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 0]
+     dui item moveto $pages l_${button_name} [expr $::skin(button_x_${button_name}) + $width/2] [expr $::skin(button_y_${button_name}) + $height/2 - $offset]
+     dui item config $pages l_${button_name} -anchor center
+     dui item moveto $pages b_${button_name}* $::skin(button_x_${button_name}) [expr $::skin(button_y_${button_name}) + 0]
 }
 
 proc start_button_ready {} {
@@ -1641,6 +1756,7 @@ proc toggle_icon_size_settings {} {
         set_button icon_size_plus state hidden
         set_button icon_size_minus_x10 state hidden
         set_button icon_size_plus_x10 state hidden
+        dui item config off settings_toggles -initial_state normal -state normal
     } else {
         set ::icon_size_state "hide"
         dui item config off icon_size_set -initial_state normal -state normal
@@ -1648,6 +1764,7 @@ proc toggle_icon_size_settings {} {
         set_button icon_size_plus state normal
         set_button icon_size_minus_x10 state normal
         set_button icon_size_plus_x10 state normal
+        dui item config off settings_toggles -initial_state hidden -state hidden
     }
 }
 
@@ -1679,11 +1796,14 @@ proc check_heading {} {
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_y_water) $::start_button_y
         set ::skin(button_y_dye) $::start_button_y
+        set ::skin(button_y_skin_history_button) $::start_button_y
         move_workflow_button espresso
         move_workflow_button flush
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
+        move_workflow_button skin_history_button
+
     } else {
         set ::skin_heading {}
         dui item config off headerbar_heading -initial_state hidden -state hidden
@@ -1693,11 +1813,13 @@ proc check_heading {} {
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_y_water) $::start_button_y
         set ::skin(button_y_dye) $::start_button_y
+        set ::skin(button_y_skin_history_button) $::start_button_y
         move_workflow_button espresso
         move_workflow_button flush
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
+        move_workflow_button skin_history_button
     }
     if {$::skin(show_heading) == 2 || $::skin(show_heading) == 3} {
         dui item config $::skin_home_pages headerar_bg0 -fill $::skin_background_colour
@@ -1745,7 +1867,10 @@ proc header_settings {} {
             dui item moveto off heading_entry 450 640
         }
         dui item config off fav_edit_buttons -initial_state hidden -state hidden
-
+        dui item config off settings_toggles -initial_state normal -state normal
+        if {$::skin(show_history_button) == 1} {
+            set_button skin_history_button state normal
+        }
     } else {
         hide_header_settings
         show_graph
@@ -1769,6 +1894,8 @@ proc hide_header_settings {} {
     set_button icon_size_plus state hidden
     set_button icon_size_minus_x10 state hidden
     set_button icon_size_plus_x10 state hidden
+    dui item config off settings_toggles -initial_state hidden -state hidden
+    set_button skin_history_button state hidden
 }
 
 proc wifi_status {} {
@@ -1895,6 +2022,13 @@ proc workflow {option} {
         set ::skin(button_y_water) 0
         set ::skin(button_x_dye) [expr $::start_button_x + 1190]
         set ::skin(button_y_dye) $::start_button_y
+        if {$::dye_button_normally_hidden == 1} {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        } else {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        }
     }
     if {$option == "long"} {
         set ::skin(button_x_water) [expr $::start_button_x + 110]
@@ -1907,6 +2041,13 @@ proc workflow {option} {
         set ::skin(button_y_steam) $::start_button_y
         set ::skin(button_x_dye) [expr $::start_button_x + 1190]
         set ::skin(button_y_dye) $::start_button_y
+        if {$::dye_button_normally_hidden == 1} {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        } else {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        }
     }
     if {$option == "americano"} {
         set ::skin(button_x_espresso) [expr $::start_button_x + 110]
@@ -1919,6 +2060,13 @@ proc workflow {option} {
         set ::skin(button_y_steam) $::start_button_y
         set ::skin(button_x_dye) [expr $::start_button_x + 1190]
         set ::skin(button_y_dye) $::start_button_y
+        if {$::dye_button_normally_hidden == 1} {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        } else {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        }
     }
     if {$option == "espresso"} {
         set ::skin(button_x_espresso) [expr $::start_button_x + 110]
@@ -1931,19 +2079,44 @@ proc workflow {option} {
         set ::skin(button_y_flush) $::start_button_y
         set ::skin(button_x_dye) [expr $::start_button_x + 830]
         set ::skin(button_y_dye) $::start_button_y
+        if { $::dye_button_normally_hidden == 1} {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 830]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        } else {
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 830 + 250]
+            set ::skin(button_y_skin_history_button) $::start_button_y
+        }
     }
     if {$option == "none"} {
         if {"DYE" in $::settings(enabled_plugins) == 1} {
-            set ::skin(button_x_espresso) [expr $::start_button_x + 10]
-            set ::skin(button_y_espresso) $::start_button_y
-            set ::skin(button_x_steam) [expr $::start_button_x + 370]
-            set ::skin(button_y_steam) $::start_button_y
-            set ::skin(button_x_water) [expr $::start_button_x + 730]
-            set ::skin(button_y_water) $::start_button_y
-            set ::skin(button_x_flush) [expr $::start_button_x + 1090]
-            set ::skin(button_y_flush) $::start_button_y
-            set ::skin(button_x_dye) [expr $::start_button_x + 1450]
-            set ::skin(button_y_dye) $::start_button_y
+
+            if {$::dye_button_normally_hidden == 1} {
+                set ::skin(button_x_espresso) [expr $::start_button_x + 10]
+                set ::skin(button_y_espresso) $::start_button_y
+                set ::skin(button_x_steam) [expr $::start_button_x + 370]
+                set ::skin(button_y_steam) $::start_button_y
+                set ::skin(button_x_water) [expr $::start_button_x + 730]
+                set ::skin(button_y_water) $::start_button_y
+                set ::skin(button_x_flush) [expr $::start_button_x + 1090]
+                set ::skin(button_y_flush) $::start_button_y
+                set ::skin(button_x_dye) [expr $::start_button_x + 1450]
+                set ::skin(button_y_dye) $::start_button_y
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1450]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            } else {
+                set ::skin(button_x_espresso) [expr $::start_button_x -20]
+                set ::skin(button_y_espresso) $::start_button_y
+                set ::skin(button_x_steam) [expr $::start_button_x + 340]
+                set ::skin(button_y_steam) $::start_button_y
+                set ::skin(button_x_water) [expr $::start_button_x + 700]
+                set ::skin(button_y_water) $::start_button_y
+                set ::skin(button_x_flush) [expr $::start_button_x + 1060]
+                set ::skin(button_y_flush) $::start_button_y
+                set ::skin(button_x_dye) [expr $::start_button_x + 1420]
+                set ::skin(button_y_dye) $::start_button_y
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1420 + 250]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            }
         } else {
             set ::skin(button_x_espresso) [expr $::start_button_x + 110]
             set ::skin(button_y_espresso) $::start_button_y
@@ -1955,6 +2128,8 @@ proc workflow {option} {
             set ::skin(button_y_flush) $::start_button_y
             set ::skin(button_x_dye) [expr $::start_button_x + 1550]
             set ::skin(button_y_dye) $::start_button_y
+            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1550]
+            set ::skin(button_y_skin_history_button) $::start_button_y
         }
     }
     set ::settings(DSx2_workflow) $::skin(workflow)
@@ -1963,7 +2138,7 @@ proc workflow {option} {
     move_workflow_button steam
     move_workflow_button water
     move_workflow_button dye
-
+    move_workflow_button skin_history_button
     set_button wf_latte label_fill $::skin_button_label_colour
     set_button wf_long label_fill $::skin_button_label_colour
     set_button wf_americano label_fill $::skin_button_label_colour
@@ -2576,7 +2751,7 @@ proc toggle_graph_compare { graph } {
 }
 
 proc toggle_cache_graphs {} {
-    if {$::main_graph_height == [rescale_y_skin 1010]} {
+    if {[.can itemcget graph_a -state] eq "hidden"} {
             set ::main_graph_height [rescale_y_skin 840]
             $::home_espresso_graph configure -height [rescale_y_skin 840]
             .can itemconfigure graph_a -state normal
@@ -3488,6 +3663,25 @@ proc skin_save_flow_cal {} {
     skin_save settings
     set_calibration_flow_multiplier $::settings(calibration_flow_multiplier)
     skin_hide_flow_cal
+}
+
+set ::screen_saver_buttons {}
+
+proc remove_screen_saver_button {button} {
+    dui item config saver $button* -initial_state hidden -state hidden
+    set ::screen_saver_buttons [lsearch -inline -all -not -exact $::screen_saver_buttons ${button}]
+    set ::next_saver_spot_y 1
+    foreach s $::screen_saver_buttons {
+        dui item moveto saver $s* [next_saver_spot_x] [next_saver_spot_y]
+    }
+}
+
+proc add_screen_saver_button {button} {
+    if {[.can itemcget $button -state] == "hidden"} {
+        dui item config saver $button* -initial_state normal -state normal
+        lappend ::screen_saver_buttons $button
+        dui item moveto saver $button* [next_saver_spot_x] [next_saver_spot_y]
+    }
 }
 
 rename backup_settings backup_settings_orig

@@ -42,6 +42,18 @@ dui add variable off 630 1090 -fill $::skin_text_colour -font [skin_font font_bo
 dui add shape rect off 794 960 1066 1220 -width 2 -outline $::skin_text_colour -fill $::skin_background_colour -tags {icon_size_shape icon_size_set} -initial_state hidden
 dui add variable off 930 1090 -font [skin_font awesome_light [fixed_size 130]] -fill $::skin_text_colour -anchor center -initial_state hidden -tags {skin_icon_size_test icon_size_set} -textvariable {$::skin(icon_fav)}
 
+dui add dtext off 540 756 -tags {toggle_history_text settings_toggles} -text [translate "show history button"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw -initial_state hidden
+dui add dtoggle off 920 750 -anchor nw -tags {toggle_history_button settings_toggles} \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -initial_state hidden \
+    -variable ::skin(show_history_button) \
+    -command {if {$::skin(show_history_button) == 0} {
+            set_button skin_history_button state hidden
+        } else {
+            set_button skin_history_button state normal
+        }
+    }
+
 #####################
 ### fav
 ####
@@ -743,8 +755,20 @@ proc skin_dye_button {} {
 			[expr \$::skin(button_y_dye)+140]\} -anchor ne] \
 			-tap_pad {4 4 40 4} -page_title [translate {Select a shot to describe}]
 	}
+
 }
+
 skin_dye_button
+
+### history buttoms
+add_colour_button skin_history_button off [expr $::skin(button_x_history) + 230] $::skin(button_y_history) 100 100 {\uf1da} {skin_history}
+set_button skin_history_button font [skin_font awesome_light [fixed_size 28]]
+
+
+
+if {$::skin(show_history_button) == 0} {
+    set_button skin_history_button state hidden
+}
 
 if {$::android != 1} {
     start_idle
@@ -762,6 +786,7 @@ workflow $::skin(workflow)
 dui add variable off 0 0 -fill $::skin_text_colour  -font [skin_font font 14] -tags loop -anchor center -textvariable {[skin_loop]}
 check_graph_axis
 check_y_resolution
+check_history_button_position
 
 # optional keyboard bindings
 focus .can

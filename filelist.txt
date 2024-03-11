@@ -4,10 +4,16 @@ code/procs_vars.tcl
 code/save_and_load.tcl
 colour_themes/Damian/dark.txt
 colour_themes/Damian/default_copy.txt
+colour_themes/Eran/bright_purple.txt
 colour_themes/Eran/brown.txt
+colour_themes/Eran/christmas.txt
 colour_themes/Eran/custom_colours.txt
+colour_themes/Eran/dark.txt
 colour_themes/Eran/green.txt
 colour_themes/Eran/pink.txt
+colour_themes/Eran/pop.txt
+colour_themes/Eran/purple.txt
+colour_themes/Eran/retro.txt
 colour_themes/Eran/sand.txt
 colour_themes/default.txt
 fonts/D-font.otf
@@ -30,4 +36,5 @@ pages/Damian/home.tcl
 pages/P&D/home.tcl
 pages/P&D/setup.tcl
 plugins/pizza.tcl
+plugins/screen_saver_history_button.tcl
 skin.tcl

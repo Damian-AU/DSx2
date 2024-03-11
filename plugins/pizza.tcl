@@ -1,18 +1,5 @@
-#### Pizza dough calulator - skin pluging by Damian v1.00 ####
-
-### Custom settings
-set ::skin(pizza_size_fav_1) 280
-set ::skin(pizza_hydration_fav_1) 64.0
-set ::skin(pizza_yeast_factor_fav_1) "Normal"
-set ::skin(pizza_waste_fav_1) 2.0
-
-set ::skin(pizza_size_fav_2) 280
-set ::skin(pizza_hydration_fav_2) 64.0
-set ::skin(pizza_yeast_factor_fav_2) "Fluffy"
-set ::skin(pizza_waste_fav_2) 2.0
-
-
-
+#### Pizza dough calulator - DSx2 pluging by Damian ####
+set ::pizza_dough_calulator_version 1.10
 
 ### Starting values ###
 if {[info exists ::skin(pizza_quantity)] != 1} {
@@ -47,10 +34,10 @@ if {[info exists ::skin(pizza_waste_fav_1)] != 1} {
 if {[info exists ::skin(pizza_size_fav_2)] != 1} {
     set ::skin(pizza_size_fav_2) 280
 }
-if {[info exists ::skin(pizza_hydration_fav_2] != 1} {
+if {[info exists ::skin(pizza_hydration_fav_2)] != 1} {
     set ::skin(pizza_hydration_fav_2) 65.0
 }
-if {[info exists ::skin(pizza_yeast_factor_fav_2] != 1} {
+if {[info exists ::skin(pizza_yeast_factor_fav_2)] != 1} {
     set ::skin(pizza_yeast_factor_fav_2) "Fluffy"
 }
 if {[info exists ::skin(pizza_waste_fav_2)] != 1} {
@@ -89,6 +76,7 @@ proc pizza_save_fav_1 {} {
     set ::skin(pizza_hydration_fav_1) $::skin(pizza_hydration)
     set ::skin(pizza_waste_fav_1) $::skin(pizza_waste)
     pizza_yeast_text_colour
+    skin_save skin
 }
 
 proc pizza_save_fav_2 {} {
@@ -97,6 +85,7 @@ proc pizza_save_fav_2 {} {
     set ::skin(pizza_hydration_fav_2) $::skin(pizza_hydration)
     set ::skin(pizza_waste_fav_2) $::skin(pizza_waste)
     pizza_yeast_text_colour
+    skin_save skin
 }
 
 proc pizza_fav_1 {} {
@@ -157,11 +146,12 @@ proc pizza_calculate {} {
 
 ### UI ###
 ### page show button ###
-dui add dbutton saver 40 40 \
-    -bwidth 140 -bheight 140 \
+dui add dbutton saver 0 0 \
+    -bwidth 140 -bheight 140 -tags pizza_saver_button \
     -shape round -radius 30 -fill #333 \
     -labelvariable {\UF818} -label_font [skin_font awesome 48] -label_fill #666 -label_pos {0.5 0.5} \
     -command {scale_enable_lcd; page_show pizza_dough;}
+add_screen_saver_button pizza_saver_button
 
 ### Page heading ###
 add_de1_variable "pizza_dough" 1280 80 -justify center -font [skin_font font 30] -fill $::skin_text_colour -textvariable {Pizza Dough Calculator}
@@ -342,6 +332,7 @@ dui add dbutton pizza_fav_setup 80 1400 \
     -bwidth 400 -bheight 96 \
     -labelvariable {[translate "factory reset"]} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
     -shape round_outline -width 2 -arc_offset 20 -fill $::skin_forground_colour -outline $::skin_forground_colour \
-    -command {pizza_reset; pizza_calculate; page_show pizza_dough;}
+    -command {pizza_reset; skin_save skin; pizza_calculate; page_show pizza_dough;}
 
 pizza_calculate
+dui add variable "pizza_dough pizza_fav_setup" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {version ${::pizza_dough_calulator_version}}

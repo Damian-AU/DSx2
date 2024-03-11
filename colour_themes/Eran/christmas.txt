@@ -2,6 +2,8 @@ background_colour #702E28
 forground_colour #73CE7A
 button_label_colour "#B32B22"
 text_colour #F0F6F8
+secondary_text_colour #BABA16
+disabled_colour #7E8182
 selected_colour #0A34FB
 machine_not_ready #DA515E
 machine_ready #0CA581
@@ -12,6 +14,7 @@ brown #A1663A
 yellow #c5c315
 x_axis #E3E1E1
 y_axis #E3E1E1
+y2_axis #E3E1E1
 grey #E3E1E1
 graph_grid_colour #C7C7C7
 mini_graph_grid_colour #C7C7C7
