@@ -1,4 +1,4 @@
-set ::skin_version 1.28
+set ::skin_version 1.29
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -173,6 +173,10 @@ if {![info exist ::skin(show_history_button)]} {
 }
 
 proc skin_history {} {
+    history_viewer open
+}
+
+proc skin_history_2 {} {
     history_viewer open
 }
 
@@ -652,8 +656,7 @@ proc set_button {button_name property value} {
 
 proc add_colour_button {button_name pages x y width height tv command} {
     set ::${button_name}(pages) $pages
-
-    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
@@ -672,7 +675,7 @@ proc add_icon_button {button_name pages x y width height tv command {extra_tags 
 
 proc add_icon_label_button {button_name pages x y width height tvi tv command } {
     set ::${button_name}(pages) $pages
-    dui add dbutton $pages $x $y -bwidth $width -shape round_outline -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -outline $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
     dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
     dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
@@ -803,7 +806,7 @@ proc hide_graph {} {
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     }
     if {$::skin(show_history_button) == 1} {
-        set_button skin_history_button state hidden
+        dui item config off skin_history_button* -initial_state hidden -state hidden
     }
 }
 
@@ -850,7 +853,7 @@ proc show_graph {} {
     dui item config off main_graph_toggle_goal_label -initial_state normal -state normal
     dui item config off main_graph_toggle_goal_button* -initial_state normal -state normal
     if {$::skin(show_history_button) == 1} {
-        set_button skin_history_button state normal
+        dui item config off skin_history_button* -initial_state normal -state normal
     }
     if {$::skin(show_history_button) == 1} {
         if {[.can itemcget l_dye_bg -state] eq "hidden" || "DYE" in $::settings(enabled_plugins) == 0} {
@@ -1581,7 +1584,7 @@ proc move_workflow_button {button_name} {
 
         dui item moveto off launch_dye* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
     } elseif {$button_name == "skin_history_button"} {
-        move_colour_button skin_history_button
+        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
     } else {
         set z ::${button_name}(pages)
         set pages [set $z]
@@ -1614,7 +1617,7 @@ proc move_colour_button {button_name} {
      set z ::${button_name}(pages)
      set pages [set $z]
      set offset 2
-     if {$button_name == "skin_history_button"} {set offset 0}
+     #if {$button_name == "skin_history_button"} {set offset 0}
      lassign [.can coords b_${button_name}] x0 y0 x1 y1
      set width [expr [skin_screen_height_ratio $x1] - [skin_screen_width_ratio $x0]]
      set height [expr [skin_screen_height_ratio $y1] - [skin_screen_height_ratio $y0]]
@@ -1802,7 +1805,7 @@ proc check_heading {} {
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
-        move_workflow_button skin_history_button
+        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
 
     } else {
         set ::skin_heading {}
@@ -1819,7 +1822,7 @@ proc check_heading {} {
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
-        move_workflow_button skin_history_button
+        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
     }
     if {$::skin(show_heading) == 2 || $::skin(show_heading) == 3} {
         dui item config $::skin_home_pages headerar_bg0 -fill $::skin_background_colour
@@ -1869,7 +1872,7 @@ proc header_settings {} {
         dui item config off fav_edit_buttons -initial_state hidden -state hidden
         dui item config off settings_toggles -initial_state normal -state normal
         if {$::skin(show_history_button) == 1} {
-            set_button skin_history_button state normal
+            dui item config off skin_history_button* -initial_state normal -state normal
         }
     } else {
         hide_header_settings
@@ -1895,7 +1898,7 @@ proc hide_header_settings {} {
     set_button icon_size_minus_x10 state hidden
     set_button icon_size_plus_x10 state hidden
     dui item config off settings_toggles -initial_state hidden -state hidden
-    set_button skin_history_button state hidden
+    dui item config off skin_history_button* -initial_state hidden -state hidden
 }
 
 proc wifi_status {} {
@@ -2138,7 +2141,7 @@ proc workflow {option} {
     move_workflow_button steam
     move_workflow_button water
     move_workflow_button dye
-    move_workflow_button skin_history_button
+    dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
     set_button wf_latte label_fill $::skin_button_label_colour
     set_button wf_long label_fill $::skin_button_label_colour
     set_button wf_americano label_fill $::skin_button_label_colour
@@ -3075,7 +3078,7 @@ proc check_y_resolution {} {
     }
 }
 
-proc main_grap_elements {} {
+proc main_graph_elements {} {
     return [list \
     compare_pressure \
     compare_flow \
@@ -3110,7 +3113,7 @@ proc highlight_curve { curve } {
         return
     }
     hide_zoom_temperature
-    foreach e [main_grap_elements] {
+    foreach e [main_graph_elements] {
         $::home_espresso_graph element configure $e -hide 1
     }
     if {$curve == "pressure" || $curve == "resistance"} {
@@ -3148,7 +3151,7 @@ proc highlight_curve { curve } {
 }
 
 proc exit_highlight_curve {} {
-    foreach e [main_grap_elements] {
+    foreach e [main_graph_elements] {
         $::home_espresso_graph element configure $e -hide 0
     }
     check_graph_axis
@@ -3681,6 +3684,52 @@ proc add_screen_saver_button {button} {
         dui item config saver $button* -initial_state normal -state normal
         lappend ::screen_saver_buttons $button
         dui item moveto saver $button* [next_saver_spot_x] [next_saver_spot_y]
+    }
+}
+
+### skin_moveby is a copy from a recent dui addition on 11 March 2024, version 1.43.8.16
+### The function is very useful but to keep DSx2 backward compatable I have written skin_moveby
+### TODO replace all "skin_moveby" with "dui item moveby" once Stable version 1.44 is released, (used in History viewer)
+
+proc skin_moveby { page_or_id_or_widget tags {x_change {}} {y_change {}} } {
+    set can [dui canvas]
+    set items [dui item get $page_or_id_or_widget $tags]
+    if { $tags eq {} } {
+        set page [lindex [pages [lindex $items 0]] 0]
+    } else {
+        set page [lindex $page_or_id_or_widget 0]
+    }
+    if { $x_change ne {} } {
+        set x_change [dui::page::calc_x $page $x_change]
+    }
+    if { $y_change ne {} } {
+        set y_change [dui::page::calc_y $page $y_change]
+    }
+    foreach id $items {
+        lassign [$can coords $id] x0 y0 x1 y1
+        if { $x_change eq {} } {
+            set nx0 $x0
+            set nx1 $x1
+        } else {
+            set nx0 [expr {$x0+$x_change}]
+            if { $x1 ne {} } {
+                set nx1 [expr {$x1+$x_change}]
+            }
+        }
+        if { $y_change eq {} } {
+            set ny0 $y0
+            set ny1 $y1
+        } else {
+            set ny0 [expr {$y0+$y_change}]
+            if { $y1 ne {} } {
+                set ny1 [expr {$y1+$y_change}]
+            }
+        }
+        if { $x1 eq {} || $y1 eq {} } {
+            $can coords $id $nx0 $ny0
+        } else {
+            $can coords $id $nx0 $ny0 $nx1 $ny1
+        }
     }
 }
 

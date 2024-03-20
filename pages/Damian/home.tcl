@@ -48,9 +48,9 @@ dui add dtoggle off 920 750 -anchor nw -tags {toggle_history_button settings_tog
     -initial_state hidden \
     -variable ::skin(show_history_button) \
     -command {if {$::skin(show_history_button) == 0} {
-            set_button skin_history_button state hidden
+            dui item config off skin_history_button* -initial_state hidden -state hidden
         } else {
-            set_button skin_history_button state normal
+            dui item config off skin_history_button* -initial_state normal -state normal
         }
     }
 
@@ -578,7 +578,7 @@ dui add dtext off 180 680 -tags {wf_dose_cup_text_line_1 wf_espresso_info} -widt
 dui add dtext off 180 740 -tags {wf_dose_cup_text_line_2 wf_espresso_info} -text [translate "If you prefer to tare with the dose cup, set the dose cup weight to 0.0"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w -initial_state hidden
 dui add dtext off 180 800 -tags {wf_dose_cup_text_line_3 wf_espresso_info} -text [translate "Tap the dose cup button to set it to the current scale weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w -initial_state hidden
 dui add dtext off 900 580 -tags {wf_dose_cup_text_line_4 wf_espresso_info} -width 1400 -text [translate "tap to close"] -font [skin_font font 18] -fill $::skin_text_colour -anchor center -initial_state hidden
-add_clear_button {wf_espresso_info_close_button wf_espresso_info} off 100 560 1600 340 {} {hide_wf_espresso_info}; set_button {wf_espresso_info_close_button wf_espresso_info} state hidden
+dui add dbutton off 100 560 -bwidth 1600 -bheight 340 -initial_state hidden -tags {hide_wf_espresso_info wf_espresso_info} -command {hide_wf_espresso_info}
 
 hide_espresso_settings
 ###########################################################
@@ -761,13 +761,14 @@ proc skin_dye_button {} {
 skin_dye_button
 
 ### history buttoms
-add_colour_button skin_history_button off [expr $::skin(button_x_history) + 230] $::skin(button_y_history) 100 100 {\uf1da} {skin_history}
-set_button skin_history_button font [skin_font awesome_light [fixed_size 28]]
-
-
+dui add dbutton off [expr $::skin(button_x_history) + 230] $::skin(button_y_history) \
+    -bwidth 100 -bheight 100 -tags skin_history_button -initial_state normal \
+    -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
+    -labelvariable {\uf1da} -label_font [skin_font awesome_light [fixed_size 28]] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -command {skin_history} -longpress_cmd {skin_history_2}
 
 if {$::skin(show_history_button) == 0} {
-    set_button skin_history_button state hidden
+    dui item config off skin_history_button* -initial_state hidden -state hidden
 }
 
 if {$::android != 1} {

@@ -2,8 +2,8 @@ code/slow_scale_filtering/plugin.tcl
 code/default_settings.txt
 code/procs_vars.tcl
 code/save_and_load.tcl
-colour_themes/Damian/dark.txt
-colour_themes/Damian/default_copy.txt
+colour_theme/Damian/dark.txt
+colour_theme/Damian/default_copy.txt
 colour_themes/Eran/bright_purple.txt
 colour_themes/Eran/brown.txt
 colour_themes/Eran/christmas.txt
@@ -15,7 +15,7 @@ colour_themes/Eran/pop.txt
 colour_themes/Eran/purple.txt
 colour_themes/Eran/retro.txt
 colour_themes/Eran/sand.txt
-colour_themes/default.txt
+colour_theme/default.txt
 fonts/D-font.otf
 fonts/Font Awesome 5 Pro-Light-300.otf
 fonts/Font Awesome 5 Pro-Regular-400.otf
@@ -36,5 +36,6 @@ pages/Damian/home.tcl
 pages/P&D/home.tcl
 pages/P&D/setup.tcl
 plugins/pizza.tcl
+plugins/history_viewer.tcl
 plugins/screen_saver_history_button.tcl
 skin.tcl

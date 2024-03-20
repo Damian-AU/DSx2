@@ -27,3 +27,5 @@ x_axis #2b6084
 y_axis #2b6084
 graph_grid_colour #2b6084
 mini_graph_grid_colour #bbb
+history_left_colour #A1663A
+history_right_colour #DA515E
