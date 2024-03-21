@@ -1,5 +1,5 @@
 background_colour #000
-forground_colour #1a1a1e
+foreground_colour #1a1a1e
 button_label_colour #E8E8E8
 text_colour #E8E8E8
 selected_colour #fe7e00

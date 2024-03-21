@@ -1,4 +1,4 @@
-set ::skin_version 1.30
+set ::skin_version 1.31
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -307,7 +307,9 @@ proc initial_icon_cal_check {} {
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
         set_button edit_flow_rate_cal_button state normal
-        set_button edit_theme_button state normal
+        if {[info exist ::skin_show_pulak_button]} {
+            set_button edit_theme_button state normal
+        }
         hide_graph
         set_button close_heading_settings state normal
         set_button exit_heading_settings state normal
@@ -1863,7 +1865,9 @@ proc header_settings {} {
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
         set_button edit_flow_rate_cal_button state normal
-        set_button edit_theme_button state normal
+        if {[info exist ::skin_show_pulak_button]} {
+            set_button edit_theme_button state normal
+        }
         hide_graph
         set_button close_heading_settings state normal
         set_button exit_heading_settings state normal
@@ -1888,7 +1892,9 @@ proc hide_header_settings {} {
     set_button edit_colour_theme_button state hidden
     set_button edit_icon_size_button state hidden
     set_button edit_flow_rate_cal_button state hidden
-    set_button edit_theme_button state hidden
+    if {[info exist ::skin_show_pulak_button]} {
+        set_button edit_theme_button state hidden
+    }
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
     dui item moveto off heading_entry 450 -1001

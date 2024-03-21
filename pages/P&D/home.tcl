@@ -680,7 +680,7 @@ add_de1_variable "off espresso steam" 0 2000 -font [skin_font font 6] -fill #000
     [profile_type_text]
 }
 
-blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_state_change
+blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_state_change compare_espresso_weight_chartable compare_espresso_temperature_basket10th compare_espresso_resistance
 
 set ::key_font_size [fixed_size 14]
 
@@ -738,7 +738,8 @@ add_de1_widget "off flush water" graph 1130 350 {
     $widget element create compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow -symbol none -label "" -linewidth [rescale_x_skin 4] -color #4e85f4 -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 4] -color #a2693d -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color #a2a293  -pixels 0;
-
+    $widget element create compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
 
     $widget element create home_pressure_goal -xdata espresso_elapsed -ydata espresso_pressure_goal -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_green  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
     $widget element create home_flow_goal  -xdata espresso_elapsed -ydata espresso_flow_goal -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0  -dashes {2 2};
@@ -749,6 +750,9 @@ add_de1_widget "off flush water" graph 1130 350 {
     $widget element create home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th -symbol none -label ""  -linewidth [rescale_x_skin 6] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create home_resistance  -xdata espresso_elapsed -ydata espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 6] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0
     $widget element create home_steps -xdata espresso_elapsed -ydata espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color $::skin_grey  -pixels 0 ;
+
+    $widget element create home_weight_chartable  -xdata espresso_elapsed -ydata espresso_weight_chartable -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_brown  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
+    $widget element create compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
 
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font_bold 16] -min 0.0;
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font 16] -min 0.0 -max 10 -subdivisions 5 -majorticks {0  2  4  6  8  10  12}  -hide 0;

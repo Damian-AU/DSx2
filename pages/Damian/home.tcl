@@ -54,7 +54,7 @@ dui add dtoggle off 920 750 -anchor nw -tags {toggle_history_button settings_tog
         }
     }
 
-dui add dtext off 540 856 -tags {toggle_weight_text settings_toggles} -text [translate "show history button"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw -initial_state hidden
+dui add dtext off 540 856 -tags {toggle_weight_text settings_toggles} -text [translate "show weight curves"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw -initial_state hidden
 dui add dtoggle off 920 850 -anchor nw -tags {toggle_weight_button settings_toggles} \
     -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
     -initial_state hidden \
