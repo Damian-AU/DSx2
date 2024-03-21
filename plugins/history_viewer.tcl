@@ -1,4 +1,22 @@
-set ::history_viewer_version 1.00
+set ::history_viewer_version 1.10
+
+# set ::block_DSx2_history_viewer ""
+
+proc skin_history {} {
+    page_show history
+}
+if {[info exist ::block_DSx2_history_viewer]} {
+    dui add dtext history 1280 450 -font [skin_font font 34] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -text {DSx2 History Viewer was disabled by another plugin}
+
+    dui add dbutton history 1210 600 \
+        -shape round -radius $::skin_button_radius -width 2 -fill $::skin_foreground_colour \
+        -label [translate "EXIT"] -label_font [skin_font font 18] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+        -bwidth 110 -bheight 80 -initial_state normal \
+        -command {if {$::de1_num_state($::de1(state)) == "Sleep"} {page_show saver;} else {set_next_page off off; start_idle; page_show off;}}
+
+    return
+}
+
 proc history_graph_list {} {
 	return [list \
         espresso_elapsed \
@@ -11,6 +29,7 @@ proc history_graph_list {} {
         espresso_flow_weight \
         espresso_resistance \
         espresso_state_change \
+        espresso_weight \
     ]
 }
 
@@ -22,6 +41,7 @@ proc history_custom_graph_list {} {
         espresso_flow_2x \
         espresso_flow_goal_2x \
         espresso_flow_weight_2x \
+        espresso_weight10th \
     ]
 }
 
@@ -42,6 +62,7 @@ blt::vector create \
     history_left_espresso_temperature_basket \
     history_left_espresso_temperature_goal \
     history_left_espresso_temperature_basket10th \
+    history_left_espresso_weight10th \
     history_left_espresso_temperature_goal10th \
     history_left_espresso_pressure \
     history_left_espresso_pressure_goal \
@@ -52,13 +73,15 @@ blt::vector create \
     history_left_espresso_flow_weight \
     history_left_espresso_flow_weight_2x \
     history_left_espresso_resistance \
-    history_left_espresso_state_change
+    history_left_espresso_state_change \
+    history_left_espresso_weight
 
 blt::vector create \
     history_right_espresso_elapsed \
     history_right_espresso_temperature_basket \
     history_right_espresso_temperature_goal \
     history_right_espresso_temperature_basket10th \
+    history_right_espresso_weight10th \
     history_right_espresso_temperature_goal10th \
     history_right_espresso_pressure \
     history_right_espresso_pressure_goal \
@@ -69,13 +92,15 @@ blt::vector create \
     history_right_espresso_flow_weight \
     history_right_espresso_flow_weight_2x \
     history_right_espresso_resistance \
-    history_right_espresso_state_change
+    history_right_espresso_state_change \
+    history_right_espresso_weight
 
 blt::vector create \
     history_1_espresso_elapsed \
     history_1_espresso_temperature_basket \
     history_1_espresso_temperature_goal \
     history_1_espresso_temperature_basket10th \
+    history_1_espresso_weight10th \
     history_1_espresso_temperature_goal10th \
     history_1_espresso_pressure \
     history_1_espresso_pressure_goal \
@@ -86,13 +111,15 @@ blt::vector create \
     history_1_espresso_flow_weight \
     history_1_espresso_flow_weight_2x \
     history_1_espresso_resistance \
-    history_1_espresso_state_change
+    history_1_espresso_state_change \
+    history_1_espresso_weight
 
 blt::vector create \
     history_2_espresso_elapsed \
     history_2_espresso_temperature_basket \
     history_2_espresso_temperature_goal \
     history_2_espresso_temperature_basket10th \
+    history_2_espresso_weight10th \
     history_2_espresso_temperature_goal10th \
     history_2_espresso_pressure \
     history_2_espresso_pressure_goal \
@@ -103,13 +130,15 @@ blt::vector create \
     history_2_espresso_flow_weight \
     history_2_espresso_flow_weight_2x \
     history_2_espresso_resistance \
-    history_2_espresso_state_change
+    history_2_espresso_state_change \
+    history_2_espresso_weight
 
 blt::vector create \
     history_3_espresso_elapsed \
     history_3_espresso_temperature_basket \
     history_3_espresso_temperature_goal \
     history_3_espresso_temperature_basket10th \
+    history_3_espresso_weight10th \
     history_3_espresso_temperature_goal10th \
     history_3_espresso_pressure \
     history_3_espresso_pressure_goal \
@@ -120,13 +149,15 @@ blt::vector create \
     history_3_espresso_flow_weight \
     history_3_espresso_flow_weight_2x \
     history_3_espresso_resistance \
-    history_3_espresso_state_change
+    history_3_espresso_state_change \
+    history_3_espresso_weight
 
 blt::vector create \
     history_4_espresso_elapsed \
     history_4_espresso_temperature_basket \
     history_4_espresso_temperature_goal \
     history_4_espresso_temperature_basket10th \
+    history_4_espresso_weight10th \
     history_4_espresso_temperature_goal10th \
     history_4_espresso_pressure \
     history_4_espresso_pressure_goal \
@@ -137,13 +168,15 @@ blt::vector create \
     history_4_espresso_flow_weight \
     history_4_espresso_flow_weight_2x \
     history_4_espresso_resistance \
-    history_4_espresso_state_change
+    history_4_espresso_state_change \
+    history_4_espresso_weight
 
 blt::vector create \
     history_5_espresso_elapsed \
     history_5_espresso_temperature_basket \
     history_5_espresso_temperature_goal \
     history_5_espresso_temperature_basket10th \
+    history_5_espresso_weight10th \
     history_5_espresso_temperature_goal10th \
     history_5_espresso_pressure \
     history_5_espresso_pressure_goal \
@@ -154,13 +187,15 @@ blt::vector create \
     history_5_espresso_flow_weight \
     history_5_espresso_flow_weight_2x \
     history_5_espresso_resistance \
-    history_5_espresso_state_change
+    history_5_espresso_state_change \
+    history_5_espresso_weight
 
 blt::vector create \
     history_6_espresso_elapsed \
     history_6_espresso_temperature_basket \
     history_6_espresso_temperature_goal \
     history_6_espresso_temperature_basket10th \
+    history_6_espresso_weight10th \
     history_6_espresso_temperature_goal10th \
     history_6_espresso_pressure \
     history_6_espresso_pressure_goal \
@@ -171,13 +206,15 @@ blt::vector create \
     history_6_espresso_flow_weight \
     history_6_espresso_flow_weight_2x \
     history_6_espresso_resistance \
-    history_6_espresso_state_change
+    history_6_espresso_state_change \
+    history_6_espresso_weight
 
 blt::vector create \
     history_7_espresso_elapsed \
     history_7_espresso_temperature_basket \
     history_7_espresso_temperature_goal \
     history_7_espresso_temperature_basket10th \
+    history_7_espresso_weight10th \
     history_7_espresso_temperature_goal10th \
     history_7_espresso_pressure \
     history_7_espresso_pressure_goal \
@@ -188,13 +225,15 @@ blt::vector create \
     history_7_espresso_flow_weight \
     history_7_espresso_flow_weight_2x \
     history_7_espresso_resistance \
-    history_7_espresso_state_change
+    history_7_espresso_state_change \
+    history_7_espresso_weight
 
 blt::vector create \
     history_8_espresso_elapsed \
     history_8_espresso_temperature_basket \
     history_8_espresso_temperature_goal \
     history_8_espresso_temperature_basket10th \
+    history_8_espresso_weight10th \
     history_8_espresso_temperature_goal10th \
     history_8_espresso_pressure \
     history_8_espresso_pressure_goal \
@@ -205,13 +244,15 @@ blt::vector create \
     history_8_espresso_flow_weight \
     history_8_espresso_flow_weight_2x \
     history_8_espresso_resistance \
-    history_8_espresso_state_change
+    history_8_espresso_state_change \
+    history_8_espresso_weight
 
 blt::vector create \
     history_9_espresso_elapsed \
     history_9_espresso_temperature_basket \
     history_9_espresso_temperature_goal \
     history_9_espresso_temperature_basket10th \
+    history_9_espresso_weight10th \
     history_9_espresso_temperature_goal10th \
     history_9_espresso_pressure \
     history_9_espresso_pressure_goal \
@@ -222,13 +263,15 @@ blt::vector create \
     history_9_espresso_flow_weight \
     history_9_espresso_flow_weight_2x \
     history_9_espresso_resistance \
-    history_9_espresso_state_change
+    history_9_espresso_state_change \
+    history_9_espresso_weight
 
 blt::vector create \
     history_10_espresso_elapsed \
     history_10_espresso_temperature_basket \
     history_10_espresso_temperature_goal \
     history_10_espresso_temperature_basket10th \
+    history_10_espresso_weight10th \
     history_10_espresso_temperature_goal10th \
     history_10_espresso_pressure \
     history_10_espresso_pressure_goal \
@@ -239,7 +282,8 @@ blt::vector create \
     history_10_espresso_flow_weight \
     history_10_espresso_flow_weight_2x \
     history_10_espresso_resistance \
-    history_10_espresso_state_change
+    history_10_espresso_state_change \
+    history_10_espresso_weight
 
 if {![info exist ::skin(history_pressure)]} {
     set ::skin(history_pressure) 1
@@ -249,6 +293,9 @@ if {![info exist ::skin(history_flow)]} {
 }
 if {![info exist ::skin(history_weight)]} {
     set ::skin(history_weight) 1
+}
+if {![info exist ::skin(history_weight10th)]} {
+    set ::skin(history_weight10th) 1
 }
 if {![info exist ::skin(history_temperature)]} {
     set ::skin(history_temperature) 1
@@ -281,16 +328,21 @@ if {[info exist ::user(history_right_colour)]} {
 } else {
     set ::history_right_colour $::skin_red
 }
+if {![info exist ::skin(history_enable_weight10th)]} {
+    set ::skin(history_enable_weight10th) 0
+}
+if {![info exist ::skin(history_sch_limit)]} {
+    set ::skin(history_sch_limit) 100
+}
 
-set ::history_sch_limit 500
 set ::history_count 0
 
-proc history_list {{limit $::history_sch_limit}} {
+proc history_list {{limit $::skin(history_sch_limit)}} {
     set result {}
     set files [lsort -dictionary -decreasing [glob -nocomplain -tails -directory "[homedir]/history/" *.shot]]
     set ::history_count [llength $files]
-    if {$::history_count < $::history_sch_limit} {
-        set ::history_sch_limit $::history_count
+    if {$::history_count < $::skin(history_sch_limit)} {
+        set ::skin(history_sch_limit) $::history_count
     }
     set count 0
     foreach file $files {
@@ -305,6 +357,7 @@ proc history_list {{limit $::history_sch_limit}} {
 }
 
 proc scroll_history { steps } {
+    borg spinner on
     if {$::history_count < 10} {
         set ::skin(history_position) 1
         get_history_data 1
@@ -314,10 +367,11 @@ proc scroll_history { steps } {
     if {$pos < 1} {
         set pos 1
     }
-    if {$pos > [expr $::history_sch_limit - 9]} {
-        set pos [expr $::history_sch_limit - 9]
+    if {$pos > [expr $::skin(history_sch_limit) - 9]} {
+        set pos [expr $::skin(history_sch_limit) - 9]
     }
     get_history_data $pos
+    borg spinner off
 }
 
 proc history_position { pos } {
@@ -404,7 +458,7 @@ proc history_left_graph_info {} {
     set p $::history_left_graph_profile_title
     set b [round_to_one_digits $::history_left_graph_dose]
     set w [round_to_one_digits $::history_left_graph_drink_weight]
-    set er [round_to_one_digits [expr $::history_left_graph_dose / ($::history_left_graph_drink_weight + 0.001)]]
+    set er [round_to_one_digits [expr $::history_left_graph_drink_weight / ($::history_left_graph_dose + 0.001)]]
     if {$::history_left_graph_dose < 5 || $::history_left_graph_drink_weight < 5} {
         set er 0
     }
@@ -421,7 +475,7 @@ proc history_right_graph_info {} {
     set p [name_length $::history_right_graph_profile_title 26]
     set b [round_to_one_digits $::history_right_graph_dose]
     set w [round_to_one_digits $::history_right_graph_drink_weight]
-    set er [round_to_one_digits [expr $::history_right_graph_dose / ($::history_right_graph_drink_weight + 0.001)]]
+    set er [round_to_one_digits [expr $::history_left_graph_drink_weight / ($::history_left_graph_dose + 0.001)]]
     if {$::history_right_graph_dose < 5 || $::history_right_graph_drink_weight < 5} {
         set er 0
     }
@@ -438,6 +492,9 @@ proc make_custom_curves {} {
         clear_history_custom_graphs $graph
         foreach t [history_${graph}_espresso_temperature_basket * 0.1] {
             history_${graph}_espresso_temperature_basket10th append $t
+        }
+        foreach w [history_${graph}_espresso_weight * 0.1] {
+            history_${graph}_espresso_weight10th append $w
         }
         foreach tg [history_${graph}_espresso_temperature_goal * 0.1] {
             history_${graph}_espresso_temperature_goal10th append $tg
@@ -478,6 +535,7 @@ proc clear_history_custom_graphs { graph } {
     history_${graph}_espresso_flow_goal_2x length 0
     history_${graph}_espresso_flow_weight_2x length 0
     history_${graph}_espresso_temperature_basket10th length 0
+    history_${graph}_espresso_weight10th length 0
     history_${graph}_espresso_temperature_goal10th length 0
 }
 
@@ -668,6 +726,7 @@ proc load_to_history { side graph } {
         history_left_espresso_pressure append ${graph}_espresso_pressure
         history_left_espresso_state_change append ${graph}_espresso_state_change
         history_left_espresso_temperature_basket10th append ${graph}_espresso_temperature_basket10th
+        history_left_espresso_weight10th append ${graph}_espresso_weight10th
         history_left_espresso_temperature_basket append ${graph}_espresso_temperature_basket
         history_left_espresso_resistance append ${graph}_espresso_resistance
         history_left_espresso_flow append ${graph}_espresso_flow
@@ -768,6 +827,7 @@ proc load_to_history { side graph } {
         history_right_espresso_pressure append ${graph}_espresso_pressure
         history_right_espresso_state_change append ${graph}_espresso_state_change
         history_right_espresso_temperature_basket10th append ${graph}_espresso_temperature_basket10th
+        history_right_espresso_weight10th append ${graph}_espresso_weight10th
         history_right_espresso_temperature_basket append ${graph}_espresso_temperature_basket
         history_right_espresso_resistance append ${graph}_espresso_resistance
         history_right_espresso_flow append ${graph}_espresso_flow
@@ -875,6 +935,14 @@ proc toggle_history_graph {curve} {
     } else {
         set ::skin(history_${curve}) 1
     }
+    if {$curve == "weight" && $::skin(history_enable_weight10th) == 1} {
+        set ::skin(history_weight10th) $::skin(history_weight)
+        config_history_graph weight10th
+    }
+    if {$::skin(history_enable_weight10th) == 0} {
+        set ::skin(history_weight10th) 0
+        config_history_graph weight10th
+    }
     config_history_graph $curve
     skin_save skin
 }
@@ -937,6 +1005,9 @@ proc check_one_graph_goals {} {
 }
 
 proc config_history_graph {curve} {
+    if {$::skin(history_enable_weight10th) == 0} {
+        set ::skin(history_weight10th) 0
+    }
     if {$curve == "goal"} {
         if {$::skin(history_goal) == 1} {
             $::history_left_graph element configure history_left_pressure_goal -hide 0
@@ -1129,7 +1200,10 @@ proc config_history_graph {curve} {
 }
 
 proc check_history_graph {} {
-    foreach key {pressure flow weight temperature resistance steps goal y2} {
+    if {$::skin(history_enable_weight10th) == 0} {
+        set ::skin(history_weight10th) 0
+    }
+    foreach key {pressure flow weight temperature resistance steps goal y2 weight10th} {
         config_history_graph $key
     }
 }
@@ -1169,7 +1243,7 @@ proc history_highlight_curve { curve } {
     if {$::skin(history_$curve) == 0} {
         return
     }
-    foreach key {pressure flow weight temperature} {
+    foreach key {pressure flow weight weight10th temperature resistance} {
         set ::history_backup(${key}_curve_state) $::skin(history_${key})
         if {$::skin(history_${key}) > 0 && $curve != $key} {
             set ::skin(history_${key}) 0
@@ -1181,7 +1255,7 @@ proc history_highlight_curve { curve } {
 }
 
 proc exit_history_highlight_curve {} {
-    foreach key {pressure flow weight temperature} {
+    foreach key {pressure flow weight weight10th temperature resistance} {
 
         set ::skin(history_${key}) $::history_backup(${key}_curve_state)
         config_history_graph $key
@@ -1439,7 +1513,7 @@ add_de1_widget "history" graph 30 100 {
     set ::history_one_graph $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 100] && $::history_zoomed == 0} {
+        if {$x < [rescale_x_skin 100] && $::history_zoomed == 0} {
             toggle_history_y_resolution
         } else {
             toggle_history_graphs
@@ -1455,6 +1529,7 @@ add_de1_widget "history" graph 30 100 {
     $widget element create one_history_left_weight -xdata history_left_espresso_elapsed -ydata history_left_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create one_history_left_temperature -xdata history_left_espresso_elapsed -ydata history_left_espresso_temperature_basket -symbol none -label ""  -linewidth [rescale_x_skin 10] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create one_history_left_temperature10th -xdata history_left_espresso_elapsed -ydata history_left_espresso_temperature_basket10th -symbol none -label ""  -linewidth [rescale_x_skin 10] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create one_history_left_weight10th -xdata history_left_espresso_elapsed -ydata history_left_espresso_weight10th -symbol none -label ""  -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
     $widget element create one_history_left_resistance -xdata history_left_espresso_elapsed -ydata history_left_espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0
     $widget element create one_history_left_steps -xdata history_left_espresso_elapsed -ydata history_left_espresso_state_change -label "" -linewidth [rescale_x_skin 8] -color $::skin_grey  -pixels 0 ;
     $widget element create one_history_left_flow_goal_2x -xdata history_left_espresso_elapsed -ydata history_left_espresso_flow_goal_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
@@ -1471,6 +1546,7 @@ add_de1_widget "history" graph 30 100 {
     $widget element create one_history_right_weight -xdata history_right_espresso_elapsed -ydata history_right_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create one_history_right_temperature -xdata history_right_espresso_elapsed -ydata history_right_espresso_temperature_basket -symbol none -label ""  -linewidth [rescale_x_skin 5] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create one_history_right_temperature10th -xdata history_right_espresso_elapsed -ydata history_right_espresso_temperature_basket10th -symbol none -label ""  -linewidth [rescale_x_skin 5] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create one_history_right_weight10th -xdata history_right_espresso_elapsed -ydata history_right_espresso_weight10th -symbol none -label ""  -linewidth [rescale_x_skin 3] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
     $widget element create one_history_right_resistance -xdata history_right_espresso_elapsed -ydata history_right_espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0
     $widget element create one_history_right_steps -xdata history_right_espresso_elapsed -ydata history_right_espresso_state_change -label "" -linewidth [rescale_x_skin 4] -color $::skin_grey  -pixels 0 ;
     $widget element create one_history_right_flow_goal_2x -xdata history_right_espresso_elapsed -ydata history_right_espresso_flow_goal_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
@@ -1488,7 +1564,7 @@ add_de1_widget "history" graph 30 440 {
     set ::history_left_graph $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 100] && $::history_zoomed == 0} {
+        if {$x < [rescale_x_skin 100] && $::history_zoomed == 0} {
             toggle_history_y_resolution
         } else {
             toggle_history_graphs
@@ -1504,6 +1580,7 @@ add_de1_widget "history" graph 30 440 {
     $widget element create history_left_weight -xdata history_left_espresso_elapsed -ydata history_left_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 9] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create history_left_temperature -xdata history_left_espresso_elapsed -ydata history_left_espresso_temperature_basket -symbol none -label ""  -linewidth [rescale_x_skin 9] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create history_left_temperature10th -xdata history_left_espresso_elapsed -ydata history_left_espresso_temperature_basket10th -symbol none -label ""  -linewidth [rescale_x_skin 9] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create history_left_weight10th -xdata history_left_espresso_elapsed -ydata history_left_espresso_weight10th -symbol none -label ""  -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
     $widget element create history_left_resistance -xdata history_left_espresso_elapsed -ydata history_left_espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 9] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0
     $widget element create history_left_steps -xdata history_left_espresso_elapsed -ydata history_left_espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color $::skin_grey  -pixels 0 ;
     $widget element create history_left_flow_goal_2x -xdata history_left_espresso_elapsed -ydata history_left_espresso_flow_goal_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
@@ -1521,7 +1598,7 @@ add_de1_widget "history" graph 1280 440 {
     set ::history_right_graph $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 100] && $::history_zoomed == 0} {
+        if {$x < [rescale_x_skin 100] && $::history_zoomed == 0} {
             toggle_history_y_resolution
         } else {
             toggle_history_graphs
@@ -1537,6 +1614,7 @@ add_de1_widget "history" graph 1280 440 {
     $widget element create history_right_weight  -xdata history_right_espresso_elapsed -ydata history_right_espresso_flow_weight -symbol none -label "" -linewidth [rescale_x_skin 9] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create history_right_temperature -xdata history_right_espresso_elapsed -ydata history_right_espresso_temperature_basket -symbol none -label ""  -linewidth [rescale_x_skin 9] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
     $widget element create history_right_temperature10th -xdata history_right_espresso_elapsed -ydata history_right_espresso_temperature_basket10th -symbol none -label ""  -linewidth [rescale_x_skin 9] -color $::skin_red -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
+    $widget element create history_right_weight10th -xdata history_right_espresso_elapsed -ydata history_right_espresso_weight10th -symbol none -label ""  -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
     $widget element create history_right_resistance  -xdata history_right_espresso_elapsed -ydata history_right_espresso_resistance -symbol none -label "" -linewidth [rescale_x_skin 9] -color $::skin_yellow -smooth $::settings(live_graph_smoothing_technique) -pixels 0
     $widget element create history_right_steps -xdata history_right_espresso_elapsed -ydata history_right_espresso_state_change -label "" -linewidth [rescale_x_skin 2] -color $::skin_grey  -pixels 0 ;
     $widget element create history_right_flow_goal_2x -xdata history_right_espresso_elapsed -ydata history_right_espresso_flow_goal_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
@@ -1550,15 +1628,33 @@ add_de1_widget "history" graph 1280 440 {
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1250] -height [rescale_y_skin 650] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags history_right_graph
 
 
+#dui add variable history 180 100 -font [skin_font font 34] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -textvariable {$::xxx}
+
+
+
+proc skin_graph_tap { a } {
+    return [expr $a * 1280 / $::settings(screen_size_width)]
+}
+
+
 
 add_de1_widget history graph 40 $::history_graphs_row1 {
     set ::history_history_1 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_1
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 380} {
+                load_to_history left history_1
+            } else {
+                load_to_history right history_1
+            }
         } else {
-            load_to_history right history_1
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_1
+            } else {
+                load_to_history right history_1
+            }
         }
     }
     $widget element create history_1_espresso_pressure -xdata history_1_espresso_elapsed -ydata history_1_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1574,16 +1670,25 @@ add_de1_widget history graph 40 $::history_graphs_row1 {
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_1
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_1
 
 add_de1_widget history graph 500 $::history_graphs_row1 {
     set ::history_history_2 $widget
     bind $widget [platform_button_press] {
-set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_2
+        set x [translate_coordinates_finger_down_x %x]
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 380} {
+                load_to_history left history_2
+            } else {
+                load_to_history right history_2
+            }
         } else {
-            load_to_history right history_2
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_2
+            } else {
+                load_to_history right history_2
+            }
         }
     }
     $widget element create history_2_espresso_pressure -xdata history_2_espresso_elapsed -ydata history_2_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1598,16 +1703,25 @@ set x [translate_coordinates_finger_down_x %x]
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_2
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_2
 
 add_de1_widget history graph 960 $::history_graphs_row1 {
     set ::history_history_3 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_3
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 620} {
+                load_to_history left history_3
+            } else {
+                load_to_history right history_3
+            }
         } else {
-            load_to_history right history_3
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_3
+            } else {
+                load_to_history right history_3
+            }
         }
     }
     $widget element create history_3_espresso_pressure -xdata history_3_espresso_elapsed -ydata history_3_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1622,16 +1736,25 @@ add_de1_widget history graph 960 $::history_graphs_row1 {
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
 $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_3
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_3
 
 add_de1_widget history graph 1420 $::history_graphs_row1 {
     set ::history_history_4 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_4
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 840} {
+                load_to_history left history_4
+            } else {
+                load_to_history right history_4
+            }
         } else {
-            load_to_history right history_4
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_4
+            } else {
+                load_to_history right history_4
+            }
         }
     }
     $widget element create history_4_espresso_pressure -xdata history_4_espresso_elapsed -ydata history_4_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1646,16 +1769,25 @@ add_de1_widget history graph 1420 $::history_graphs_row1 {
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
 $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_4
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_4
 
 add_de1_widget history graph 1880 $::history_graphs_row1 {
     set ::history_history_5 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_5
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 1070} {
+                load_to_history left history_5
+            } else {
+                load_to_history right history_5
+            }
         } else {
-            load_to_history right history_5
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_5
+            } else {
+                load_to_history right history_5
+            }
         }
     }
     $widget element create history_5_espresso_pressure -xdata history_5_espresso_elapsed -ydata history_5_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1670,16 +1802,25 @@ add_de1_widget history graph 1880 $::history_graphs_row1 {
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
 $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_5
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_5
 
 add_de1_widget history graph 40 $::history_graphs_row2 {
     set ::history_history_6 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_6
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 380} {
+                load_to_history left history_6
+            } else {
+                load_to_history right history_6
+            }
         } else {
-            load_to_history right history_6
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_6
+            } else {
+                load_to_history right history_6
+            }
         }
     }
     $widget element create history_6_espresso_pressure -xdata history_6_espresso_elapsed -ydata history_6_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1694,16 +1835,25 @@ add_de1_widget history graph 40 $::history_graphs_row2 {
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_6
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_6
 
 add_de1_widget history graph 500 $::history_graphs_row2 {
     set ::history_history_7 $widget
     bind $widget [platform_button_press] {
-set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_7
+        set x [translate_coordinates_finger_down_x %x]
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 380} {
+                load_to_history left history_7
+            } else {
+                load_to_history right history_7
+            }
         } else {
-            load_to_history right history_7
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_7
+            } else {
+                load_to_history right history_7
+            }
         }
     }
     $widget element create history_7_espresso_pressure -xdata history_7_espresso_elapsed -ydata history_7_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1718,16 +1868,25 @@ set x [translate_coordinates_finger_down_x %x]
     #$widget axis configure y2 -color $::skin_y7_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_7
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_7
 
 add_de1_widget history graph 960 $::history_graphs_row2 {
     set ::history_history_8 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_8
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 620} {
+                load_to_history left history_8
+            } else {
+                load_to_history right history_8
+            }
         } else {
-            load_to_history right history_8
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_8
+            } else {
+                load_to_history right history_8
+            }
         }
     }
     $widget element create history_8_espresso_pressure -xdata history_8_espresso_elapsed -ydata history_8_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1741,17 +1900,26 @@ add_de1_widget history graph 960 $::history_graphs_row2 {
     $widget element create history_8_espresso_flow_weight_2x -xdata history_8_espresso_elapsed -ydata history_8_espresso_flow_weight_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -hide 0;
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
-$widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_8
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_8
 
 add_de1_widget history graph 1420 $::history_graphs_row2 {
     set ::history_history_9 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_9
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 840} {
+                load_to_history left history_9
+            } else {
+                load_to_history right history_9
+            }
         } else {
-            load_to_history right history_9
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_9
+            } else {
+                load_to_history right history_9
+            }
         }
     }
     $widget element create history_9_espresso_pressure -xdata history_9_espresso_elapsed -ydata history_9_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1765,17 +1933,26 @@ add_de1_widget history graph 1420 $::history_graphs_row2 {
     $widget element create history_9_espresso_flow_weight_2x -xdata history_9_espresso_elapsed -ydata history_9_espresso_flow_weight_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -hide 0;
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
-$widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_9
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_9
 
 add_de1_widget history graph 1880 $::history_graphs_row2 {
     set ::history_history_10 $widget
     bind $widget [platform_button_press] {
         set x [translate_coordinates_finger_down_x %x]
-        if {$x < [rescale_y_skin 260]} {
-            load_to_history left history_10
+        set ::xxx [skin_graph_tap $x]
+        if {$::xxx > 260} {
+            if {$::xxx < 1070} {
+                load_to_history left history_10
+            } else {
+                load_to_history right history_10
+            }
         } else {
-            load_to_history right history_10
+            if {$x < [rescale_x_skin 260]} {
+                load_to_history left history_10
+            } else {
+                load_to_history right history_10
+            }
         }
     }
     $widget element create history_10_espresso_pressure -xdata history_10_espresso_elapsed -ydata history_10_espresso_pressure -symbol none -label "" -linewidth [rescale_x_skin 5] -color #18c37e  -smooth $::settings(live_graph_smoothing_technique) -pixels 0;
@@ -1789,8 +1966,8 @@ add_de1_widget history graph 1880 $::history_graphs_row2 {
     $widget element create history_10_espresso_flow_weight_2x -xdata history_10_espresso_elapsed -ydata history_10_espresso_flow_weight_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -hide 0;
     #$widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
-$widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 600]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_10
+    $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 480] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags history_history_10
 
 dui add dtext history 2450 1310 -text [translate "showing"] -font [skin_font font 12] -fill $::skin_text_colour -anchor center
 dui add variable history 2450 1348 -fill $::skin_text_colour -font [skin_font font 14] -anchor center -textvariable {[history_pos_showing]}
@@ -1807,6 +1984,55 @@ show_history_graph
 
 dui add variable history 2540 1580 -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {v$::history_viewer_version}
 
-proc skin_history {} {
-    page_show history
+
+
+### settings
+proc toggle_enable_weight10th {} {
+    if {$::skin(history_enable_weight10th) == 0} {
+        set ::skin(history_weight10th) 0
+    } else {
+        set ::skin(history_weight10th) $::skin(history_weight)
+    }
+    config_history_graph weight10th
+    skin_save skin
 }
+
+proc set_history_sch { value } {
+    set ::skin(history_sch_limit) [expr $::skin(history_sch_limit) + $value]
+    if {$::skin(history_sch_limit) < 50} {
+        set ::skin(history_sch_limit) 50
+    }
+    if {$::skin(history_sch_limit) > 500} {
+        set ::skin(history_sch_limit) 500
+    }
+    if {$::history_count < $::skin(history_sch_limit)} {
+        set ::skin(history_sch_limit) $::history_count
+    }
+}
+
+dui add variable skin_hv_settings 1280 160 -font [skin_font font 34] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor center -textvariable {DSx2 History Viewer Settings}
+
+dui add dbutton history [expr $::skin_history_graph_key_x + 2290 + 26] 150 \
+    -shape round -radius $::skin_button_radius -width 2 -fill $::skin_foreground_colour \
+    -label $::skin(icon_edit) -label_font [skin_font awesome_light [fixed_size 20]] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -bwidth 110 -bheight 80 -initial_state normal -tags {history_settings_button history_zoom_temperature_state history_key_buttons}\
+    -command {page_show skin_hv_settings}
+
+dui add dbutton skin_hv_settings [expr $::skin_history_graph_key_x + 2290 + 26] 150 \
+    -shape round -radius $::skin_button_radius -width 2 -fill $::skin_foreground_colour \
+    -label [translate "EXIT"] -label_font [skin_font awesome_light [fixed_size 20]] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -bwidth 110 -bheight 80 -initial_state normal -tags {history_settings_button history_zoom_temperature_state history_key_buttons}\
+    -command {page_show history}
+
+dui add dtext skin_hv_settings 1180 630 -font [skin_font font 18] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor e -text [translate "show weight curves"]
+
+dui add dtoggle skin_hv_settings 1220 600 -anchor nw \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(history_enable_weight10th) \
+    -command {toggle_enable_weight10th}
+
+dui add dtext skin_hv_settings 1180 860 -font [skin_font font 18] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor e -text [translate "search limit"]
+
+dui add variable skin_hv_settings 1280 860 -fill $::skin_text_colour -font [skin_font font 20] -anchor center -textvariable {$::skin(history_sch_limit)}
+add_colour_button history_sch_up skin_hv_settings 1230 720 100 100 {\Uf106} {set_history_sch -50 }; set_button  history_sch_up font [skin_font awesome_light [fixed_size 34]]
+add_colour_button history_sch_down skin_hv_settings 1230 900 100 100 {\Uf107} {set_history_sch 50 }; set_button  history_sch_down font [skin_font awesome_light [fixed_size 34]]
