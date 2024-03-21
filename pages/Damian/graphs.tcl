@@ -22,7 +22,7 @@ add_de1_widget off graph 40 1350 {
     $widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_a
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 496] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_a
 
 add_de1_widget off graph 520 1350 {
     set ::cache_graph_b $widget
@@ -46,7 +46,7 @@ set x [translate_coordinates_finger_down_x %x]
     $widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
     $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_b
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 496] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_b
 
 add_de1_widget off graph 1000 1350 {
     set ::cache_graph_c $widget
@@ -70,7 +70,7 @@ add_de1_widget off graph 1000 1350 {
     $widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
 $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_c
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 496] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_c
 
 add_de1_widget off graph 1480 1350 {
     set ::cache_graph_d $widget
@@ -94,7 +94,7 @@ add_de1_widget off graph 1480 1350 {
     $widget axis configure y2 -color $::skin_y2_axis_colour -tickfont [skin_font font [fixed_size 8]] -min 0.0 -max 5 -subdivisions 1 -majorticks {0  1  2  3  4  5  6} -hide 0;
 
 $widget grid configure -color $::skin_mini_grid_colour -linewidth 1
-} -plotbackground $::skin_background_colour -width [rescale_x_skin [skin_graph_size 620]] -height [rescale_y_skin [skin_graph_size 260]] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_d
+} -plotbackground $::skin_background_colour -width [rescale_x_skin 496] -height [rescale_y_skin 210] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -tags graph_d
 
 .can itemconfigure graph_a -state hidden
 .can itemconfigure graph_b -state hidden

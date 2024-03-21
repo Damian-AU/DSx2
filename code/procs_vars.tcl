@@ -1,4 +1,4 @@
-set ::skin_version 1.29
+set ::skin_version 1.30
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -800,6 +800,7 @@ proc hide_graph {} {
         $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+        $::home_espresso_graph element configure compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
@@ -2536,6 +2537,7 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_pressure -xdata espresso_elapsed -ydata espresso_pressure
     $::home_espresso_graph element configure home_flow  -xdata espresso_elapsed -ydata espresso_flow
     $::home_espresso_graph element configure home_weight  -xdata espresso_elapsed -ydata espresso_flow_weight
+    $::home_espresso_graph element configure home_weight_chartable  -xdata espresso_elapsed -ydata espresso_weight_chartable
     $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th
     $::home_espresso_graph element configure home_zoom_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket
     $::home_espresso_graph element configure home_resistance  -xdata espresso_elapsed -ydata espresso_resistance
@@ -2672,6 +2674,10 @@ proc toggle_graph {curve} {
                 $::home_espresso_graph_espresso element configure home_${curve}_2x -linewidth 0
                 $::home_espresso_graph element configure home_${curve}_2x -linewidth 0
             }
+            if {$curve == "weight"} {
+                $::home_espresso_graph element configure home_weight_chartable -linewidth 0
+                $::home_espresso_graph element configure compare_weight_chartable -linewidth 0
+            }
         } else {
             set ::skin($curve) 1
             if {$::skin(goal) != 0} {
@@ -2694,6 +2700,10 @@ proc toggle_graph {curve} {
             }
             if {$curve == "pressure" || $curve == "flow" || $curve == "weight" || $curve == "temperature" || $curve == "resistance"} {
                 $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 4]
+            }
+            if {$curve == "weight"} {
+                $::home_espresso_graph element configure home_weight_chartable -linewidth [rescale_x_skin 4]
+                $::home_espresso_graph element configure compare_weight_chartable -linewidth [rescale_x_skin 4]
             }
             dui item config espresso ${curve}_data -fill $::skin_text_colour
             dui item config "off flush water" ${curve}_text -fill $::skin_text_colour
@@ -2732,10 +2742,12 @@ proc toggle_graph_compare { graph } {
         $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+        $::home_espresso_graph element configure compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
+
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
@@ -2746,9 +2758,11 @@ proc toggle_graph_compare { graph } {
         if {$::skin(show_y2_axis) == 0} {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
             $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight
+            $::home_espresso_graph element configure compare_weight_chartable -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_weight_chartable
         } else {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_2x
             $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight_2x
+            $::home_espresso_graph element configure compare_weight_chartable -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_weight_chartable
         }
     }
 }
@@ -2801,6 +2815,7 @@ proc toggle_cache_graphs {} {
             $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
             $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
             $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
+            $::home_espresso_graph element configure compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable
             $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
             $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
             $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
@@ -3453,17 +3468,17 @@ set {} {
 
 # programming stuff
 
-blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket graph_a_espresso_temperature_basket10th graph_a_espresso_resistance
-blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket graph_b_espresso_temperature_basket10th graph_b_espresso_resistance
-blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket graph_c_espresso_temperature_basket10th graph_c_espresso_resistance
-blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket graph_d_espresso_temperature_basket10th graph_d_espresso_resistance
+blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket graph_a_espresso_temperature_basket10th graph_a_espresso_resistance graph_a_espresso_weight_chartable
+blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket graph_b_espresso_temperature_basket10th graph_b_espresso_resistance graph_b_espresso_weight_chartable
+blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket graph_c_espresso_temperature_basket10th graph_c_espresso_resistance graph_c_espresso_weight_chartable
+blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket graph_d_espresso_temperature_basket10th graph_d_espresso_resistance graph_d_espresso_weight_chartable
 
 proc shift_graph_list {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_weight_chartable espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time]
 }
 
 proc shift_graph_list_vectors {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_weight_chartable espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance]
 }
 
 proc shift_graph_list_variables {} {
@@ -3525,11 +3540,6 @@ proc save_graph_cache { args } {
     }
 
     write_file "[skin_directory]/settings/graph_cache.tdb" $graph_cache_data
-}
-
-proc skin_graph_size { value } {
-    set x [expr {$::skin_graph_multiplier * $value}]
-    return $x
 }
 
 proc restore_cache_graphs {} {

@@ -54,6 +54,20 @@ dui add dtoggle off 920 750 -anchor nw -tags {toggle_history_button settings_tog
         }
     }
 
+dui add dtext off 540 856 -tags {toggle_weight_text settings_toggles} -text [translate "show history button"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw -initial_state hidden
+dui add dtoggle off 920 850 -anchor nw -tags {toggle_weight_button settings_toggles} \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -initial_state hidden \
+    -variable ::skin(show_weight_chartable) \
+    -command {if {$::skin(show_weight_chartable) == 0} {
+            $::home_espresso_graph element configure home_weight_chartable -hide 1
+            $::home_espresso_graph element configure compare_weight_chartable -hide 1
+        } else {
+            $::home_espresso_graph element configure home_weight_chartable -hide 0
+            $::home_espresso_graph element configure compare_weight_chartable -hide 0
+        }
+    }
+
 #####################
 ### fav
 ####
@@ -183,7 +197,7 @@ add_de1_variable "off espresso steam" 0 2000 -font [skin_font font 6] -fill #000
     [profile_type_text]
 }
 
-blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_flow_2x compare_espresso_flow_weight_2x compare_espresso_state_change compare_espresso_temperature_basket compare_espresso_temperature_basket10th compare_espresso_resistance
+blt::vector create compare_espresso_elapsed compare_espresso_pressure compare_espresso_flow compare_espresso_flow_weight compare_espresso_weight_chartable compare_espresso_flow_2x compare_espresso_flow_weight_2x compare_espresso_state_change compare_espresso_temperature_basket compare_espresso_temperature_basket10th compare_espresso_resistance
 
 
 
@@ -292,6 +306,9 @@ add_de1_widget "off flush water" graph 30 520 {
     $widget element create home_flow_goal_2x -xdata espresso_elapsed -ydata espresso_flow_goal_2x -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2} -hide 1;
     $widget element create home_flow_2x -xdata espresso_elapsed -ydata espresso_flow_2x -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_blue -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -hide 1;
     $widget element create home_weight_2x -xdata espresso_elapsed -ydata espresso_flow_weight_2x -symbol none -label "" -linewidth [rescale_x_skin 10] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -hide 1;
+
+    $widget element create home_weight_chartable  -xdata espresso_elapsed -ydata espresso_weight_chartable -symbol none -label "" -linewidth [rescale_x_skin 5] -color $::skin_brown  -smooth $::settings(live_graph_smoothing_technique)  -pixels 0 -dashes {2 2};
+    $widget element create compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable -symbol none -label "" -linewidth [rescale_x_skin 4] -color $::skin_brown -smooth $::settings(live_graph_smoothing_technique) -pixels 0 -dashes {2 2};
 
     $widget axis configure x -color $::skin_x_axis_colour -tickfont [skin_font font [fixed_size 14]] -min 0.0;
     $widget axis configure y -color $::skin_y_axis_colour -tickfont [skin_font font [fixed_size 14]] -title "[translate "pressure"]  &  [translate "temperature"]" -titlecolor $::skin_y_axis_colour -titlefont [skin_font font [fixed_size 14]]  -min 0.0 -max 10 -subdivisions 1 -majorticks {0  2  4  6  8  10  12} -hide 0;
@@ -773,6 +790,14 @@ if {$::skin(show_history_button) == 0} {
 
 if {$::android != 1} {
     start_idle
+}
+
+if {$::skin(show_weight_chartable) == 0} {
+    $::home_espresso_graph element configure home_weight_chartable -hide 1
+    $::home_espresso_graph element configure compare_weight_chartable -hide 1
+} else {
+    $::home_espresso_graph element configure home_weight_chartable -hide 0
+    $::home_espresso_graph element configure compare_weight_chartable -hide 0
 }
 
 ### manual
