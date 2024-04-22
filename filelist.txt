@@ -1,3 +1,4 @@
+2560x1600/icon.jpg
 code/slow_scale_filtering/plugin.tcl
 code/default_settings.txt
 code/procs_vars.tcl

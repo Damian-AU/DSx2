@@ -1,4 +1,4 @@
-set ::skin_version 1.31
+set ::skin_version 1.32
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -760,7 +760,6 @@ proc hide_graph {} {
 
     set_favs_showing
     dui item moveto off heading_entry 450 -1001
-
 
     set ::zoom_temperature 0
     set_button auto_tare state normal
@@ -2481,6 +2480,7 @@ proc backup_live_graph {} {
 		    set ::skin_graphs(live_graph_time) $::settings(espresso_clock)
 		    set ::skin_graphs(live_graph_beans) $::settings(grinder_dose_weight)
 		    set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
+		    set ::skin_graphs(live_graph_weight) $::settings(drink_weight)
 		    set ::skin_graphs(live_graph_pi_water) [round_to_integer $::de1(preinfusion_volume)]
 		    set ::skin_graphs(live_graph_pour_water) [round_to_integer $::de1(pour_volume)]
 		    set ::skin_graphs(live_graph_water) [expr {[round_to_integer $::de1(preinfusion_volume)] + [round_to_integer $::de1(pour_volume)]}]
