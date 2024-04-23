@@ -28,7 +28,7 @@ add_de1_widget "off" entry 450 -1001 {
 add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colour theme"]\r$::skin(colour_theme)} {skin_colour_theme_selection}; set_button edit_colour_theme_button state hidden
 add_colour_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state [translate "icon"]\r[translate "calibration"]} {toggle_icon_size_settings}; set_button edit_icon_size_button state hidden
 set ::skin_flow_cal_ui_added 0
-add_colour_button edit_flow_rate_cal_button off 100 1010 340 100 {[translate "flow rate"]\r[translate "calibrator"]} {add_cal_controller; restore_live_graphs_default_vectors; hide_header_settings; show_graph; restore_live_graphs; skin_show_flow_cal}; set_button edit_flow_rate_cal_button state hidden
+add_colour_button edit_flow_rate_cal_button off 100 1010 340 100 {[translate "flow rate"]\r[translate "calibrator"]} {show_flow_cal_ui}; set_button edit_flow_rate_cal_button state hidden
 add_colour_button edit_theme_button off 100 1140 340 100 {[translate "switch to"]\r[translate "P&D style"]} {set ::skin(theme) "P&D"; skin_save skin; after 500 skin_exit}; set_button edit_theme_button state hidden
 add_colour_button exit_heading_settings off 100 1330 260 100 {[translate "close"]} {hide_header_settings; show_graph; skin_save skin}; set_button exit_heading_settings state hidden
 dui add variable off 200 540 -fill $::skin_selected_colour -font [skin_font font_bold 24] -anchor w -textvariable {$::skin_initial_setup}

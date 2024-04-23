@@ -1,4 +1,4 @@
-set ::skin_version 1.32
+set ::skin_version 1.33
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -3641,6 +3641,19 @@ proc skin_flow_cal_down {} {
     foreach flow_2x $::skin_graphs(live_graph_espresso_flow_2x) {
         espresso_flow_2x append [expr $::settings(calibration_flow_multiplier) * $flow_2x / $::skin_flow_cal_backup]
     }
+}
+
+proc show_flow_cal_ui {} {
+    if {![info exist ::skin_graphs(live_graph_espresso_flow_weight)]} {
+        borg toast [translate "You do not have any flow weight data recorded yet"]
+        return
+    }
+    add_cal_controller
+    restore_live_graphs_default_vectors
+    hide_header_settings
+    show_graph
+    restore_live_graphs
+    skin_show_flow_cal
 }
 
 proc skin_show_flow_cal {} {
