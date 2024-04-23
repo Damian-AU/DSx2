@@ -1,3 +1,4 @@
+1280x800/icon.jpg
 2560x1600/icon.jpg
 code/slow_scale_filtering/plugin.tcl
 code/default_settings.txt
