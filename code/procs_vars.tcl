@@ -1,4 +1,4 @@
-set ::skin_version 1.35
+set ::skin_version 2.00
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -1373,6 +1373,7 @@ proc check_jug_number {} {
 check_jug_number
 
 proc skin_steam_time_calc {} {
+    popup [translate "Steam timer set"]
     if {$::skin(jug_auto) == 1} {
         if {$::skin(jug_single) == "jug_s"} {
             set_jug s
@@ -1409,7 +1410,7 @@ proc skin_steam_time_calc {} {
                 set ::settings(steam_timeout) $::skin(steam_calc)
                 save_settings
                 de1_send_steam_hotwater_settings
-                borg toast [translate "Steam timer set"]
+                popup [translate "Steam timer set"]
             }
         }
     } else {
@@ -1426,7 +1427,7 @@ proc skin_steam_time_calc {} {
             set ::settings(steam_timeout) $::skin(steam_calc)
             save_settings
             de1_send_steam_hotwater_settings
-            borg toast [translate "Steam timer set"]
+            popup [translate "Steam timer set"]
         }
     }
 }
@@ -1510,14 +1511,14 @@ proc toggle_steam_heater {} {
 
 
 proc wf_update_profile_saw {} {
-    if {$::settings(profile_has_changed) == 1} { borg toast [translate "Profile Updated"]; save_profile }
+    if {$::settings(profile_has_changed) == 1} { popup [translate "Profile Updated"]; save_profile }
     set_button wf_save_saw_x_button state hidden
     set_button wf_save_saw_tick_button state hidden
 }
 
 proc wf_cancel_profile_saw {} {
     if {$::settings(profile_has_changed) == 1} {
-        borg toast [translate "Cancelled"]
+        popup [translate "Cancelled"]
         set ::settings(profile_has_changed) 0
         if {$::settings(settings_profile_type) == "settings_2c"} {
             set ::settings(final_desired_shot_weight_advanced) $::saw_backup
@@ -1685,10 +1686,10 @@ proc skin_start {option} {
                 cancel_auto_stop
             }
             if {[start_button_ready] == [translate "WAIT"]} {
-                borg toast [translate "Machine still heating"]
+                popup [translate "Machine still heating"]
             }
             if {$::settings(steam_timeout) == 0} {
-                borg toast [translate "Steam is turned off"]
+                popup [translate "Steam is turned off"]
             }
         }
     }
@@ -2158,13 +2159,13 @@ proc workflow {option} {
 
 proc set_scale_weight_to_dose {} {
     if {[expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)] < 6} {
-        borg toast [translate "weight too low"]
+        popup [translate "weight too low"]
     } elseif { [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)] > 32.1} {
-        borg toast [translate "weight too high"]
+        popup [translate "weight too high"]
     } else {
         set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)]]
         skin_save settings
-        borg toast [translate "Bean weight set"]
+        popup [translate "Bean weight set"]
     }
 }
 
@@ -3613,7 +3614,7 @@ proc skin_orig_flow_cal {} {
 
 proc skin_flow_cal_up {} {
     if {$::settings(calibration_flow_multiplier) <= 0.35} {
-        borg toast [translate "minimum setting reached"]
+        popup [translate "minimum setting reached"]
         return
     }
     set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) + 0.01]]
@@ -3629,7 +3630,7 @@ proc skin_flow_cal_up {} {
 
 proc skin_flow_cal_down {} {
     if {$::settings(calibration_flow_multiplier) >= 1.65} {
-        borg toast [translate "maximum setting reached"]
+        popup [translate "maximum setting reached"]
         return
     }
     set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) - 0.01]]
@@ -3645,7 +3646,7 @@ proc skin_flow_cal_down {} {
 
 proc show_flow_cal_ui {} {
     if {![info exist ::skin_graphs(live_graph_espresso_flow_weight)]} {
-        borg toast [translate "You do not have any flow weight data recorded yet"]
+        popup [translate "You do not have any flow weight data recorded yet"]
         return
     }
     add_cal_controller

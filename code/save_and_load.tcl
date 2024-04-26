@@ -81,7 +81,7 @@ proc skin_save {key} {
         hide_jug $key
     }
 
-    if {$key == "fav1" || $key == "fav2" || $key == "fav3" || $key == "fav4" || $key == "fav5" || $key == "fav6"} {
+    if {[string range $key 0 2] == "fav"} {
         set ::skin(auto_load_fav) $::auto_load_fav
         set ::skin(fav_key) $key
         if {$key == "fav1"} {
@@ -99,6 +99,52 @@ proc skin_save {key} {
         if {$key == "fav5"} {
             set ::skin(fav_label_fav5) $::fav_label_fav5
         }
+        if {$key == "fav6"} {
+            set ::skin(fav_label_fav6) $::fav_label_fav6
+        }
+        if {$key == "fav7"} {
+            set ::skin(fav_label_fav7) $::fav_label_fav7
+        }
+        if {$key == "fav8"} {
+            set ::skin(fav_label_fav8) $::fav_label_fav8
+        }
+        if {$key == "fav9"} {
+            set ::skin(fav_label_fav9) $::fav_label_fav9
+        }
+        if {$key == "fav10"} {
+            set ::skin(fav_label_fav10) $::fav_label_fav10
+        }
+        if {$key == "fav11"} {
+            set ::skin(fav_label_fav11) $::fav_label_fav11
+        }
+        if {$key == "fav12"} {
+            set ::skin(fav_label_fav12) $::fav_label_fav12
+        }
+        if {$key == "fav13"} {
+            set ::skin(fav_label_fav13) $::fav_label_fav13
+        }
+        if {$key == "fav14"} {
+            set ::skin(fav_label_fav14) $::fav_label_fav14
+        }
+        if {$key == "fav15"} {
+            set ::skin(fav_label_fav15) $::fav_label_fav15
+        }
+        if {$key == "fav16"} {
+            set ::skin(fav_label_fav16) $::fav_label_fav16
+        }
+        if {$key == "fav17"} {
+            set ::skin(fav_label_fav17) $::fav_label_fav17
+        }
+        if {$key == "fav18"} {
+            set ::skin(fav_label_fav18) $::fav_label_fav18
+        }
+        if {$key == "fav19"} {
+            set ::skin(fav_label_fav19) $::fav_label_fav19
+        }
+        if {$key == "fav20"} {
+            set ::skin(fav_label_fav20) $::fav_label_fav20
+        }
+
         set data {}
         append data "app {\n"
         set vars [fav_settings_vars]
