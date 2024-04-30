@@ -1,4 +1,4 @@
-set ::skin_version 2.01
+set ::skin_version 2.02
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -43,8 +43,6 @@ set ::skin_button_radius $::user(button_radius)
 if {$::android != 1} {
     set ::skin_button_radius [round_to_integer [expr $::user(button_radius) * 0.66]]
 }
-
-
 
 set ::skin_background_2_colour $::user(background_2_colour)
 set ::skin_foreground_2_colour $::user(foreground_2_colour)
@@ -131,6 +129,15 @@ set ::fav_label_fav4 $::skin(fav_label_fav4)
 set ::fav_label_fav5 $::skin(fav_label_fav5)
 set ::wf_dose_x 160
 set ::skin(graph_update_delay) 10
+
+set ::graph_cache(graph_a_profile) ""
+set ::graph_cache(graph_a_time) ""
+set ::graph_cache(graph_b_profile) ""
+set ::graph_cache(graph_b_time) ""
+set ::graph_cache(graph_c_profile) ""
+set ::graph_cache(graph_c_time) ""
+set ::graph_cache(graph_d_profile) ""
+set ::graph_cache(graph_d_time) ""
 
 if {$::skin_button_radius > 50} {
     set ::skin_button_radius 50
@@ -458,9 +465,17 @@ proc skin_saw {} {
 proc skin_extraction_ratio {} {
     if {$::settings(grinder_dose_weight) > 1} {
         if {$::settings(settings_profile_type) == "settings_2c"} {
-            set y [round_to_one_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
+            if {[info exist ::skin_er_to_one_percent]} {
+                set y [round_to_two_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
+            } else {
+                set y [round_to_one_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
+            }
         } else {
-            set y [round_to_one_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
+            if {[info exist ::skin_er_to_one_percent]} {
+                set y [round_to_two_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
+            } else {
+                set y [round_to_one_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
+            }
         }
         set d "1:"
         return ($d$y)
@@ -1989,7 +2004,11 @@ proc skin_graph_info {} {
     set p $::skin_graphs(live_graph_profile)
     set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
     set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
-    set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    if {[info exist ::skin_er_to_one_percent]} {
+        set er [round_to_two_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    } else {
+        set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    }
     set pi $::skin_graphs(live_graph_pi_time)
     set pt $::skin_graphs(live_graph_pour_time)
     set t $::skin_graphs(live_graph_shot_time)
@@ -2004,7 +2023,11 @@ proc skin_graph_live_info {} {
     set p $::settings(profile_title)
     set b $::settings(grinder_dose_weight)
     set w [round_to_one_digits $::de1(scale_weight)]
-    set er [round_to_one_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
+    if {[info exist ::skin_er_to_one_percent]} {
+        set er [round_to_two_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
+    } else {
+         set er [round_to_one_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
+    }
     set pi [espresso_preinfusion_timer]
     set pt [espresso_pour_timer]
     set t [espresso_elapsed_timer]
@@ -3768,7 +3791,11 @@ proc info_espresso_last_data {} {
     set p [name_length $::skin_graphs(live_graph_profile) 24]
     set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
     set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
-    set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    if {[info exist ::skin_er_to_one_percent]} {
+        set er [round_to_two_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    } else {
+        set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    }
     set pi $::skin_graphs(live_graph_pi_time)
     set pt $::skin_graphs(live_graph_pour_time)
     set t $::skin_graphs(live_graph_shot_time)
@@ -3796,7 +3823,11 @@ proc info_espresso_last_data_compare {} {
             set p [name_length $::graph_cache(graph_a_profile) 24]
             set b [round_to_one_digits $::graph_cache(graph_a_beans)]
             set w [round_to_one_digits $::graph_cache(graph_a_weight)]
-            set er [round_to_one_digits [expr $::graph_cache(graph_a_weight) / ($::graph_cache(graph_a_beans) + 0.001)]]
+            if {[info exist ::skin_er_to_one_percent]} {
+                set er [round_to_two_digits [expr $::graph_cache(graph_a_weight) / ($::graph_cache(graph_a_beans) + 0.001)]]
+            } else {
+                set er [round_to_one_digits [expr $::graph_cache(graph_a_weight) / ($::graph_cache(graph_a_beans) + 0.001)]]
+            }
             set pi $::graph_cache(graph_a_pi_time)
             set pt $::graph_cache(graph_a_pour_time)
             set t $::graph_cache(graph_a_shot_time)
@@ -3817,7 +3848,11 @@ proc info_espresso_last_data_compare {} {
             set p [name_length $::graph_cache(graph_b_profile) 24]
             set b [round_to_one_digits $::graph_cache(graph_b_beans)]
             set w [round_to_one_digits $::graph_cache(graph_b_weight)]
-            set er [round_to_one_digits [expr $::graph_cache(graph_b_weight) / ($::graph_cache(graph_b_beans) + 0.001)]]
+            if {[info exist ::skin_er_to_one_percent]} {
+                set er [round_to_two_digits [expr $::graph_cache(graph_b_weight) / ($::graph_cache(graph_b_beans) + 0.001)]]
+            } else {
+                set er [round_to_one_digits [expr $::graph_cache(graph_b_weight) / ($::graph_cache(graph_b_beans) + 0.001)]]
+            }
             set pi $::graph_cache(graph_b_pi_time)
             set pt $::graph_cache(graph_b_pour_time)
             set t $::graph_cache(graph_b_shot_time)
@@ -3838,7 +3873,11 @@ proc info_espresso_last_data_compare {} {
             set p [name_length $::graph_cache(graph_c_profile) 24]
             set b [round_to_one_digits $::graph_cache(graph_c_beans)]
             set w [round_to_one_digits $::graph_cache(graph_c_weight)]
-            set er [round_to_one_digits [expr $::graph_cache(graph_c_weight) / ($::graph_cache(graph_c_beans) + 0.001)]]
+            if {[info exist ::skin_er_to_one_percent]} {
+                set er [round_to_two_digits [expr $::graph_cache(graph_c_weight) / ($::graph_cache(graph_c_beans) + 0.001)]]
+            } else {
+                set er [round_to_one_digits [expr $::graph_cache(graph_c_weight) / ($::graph_cache(graph_c_beans) + 0.001)]]
+            }
             set pi $::graph_cache(graph_c_pi_time)
             set pt $::graph_cache(graph_c_pour_time)
             set t $::graph_cache(graph_c_shot_time)
@@ -3859,7 +3898,11 @@ proc info_espresso_last_data_compare {} {
             set p [name_length $::graph_cache(graph_d_profile) 24]
             set b [round_to_one_digits $::graph_cache(graph_d_beans)]
             set w [round_to_one_digits $::graph_cache(graph_d_weight)]
-            set er [round_to_one_digits [expr $::graph_cache(graph_d_weight) / ($::graph_cache(graph_d_beans) + 0.001)]]
+            if {[info exist ::skin_er_to_one_percent]} {
+                set er [round_to_two_digits [expr $::graph_cache(graph_d_weight) / ($::graph_cache(graph_d_beans) + 0.001)]]
+            } else {
+                set er [round_to_one_digits [expr $::graph_cache(graph_d_weight) / ($::graph_cache(graph_d_beans) + 0.001)]]
+            }
             set pi $::graph_cache(graph_d_pi_time)
             set pt $::graph_cache(graph_d_pour_time)
             set t $::graph_cache(graph_d_shot_time)
