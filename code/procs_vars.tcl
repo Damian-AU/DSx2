@@ -1,4 +1,4 @@
-set ::skin_version 2.00
+set ::skin_version 2.01
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -170,6 +170,10 @@ if {![info exist ::skin(show_cache_y2_axis)]} {
 
 if {![info exist ::skin(show_history_button)]} {
     set ::skin(show_history_button) 1
+}
+
+if {![info exist ::skin(show_data_card_button)]} {
+    set ::skin(show_data_card_button) 0
 }
 
 proc skin_history {} {
@@ -1373,7 +1377,6 @@ proc check_jug_number {} {
 check_jug_number
 
 proc skin_steam_time_calc {} {
-    popup [translate "Steam timer set"]
     if {$::skin(jug_auto) == 1} {
         if {$::skin(jug_single) == "jug_s"} {
             set_jug s
@@ -2480,7 +2483,7 @@ proc backup_live_graph {} {
 			set ::skin_graphs(live_graph_profile) $::settings(profile_title)
 		    set ::skin_graphs(live_graph_time) $::settings(espresso_clock)
 		    set ::skin_graphs(live_graph_beans) $::settings(grinder_dose_weight)
-		    set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
+		    #set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
 		    set ::skin_graphs(live_graph_weight) $::settings(drink_weight)
 		    set ::skin_graphs(live_graph_pi_water) [round_to_integer $::de1(preinfusion_volume)]
 		    set ::skin_graphs(live_graph_pour_water) [round_to_integer $::de1(pour_volume)]
@@ -2495,7 +2498,13 @@ proc backup_live_graph {} {
 	}
 }
 
-::register_state_change_handler Espresso Idle update_live_graph
+#::register_state_change_handler Espresso Idle update_live_graph
+
+rename save_this_espresso_to_history save_this_espresso_to_history_orig
+proc save_this_espresso_to_history {unused_old_state unused_new_state} {
+    save_this_espresso_to_history_orig $unused_old_state $unused_new_state
+    update_live_graph
+}
 
 proc update_live_graph {args} {
     if {$::shift_graphs_conditions_met == 1} {
@@ -3481,7 +3490,7 @@ blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_es
 blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket graph_d_espresso_temperature_basket10th graph_d_espresso_resistance graph_d_espresso_weight_chartable
 
 proc shift_graph_list {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_weight_chartable espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_weight_chartable espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time beans weight water pi_water pour_water pi_time pour_time shot_time]
 }
 
 proc shift_graph_list_vectors {} {
@@ -3489,7 +3498,7 @@ proc shift_graph_list_vectors {} {
 }
 
 proc shift_graph_list_variables {} {
-    return [list profile time]
+    return [list profile time beans weight water pi_water pour_water pi_time pour_time shot_time]
 }
 
 proc shift_graphs { args } {
@@ -3714,6 +3723,156 @@ proc add_screen_saver_button {button} {
         dui item config saver $button* -initial_state normal -state normal
         lappend ::screen_saver_buttons $button
         dui item moveto saver $button* [next_saver_spot_x] [next_saver_spot_y]
+    }
+}
+
+if {$::skin(theme) != "Damian"} {
+    return
+}
+
+set ::info_espresso_last_data_showing 0
+
+proc info_espresso_last_data_toggle {} {
+    if {$::info_espresso_last_data_showing == 0} {
+        dui item config off info_espresso_last_data_card -state normal
+        set ::info_espresso_last_data_showing 1
+    } else {
+        dui item config off info_espresso_last_data_card -state hidden
+        set ::info_espresso_last_data_showing 0
+    }
+}
+
+proc info_espresso_last_date_time_format { time } {
+    set date [clock format $time -format {%a %d}]
+    if {$::settings(enable_ampm) == 0} {
+        set a [clock format $time -format {%H}]
+        set b [clock format $time -format {:%M}]
+        set c $a
+    } else {
+        set a [clock format $time -format {%I}]
+        set b [clock format $time -format {:%M}]
+        set c $a
+        regsub {^[0]} $c {\1} c
+    }
+    if {$::settings(enable_ampm) == 1} {
+        set pm [clock format $time -format %P]
+    } else {
+        set pm ""
+    }
+    set s {    }
+    return "$date$s$c$b$pm"
+}
+
+proc info_espresso_last_data {} {
+    set time [info_espresso_last_date_time_format $::skin_graphs(live_graph_time)]
+    set p [name_length $::skin_graphs(live_graph_profile) 24]
+    set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
+    set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
+    set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
+    set pi $::skin_graphs(live_graph_pi_time)
+    set pt $::skin_graphs(live_graph_pour_time)
+    set t $::skin_graphs(live_graph_shot_time)
+    set s { }
+    set v [skin_water_data]
+    return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
+}
+
+proc clear_info_espresso_last_data_compare {} {
+    foreach lg [shift_graph_list_variables] {
+        set ::graph_cache(graph_a_$lg) 1
+        set ::graph_cache(graph_b_$lg) 1
+        set ::graph_cache(graph_c_$lg) 1
+        set ::graph_cache(graph_d_$lg) 1
+    }
+}
+
+proc info_espresso_last_data_compare {} {
+    if {$::cache_graph_compare == 0} {
+        return ""
+    }
+    if {$::cache_graph_compare == "graph_a"} {
+        if {[info exists ::graph_cache(graph_a_shot_time)]} {
+            set time [info_espresso_last_date_time_format $::graph_cache(graph_a_time)]
+            set p [name_length $::graph_cache(graph_a_profile) 24]
+            set b [round_to_one_digits $::graph_cache(graph_a_beans)]
+            set w [round_to_one_digits $::graph_cache(graph_a_weight)]
+            set er [round_to_one_digits [expr $::graph_cache(graph_a_weight) / ($::graph_cache(graph_a_beans) + 0.001)]]
+            set pi $::graph_cache(graph_a_pi_time)
+            set pt $::graph_cache(graph_a_pour_time)
+            set t $::graph_cache(graph_a_shot_time)
+            set s { }
+            if {$::graph_cache(graph_a_pi_water) >= 1} {
+                set v "$::graph_cache(graph_a_pi_water) + $::graph_cache(graph_a_pour_water) = $::graph_cache(graph_a_water)"
+            } else {
+                set v "$::graph_cache(graph_a_water)"
+            }
+            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
+        } else {
+            return ""
+        }
+    }
+    if {$::cache_graph_compare == "graph_b"} {
+        if {[info exists ::graph_cache(graph_b_shot_time)]} {
+            set time [info_espresso_last_date_time_format $::graph_cache(graph_b_time)]
+            set p [name_length $::graph_cache(graph_b_profile) 24]
+            set b [round_to_one_digits $::graph_cache(graph_b_beans)]
+            set w [round_to_one_digits $::graph_cache(graph_b_weight)]
+            set er [round_to_one_digits [expr $::graph_cache(graph_b_weight) / ($::graph_cache(graph_b_beans) + 0.001)]]
+            set pi $::graph_cache(graph_b_pi_time)
+            set pt $::graph_cache(graph_b_pour_time)
+            set t $::graph_cache(graph_b_shot_time)
+            set s { }
+            if {$::graph_cache(graph_b_pi_water) >= 1} {
+                set v "$::graph_cache(graph_b_pi_water) + $::graph_cache(graph_b_pour_water) = $::graph_cache(graph_b_water)"
+            } else {
+                set v "$::graph_cache(graph_b_water)"
+            }
+            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
+        } else {
+            return ""
+        }
+    }
+    if {$::cache_graph_compare == "graph_c"} {
+        if {[info exists ::graph_cache(graph_c_shot_time)]} {
+            set time [info_espresso_last_date_time_format $::graph_cache(graph_c_time)]
+            set p [name_length $::graph_cache(graph_c_profile) 24]
+            set b [round_to_one_digits $::graph_cache(graph_c_beans)]
+            set w [round_to_one_digits $::graph_cache(graph_c_weight)]
+            set er [round_to_one_digits [expr $::graph_cache(graph_c_weight) / ($::graph_cache(graph_c_beans) + 0.001)]]
+            set pi $::graph_cache(graph_c_pi_time)
+            set pt $::graph_cache(graph_c_pour_time)
+            set t $::graph_cache(graph_c_shot_time)
+            set s { }
+            if {$::graph_cache(graph_c_pi_water) >= 1} {
+                set v "$::graph_cache(graph_c_pi_water) + $::graph_cache(graph_c_pour_water) = $::graph_cache(graph_c_water)"
+            } else {
+                set v "$::graph_cache(graph_c_water)"
+            }
+            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
+        } else {
+            return ""
+        }
+    }
+    if {$::cache_graph_compare == "graph_d"} {
+        if {[info exists ::graph_cache(graph_d_shot_time)]} {
+            set time [info_espresso_last_date_time_format $::graph_cache(graph_d_time)]
+            set p [name_length $::graph_cache(graph_d_profile) 24]
+            set b [round_to_one_digits $::graph_cache(graph_d_beans)]
+            set w [round_to_one_digits $::graph_cache(graph_d_weight)]
+            set er [round_to_one_digits [expr $::graph_cache(graph_d_weight) / ($::graph_cache(graph_d_beans) + 0.001)]]
+            set pi $::graph_cache(graph_d_pi_time)
+            set pt $::graph_cache(graph_d_pour_time)
+            set t $::graph_cache(graph_d_shot_time)
+            set s { }
+            if {$::graph_cache(graph_d_pi_water) >= 1} {
+                set v "$::graph_cache(graph_d_pi_water) + $::graph_cache(graph_d_pour_water) = $::graph_cache(graph_d_water)"
+            } else {
+                set v "$::graph_cache(graph_d_water)"
+            }
+            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
+        } else {
+            return ""
+        }
     }
 }
 

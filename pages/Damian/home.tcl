@@ -1,21 +1,5 @@
 set ::skin_heading DSx2
 
-#### header
-dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_foreground_colour -tags {headerar_bg0 headerbar}
-dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
-dui add shape round_outline $::skin_home_pages 0 0 1760 100 -width 0 -fill $::skin_foreground_colour -tags {headerbar_bg2 headerbar headerbar_heading}
-dui add canvas_item arc $::skin_home_pages -110 -120 210 170 -start 270 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg3 headerbar}
-dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg4 headerbar}
-dui add variable $::skin_home_pages 1020 0 -font [skin_font font [fixed_size 40]] -fill $::skin_button_label_colour -anchor n -tags {heading headerbar} -textvariable {$::skin_heading}
-
-dui add variable $::skin_home_pages 2540 4 -font [skin_font font [fixed_size 15]] -fill $::skin_button_label_colour -anchor ne -tags {headerbar_clock headerbar} -textvariable {[skin_clock]}
-dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome [fixed_size 14]] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
-dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
-
-add_clear_button heading off 0 10 2560 100 {} header_settings headerbar
-
-add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; show_graph; skin_save skin}; set_button close_heading_settings state hidden
-
 ## settings
 add_colour_button edit_heading_button off 100 620 340 100 {[translate "toggle heading"]} {toggle_heading}; set_button edit_heading_button state hidden
 
@@ -65,6 +49,18 @@ dui add dtoggle off 920 850 -anchor nw -tags {toggle_weight_button settings_togg
         } else {
             $::home_espresso_graph element configure home_weight_chartable -hide 0
             $::home_espresso_graph element configure compare_weight_chartable -hide 0
+        }
+    }
+
+dui add dtext off 540 956 -tags {toggle_data_card_text settings_toggles} -text [translate "show espressso data button"] -width 400 -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor nw -initial_state hidden
+dui add dtoggle off 920 950 -anchor nw -tags {toggle_data_card_button settings_toggles} \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -initial_state hidden \
+    -variable ::skin(show_data_card_button) \
+    -command {if {$::skin(show_data_card_button) == 0} {
+            dui item config off data_card_button* -initial_state hidden -state hidden
+        } else {
+            dui item config off data_card_button* -initial_state normal -state normal
         }
     }
 
@@ -136,9 +132,6 @@ dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 276] $::sk
 
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
 
-### sleep
-dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 40] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -textvariable {p} -tags {sleep_button powerbutton headerbar}
-add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power} headerbar
 ### ghc buttons ###
 
 add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) {[translate "espresso"]} {skin_start espresso}
@@ -788,6 +781,53 @@ if {$::skin(show_history_button) == 0} {
     dui item config off skin_history_button* -initial_state hidden -state hidden
 }
 
+### espresso data card
+set ::data_card_y_espresso 150
+dui add dbutton off 30 250 \
+    -bwidth 100 -bheight 100 -tags data_card_button \
+    -labelvariable $::skin(icon_info) -label_font [skin_font awesome_light 30] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {info_espresso_last_data_toggle}
+
+dui add dbutton off [expr $::skin(button_x_espresso) - 50] [expr $::data_card_y_espresso - 50] \
+    -bwidth 1820 -bheight 360 -tags {info_espresso_last_data_card_bg1 info_espresso_last_data_card} \
+    -shape round -radius 30 -fill $::skin_background_colour -initial_state hidden \
+    -command {do_nothing}
+
+dui add dbutton off [expr $::skin(button_x_espresso) + 20] [expr $::data_card_y_espresso + 20] \
+    -bwidth 1300 -bheight 260 -tags {info_espresso_last_data_card_bg2 info_espresso_last_data_card} \
+    -shape round -radius 30 -fill $::skin_foreground_colour -initial_state hidden \
+    -command {do_nothing}
+
+dui add variable off [expr $::skin(button_x_espresso) + 100] [expr $::data_card_y_espresso + 150] -font [skin_font font_bold 18] -initial_state hidden -fill $::skin_button_label_colour -anchor w -tags {info_espresso_last_data_card_data_titles info_espresso_last_data_card} -textvariable {Date\rProfile\rVolume\rTime\rWeight}
+dui add variable off [expr $::skin(button_x_espresso) + 300] [expr $::data_card_y_espresso + 150] -font [skin_font font 18] -fill -initial_state hidden $::skin_button_label_colour -anchor w -tags {info_espresso_last_data_card_data info_espresso_last_data_card} -textvariable {[info_espresso_last_data]}
+dui add variable off [expr $::skin(button_x_espresso) + 800] [expr $::data_card_y_espresso + 150] -font [skin_font font 18] -fill -initial_state hidden $::skin_button_label_colour -anchor w -tags {info_espresso_last_data_card_data_compare info_espresso_last_data_card} -textvariable {[info_espresso_last_data_compare]}
+
+dui add dbutton off [expr $::skin(button_x_espresso) - 30] [expr $::data_card_y_espresso - 30] \
+    -bwidth 700 -bheight 260 -initial_state hidden -tags {info_espresso_last_data_card_button info_espresso_last_data_card} \
+    -command {info_espresso_last_data_toggle}
+
+#### header
+dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_foreground_colour -tags {headerar_bg0 headerbar}
+dui add canvas_item arc $::skin_home_pages 1580 -80 1870 99 -start 270 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg1 headerbar headerbar_heading}
+dui add shape round_outline $::skin_home_pages 0 0 1760 100 -width 0 -fill $::skin_foreground_colour -tags {headerbar_bg2 headerbar headerbar_heading}
+dui add canvas_item arc $::skin_home_pages -110 -120 210 170 -start 270 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg3 headerbar}
+dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg4 headerbar}
+dui add variable $::skin_home_pages 1020 0 -font [skin_font font [fixed_size 40]] -fill $::skin_button_label_colour -anchor n -tags {heading headerbar} -textvariable {$::skin_heading}
+
+dui add variable $::skin_home_pages 2540 4 -font [skin_font font [fixed_size 15]] -fill $::skin_button_label_colour -anchor ne -tags {headerbar_clock headerbar} -textvariable {[skin_clock]}
+dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome [fixed_size 14]] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
+dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
+
+add_clear_button heading off 0 10 2560 100 {} header_settings headerbar
+
+add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; show_graph; skin_save skin}; set_button close_heading_settings state hidden
+
+### sleep
+dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 40] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -textvariable {p} -tags {sleep_button powerbutton headerbar}
+add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power} headerbar
+
+
+
 if {$::android != 1} {
     start_idle
 }
@@ -799,6 +839,13 @@ if {$::skin(show_weight_chartable) == 0} {
     $::home_espresso_graph element configure home_weight_chartable -hide 0
     $::home_espresso_graph element configure compare_weight_chartable -hide 0
 }
+
+if {$::skin(show_data_card_button) == 0} {
+    dui item config off data_card_button* -initial_state hidden -state hidden
+} else {
+    dui item config off data_card_button* -initial_state normal -state normal
+}
+
 
 ### manual
 #################
@@ -852,4 +899,3 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
     }
 }
 dui add variable "off espresso" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
-
