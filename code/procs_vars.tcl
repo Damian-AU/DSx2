@@ -1,4 +1,4 @@
-set ::skin_version 2.02
+set ::skin_version 2.03
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -678,19 +678,27 @@ proc set_button {button_name property value} {
 proc add_colour_button {button_name pages x y width height tv command} {
     set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
+    dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -text $tv
+    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
+}
+
+proc add_colour_variable_button {button_name pages x y width height tv command} {
+    set ::${button_name}(pages) $pages
+    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
+
 proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -text $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_icon_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -text $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
@@ -698,8 +706,8 @@ proc add_icon_label_button {button_name pages x y width height tvi tv command } 
     set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
-    dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
-    dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
+    dui add dtext $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -text $tvi
+    dui add dtext $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -text $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
@@ -1671,8 +1679,7 @@ proc skin_start {option} {
         show_skin_set $option
     } else {
         if {$option == "water"} {
-            if {[start_button_ready] == [translate "READY"]} {
-                if {$::settings(scale_bluetooth_address) != ""} {
+            if {$::settings(scale_bluetooth_address) != ""} {
                     scale_tare
                     set_next_page water water
                     start_water
@@ -1681,7 +1688,6 @@ proc skin_start {option} {
                     start_water
                 }
                 cancel_auto_stop
-            }
         }
         if {$option == "flush"} {
             set_next_page flush flush
@@ -1935,19 +1941,21 @@ proc wifi_status {} {
 }
 
 proc skin_battery_status {} {
-    if {[battery_state] == "charging" || [battery_state] == "charged"} {
+    set state [battery_state]
+    set level [battery_percent]
+    if {$state == "charging" || $state == "charged"} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_green
         return \uf376
-    } elseif {[battery_percent] < 20} {
+    } elseif {$level < 20} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_red
         return \uf244
-    } elseif {[battery_percent] < 50} {
+    } elseif {$level < 50} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_red
         return \ue0b1
-    } elseif {[battery_percent] < 70} {
+    } elseif {$level < 70} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_orange
         return \uf242
-    } elseif {[battery_percent] < 80} {
+    } elseif {$level < 80} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_green
         return \uf241
     } else {
@@ -1960,6 +1968,15 @@ set ::flush_timer_backup 0
 proc flush_extend {} {
     set ::settings(flush_seconds) [expr $::settings(flush_seconds) + 5]
     de1_send_steam_hotwater_settings
+}
+
+proc flush_extend1 {} {
+    ### working in progress
+    set flushtime $::settings(flush_seconds)
+    set remaining [expr {$::settings(flush_seconds) - [flush_pour_timer]}]
+    set ::settings(flush_seconds) [expr {$remaining + 5}]
+    de1_send_steam_hotwater_settings
+    set ::settings(flush_seconds) $flushtime
 }
 
 set ::steam_timer_backup 0
@@ -2585,6 +2602,7 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_flow_2x  -xdata espresso_elapsed -ydata espresso_flow_2x
     $::home_espresso_graph element configure home_weight_2x  -xdata espresso_elapsed -ydata espresso_flow_weight_2x
 }
+
 
 proc restore_live_graphs {} {
     set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]
@@ -3327,6 +3345,7 @@ proc check_app_extensions {} {
     set dflow ""
     set scale ""
     set saver ""
+    set godshot ""
     if {"D_Flow_Espresso_Profile" in $::settings(enabled_plugins) == 0 } {
         append ::settings(enabled_plugins) { D_Flow_Espresso_Profile}
         save_settings
@@ -3356,8 +3375,22 @@ proc check_app_extensions {} {
         set saver {- We needed to disable "DPx_Screen_Saver" app extension, this skin already has the MySaver feature}
         set show 1
     }
+    if {($::settings(god_espresso_name) != {} && $::settings(god_espresso_name) != "None") || $::settings(god_espresso_elapsed) != {}} {
+
+        set ::settings(god_espresso_name) {}
+        set ::settings(god_espresso_elapsed) {}
+        set ::settings(god_espresso_pressure) {}
+        set ::settings(god_espresso_temperature_basket) {}
+        set ::settings(god_espresso_flow) {}
+        set ::settings(god_espresso_flow_weight) {}
+        set ::settings(god_espresso_weight) {}
+        save_settings
+        god_shot_reference_reset
+        set godshot {- We unselected your Godshot, this skin does not support Godshots}
+        set show 1
+    }
     set ext {Tap on the screen to exit the app, the changes will be applied when you restart}
-    set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r\r\r$ext
+    set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r$godshot\r\r\r$ext
     if {$show == 1} {
         set ::skin(icon_cal_check) 0
         skin_save skin
