@@ -309,7 +309,7 @@ add_de1_widget "off flush water" graph 30 520 {
     $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph
 
-#add_de1_variable "off" 1950 1550 -font [skin_font font 15] -fill $::skin_text_colour -anchor e -tags live_graph_data -textvariable {[skin_graph_info]}
+add_de1_variable "off" 1950 1550 -font [skin_font font 15] -fill $::skin_text_colour -anchor e -tags live_graph_data -textvariable {[skin_graph_info]}
 
 add_de1_widget "espresso" graph 30 520 {
     set ::home_espresso_graph_espresso $widget
@@ -335,7 +335,7 @@ add_de1_widget "espresso" graph 30 520 {
     $widget grid configure -color $::skin_grid_colour -dashes {2 12} -linewidth 1
 } -plotbackground $::skin_background_colour -width [rescale_x_skin 1950] -height [rescale_y_skin 1010] -borderwidth 1 -background $::skin_background_colour -plotrelief flat -initial_state normal -tags main_graph_espresso
 
-#add_de1_variable "espresso" 1950 1550 -font [skin_font font 15] -fill $::skin_text_colour -anchor e -textvariable {[skin_graph_live_info]}
+add_de1_variable "espresso" 1950 1550 -font [skin_font font 15] -fill $::skin_text_colour -anchor e -textvariable {[skin_graph_live_info]}
 
 
 
@@ -816,9 +816,9 @@ dui add canvas_item arc $::skin_home_pages -110 -120 210 170 -start 270 -outline
 dui add canvas_item rect $::skin_home_pages 0 0 50 170 -outline $::skin_foreground_colour -fill $::skin_foreground_colour -tags {headerbar_bg4 headerbar}
 dui add variable $::skin_home_pages 1020 0 -font [skin_font font [fixed_size 40]] -fill $::skin_button_label_colour -anchor n -tags {heading headerbar} -textvariable {$::skin_heading}
 
-#dui add variable $::skin_home_pages 2540 4 -font [skin_font font [fixed_size 15]] -fill $::skin_button_label_colour -anchor ne -tags {headerbar_clock headerbar} -textvariable {[skin_clock]}
-#dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome [fixed_size 14]] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
-#dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
+dui add variable $::skin_home_pages 2540 4 -font [skin_font font [fixed_size 15]] -fill $::skin_button_label_colour -anchor ne -tags {headerbar_clock headerbar} -textvariable {[skin_clock]}
+dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome [fixed_size 14]] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
+dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
 
 add_clear_button heading off 0 10 2560 100 {} header_settings headerbar
 
