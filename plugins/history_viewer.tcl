@@ -1,4 +1,4 @@
-set ::history_viewer_version 1.2
+set ::history_viewer_version 1.3
 
 # set ::block_DSx2_history_viewer ""
 
@@ -1971,8 +1971,8 @@ add_de1_widget history graph 1880 $::history_graphs_row2 {
 
 dui add dtext history 2450 1310 -text [translate "showing"] -font [skin_font font 12] -fill $::skin_text_colour -anchor center
 dui add variable history 2450 1348 -fill $::skin_text_colour -font [skin_font font 14] -anchor center -textvariable {[history_pos_showing]}
-add_colour_button history_scroll_up history 2400 1180 100 100 {\Uf106} {scroll_history -5; check_history_selected_colour}; set_button  history_scroll_up font [skin_font awesome_light [fixed_size 34]]
-add_colour_button history_scroll_down history 2400 1380 100 100 {\Uf107} {scroll_history 5; check_history_selected_colour}; set_button  history_scroll_down font [skin_font awesome_light [fixed_size 34]]
+add_colour_button history_scroll_up history 2400 1180 100 100 \Uf106 {scroll_history -5; check_history_selected_colour}; set_button  history_scroll_up font [skin_font awesome_light [fixed_size 34]]
+add_colour_button history_scroll_down history 2400 1380 100 100 \Uf107 {scroll_history 5; check_history_selected_colour}; set_button  history_scroll_down font [skin_font awesome_light [fixed_size 34]]
 
 
 get_history_data $::skin(history_position)
@@ -2034,5 +2034,5 @@ dui add dtoggle skin_hv_settings 1220 600 -anchor nw \
 dui add dtext skin_hv_settings 1180 860 -font [skin_font font 18] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor e -text [translate "search limit"]
 
 dui add variable skin_hv_settings 1280 860 -fill $::skin_text_colour -font [skin_font font 20] -anchor center -textvariable {$::skin(history_sch_limit)}
-add_colour_button history_sch_up skin_hv_settings 1230 720 100 100 {\Uf106} {set_history_sch -50 }; set_button  history_sch_up font [skin_font awesome_light [fixed_size 34]]
-add_colour_button history_sch_down skin_hv_settings 1230 900 100 100 {\Uf107} {set_history_sch 50 }; set_button  history_sch_down font [skin_font awesome_light [fixed_size 34]]
+add_colour_button history_sch_up skin_hv_settings 1230 720 100 100 \Uf106 {set_history_sch -50 }; set_button  history_sch_up font [skin_font awesome_light [fixed_size 34]]
+add_colour_button history_sch_down skin_hv_settings 1230 900 100 100 \Uf107 {set_history_sch 50 }; set_button  history_sch_down font [skin_font awesome_light [fixed_size 34]]
