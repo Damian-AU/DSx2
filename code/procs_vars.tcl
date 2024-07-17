@@ -1,4 +1,4 @@
-set ::skin_version 2.05
+set ::skin_version 2.06
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -3375,19 +3375,21 @@ proc check_app_extensions {} {
         set saver {- We needed to disable "DPx_Screen_Saver" app extension, this skin already has the MySaver feature}
         set show 1
     }
-    if {($::settings(god_espresso_name) != {} && $::settings(god_espresso_name) != "None") || $::settings(god_espresso_elapsed) != {}} {
+    if {[info exist ::settings(god_espresso_elapsed)] == 1} {
+        if {($::settings(god_espresso_name) != {} && $::settings(god_espresso_name) != "None") || $::settings(god_espresso_elapsed) != {}} {
 
-        set ::settings(god_espresso_name) {}
-        set ::settings(god_espresso_elapsed) {}
-        set ::settings(god_espresso_pressure) {}
-        set ::settings(god_espresso_temperature_basket) {}
-        set ::settings(god_espresso_flow) {}
-        set ::settings(god_espresso_flow_weight) {}
-        set ::settings(god_espresso_weight) {}
-        save_settings
-        god_shot_reference_reset
-        set godshot {- We unselected your Godshot, this skin does not support Godshots}
-        set show 1
+            set ::settings(god_espresso_name) {}
+            set ::settings(god_espresso_elapsed) {}
+            set ::settings(god_espresso_pressure) {}
+            set ::settings(god_espresso_temperature_basket) {}
+            set ::settings(god_espresso_flow) {}
+            set ::settings(god_espresso_flow_weight) {}
+            set ::settings(god_espresso_weight) {}
+            save_settings
+            god_shot_reference_reset
+            set godshot {- We unselected your Godshot, this skin does not support Godshots}
+            set show 1
+        }
     }
     set ext {Tap on the screen to exit the app, the changes will be applied when you restart}
     set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r$godshot\r\r\r$ext
