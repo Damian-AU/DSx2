@@ -67,11 +67,11 @@ dui add dtoggle off 920 950 -anchor nw -tags {toggle_data_card_button settings_t
 #####################
 ### fav
 ####
-add_icon_label_button fav1 $::skin_home_pages $::skin(button_x_fav) $::start_button_y 360 100 $::skin(icon_fav) $::fav_label_fav1 {skin_load fav1}; set_button fav1 icon_font [skin_font awesome_light [fixed_size 28]]
-add_icon_label_button fav2 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 120] 360 100 $::skin(icon_fav) $::fav_label_fav2 {skin_load fav2}; set_button fav2 icon_font [skin_font awesome_light [fixed_size 28]]
-add_icon_label_button fav3 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 240] 360 100 $::skin(icon_fav) $::fav_label_fav3 {skin_load fav3}; set_button fav3 icon_font [skin_font awesome_light [fixed_size 28]]
-add_icon_label_button fav4 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 360] 360 100 $::skin(icon_fav) $::fav_label_fav4 {skin_load fav4}; set_button fav4 icon_font [skin_font awesome_light [fixed_size 28]]
-add_icon_label_button fav5 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 480] 360 100 $::skin(icon_fav) $::fav_label_fav5 {skin_load fav5}; set_button fav5 icon_font [skin_font awesome_light [fixed_size 28]]
+add_icon_label_button fav1 $::skin_home_pages $::skin(button_x_fav) $::start_button_y 360 100 $::skin(icon_fav) {$::fav_label_fav1} {skin_load fav1}; set_button fav1 icon_font [skin_font awesome_light [fixed_size 28]]
+add_icon_label_button fav2 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 120] 360 100 $::skin(icon_fav) {$::fav_label_fav2} {skin_load fav2}; set_button fav2 icon_font [skin_font awesome_light [fixed_size 28]]
+add_icon_label_button fav3 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 240] 360 100 $::skin(icon_fav) {$::fav_label_fav3} {skin_load fav3}; set_button fav3 icon_font [skin_font awesome_light [fixed_size 28]]
+add_icon_label_button fav4 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 360] 360 100 $::skin(icon_fav) {$::fav_label_fav4} {skin_load fav4}; set_button fav4 icon_font [skin_font awesome_light [fixed_size 28]]
+add_icon_label_button fav5 $::skin_home_pages $::skin(button_x_fav) [expr $::start_button_y + 480] 360 100 $::skin(icon_fav) {$::fav_label_fav5} {skin_load fav5}; set_button fav5 icon_font [skin_font awesome_light [fixed_size 28]]
 
 add_icon_button fav1_edit $::skin_home_pages 1990 $::start_button_y 100 100 $::skin(icon_edit) {edit fav1} fav_edit_buttons
 add_icon_button fav2_edit $::skin_home_pages 1990 [expr $::start_button_y + 120] 100 100 $::skin(icon_edit) {edit fav2} fav_edit_buttons
@@ -134,19 +134,19 @@ add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::sk
 
 ### ghc buttons ###
 
-add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) [translate "espresso"] {skin_start espresso}
+add_icon_label_button espresso_start off $::skin(button_x_espresso) $::skin(button_y_espresso) 340 100 $::skin(icon_espresso) {[translate "espresso"]} {skin_start espresso}
 dui add variable off [expr $::skin(button_x_espresso) + 170] [expr $::skin(button_y_espresso) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags espresso_data_line_1 -anchor n -justify center -width 340 -textvariable {[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate " : "] [skin_saw]g\r[skin_extraction_ratio]}
 add_clear_button espresso off $::skin(button_x_espresso) [expr $::skin(button_y_espresso) + 100] 340 180 {} {show_skin_set espresso}
 
-add_icon_label_button steam_start off $::skin(button_x_steam) $::skin(button_y_steam) 340 100 $::skin(icon_steam) [translate "steam"] {skin_start steam}
+add_icon_label_button steam_start off $::skin(button_x_steam) $::skin(button_y_steam) 340 100 $::skin(icon_steam) {[translate "steam"]} {skin_start steam}
 dui add variable off [expr $::skin(button_x_steam) + 170] [expr $::skin(button_y_steam) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags steam_data_line_1 -anchor n -justify center -width 340 -textvariable {[skin_steam_settings_info]\r[jug_size_data]\r[skin_steam_text $::settings(steam_timeout)]}
 add_clear_button steam off $::skin(button_x_steam) [expr $::skin(button_y_steam) + 100] 340 180 {} {show_skin_set steam}
 
-add_icon_label_button water_start off $::skin(button_x_water) $::skin(button_y_water) 340 100 $::skin(icon_water) [translate "water"] {skin_start water}
+add_icon_label_button water_start off $::skin(button_x_water) $::skin(button_y_water) 340 100 $::skin(icon_water) {[translate "water"]} {skin_start water}
 dui add variable off [expr $::skin(button_x_water) + 170] [expr $::skin(button_y_water) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags water_data_line_1 -anchor n -justify center -width 340 -textvariable {[skin_water_settings_info]}
 add_clear_button water off $::skin(button_x_water) [expr $::skin(button_y_water) + 100] 340 180 {} {show_skin_set water}
 
-add_icon_label_button flush_start off $::skin(button_x_flush) $::skin(button_y_flush) 340 100 $::skin(icon_flush) [translate "flush"] {skin_start flush}
+add_icon_label_button flush_start off $::skin(button_x_flush) $::skin(button_y_flush) 340 100 $::skin(icon_flush) {[translate "flush"]} {skin_start flush}
 dui add variable off [expr $::skin(button_x_flush) + 170] [expr $::skin(button_y_flush) + 120] -font [skin_font font_bold 17] -fill $::skin_text_colour  -tags flush_data_line_1 -anchor n -justify center -width 340 -textvariable {[round_to_integer $::settings(flush_seconds)]s}
 add_clear_button flush off $::skin(button_x_flush) [expr $::skin(button_y_flush) + 100] 340 180 {} {show_skin_set flush}
 
@@ -159,9 +159,9 @@ add_clear_button stop_espresso_stop espresso [expr $::skin(button_x_espresso) + 
 dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 400] [expr 50 + $::skin(button_y_espresso)] [expr $::skin(button_x_espresso) + 404] [expr $::skin(button_y_espresso) + 150] -tags stop_espresso_stop_s1 -width 0 -fill $::skin_background_colour
 dui add canvas_item rect espresso [expr $::skin(button_x_espresso) + 100] [expr 50 + $::skin(button_y_espresso)] [expr $::skin(button_x_espresso) + 104] [expr $::skin(button_y_espresso) + 150] -tags stop_espresso_stop_s2 -width 0 -fill $::skin_background_colour
 
-add_icon_label_button stop_steam steam $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 $::skin(icon_steam) [steam_stop_label] {skin_start idle}; set_button stop_steam icon_fill $::skin_selected_colour
-add_icon_label_button stop_flush flush $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 $::skin(icon_flush) [translate "stop"] {skin_start idle}; set_button stop_flush icon_fill $::skin_selected_colour
-add_icon_label_button stop_water water $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 $::skin(icon_water) [translate "stop"] {skin_start idle}; set_button stop_water icon_fill $::skin_selected_colour
+add_icon_label_button stop_steam steam $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 $::skin(icon_steam) {[steam_stop_label]} {skin_start idle}; set_button stop_steam icon_fill $::skin_selected_colour
+add_icon_label_button stop_flush flush $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 $::skin(icon_flush) {[translate "stop"]} {skin_start idle}; set_button stop_flush icon_fill $::skin_selected_colour
+add_icon_label_button stop_water water $::skin(button_x_espresso) [expr 50 + $::skin(button_y_espresso)] 340 100 $::skin(icon_water) {[translate "stop"]} {skin_start idle}; set_button stop_water icon_fill $::skin_selected_colour
 add_clear_button machine_stop_button $::skin_action_pages 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_start idle}
 
 
@@ -169,8 +169,8 @@ add_clear_button machine_stop_button $::skin_action_pages 2060 [expr $::skin(but
 
 dui add variable "skin_power" 1280 840 -font [skin_font font_bold 24] -fill $::skin_text_colour -anchor center -justify center -width 880 -textvariable {[translate "Going to sleep in"]... [skin_power_off_timer]}
 add_clear_button power_cancel "skin_power sleep" 0 0 2560 1600 {} {set_next_page off off; start_idle}
-add_icon_label_button power_sleep skin_power 950 600 260 100 $::skin(icon_sleep) sleep {skin_sleep}; set_button power_sleep icon_font [skin_font awesome_light [fixed_size 26]]
-add_icon_label_button power_exit skin_power 1370 600 260 100 $::skin(icon_x) exit {skin_exit}; set_button power_exit icon_font [skin_font awesome_light [fixed_size 26]]
+add_icon_label_button power_sleep skin_power 950 600 260 100 $::skin(icon_sleep) {sleep} {skin_sleep}; set_button power_sleep icon_font [skin_font awesome_light [fixed_size 26]]
+add_icon_label_button power_exit skin_power 1370 600 260 100 $::skin(icon_x) {exit} {skin_exit}; set_button power_exit icon_font [skin_font awesome_light [fixed_size 26]]
 
 ############################################################################
 ### Graph
@@ -600,7 +600,7 @@ add_clear_button wf_steam_off off 230 620 110 100 [translate "off"] {toggle_stea
 add_clear_button wf_steam_on off 340 620 110 100 [translate "on"] {toggle_steam_heater}; set_button wf_steam_on font [skin_font font_bold 18]
 dui add dtext off 840 580 -tags wf_heading_milk_jug -text [translate "Milk jug"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center -initial_state hidden
 
-add_icon_label_button wf_steam_jug_s off 710 620 280 100 $::skin(icon_jug) small {set_jug s}
+add_icon_label_button wf_steam_jug_s off 710 620 280 100 $::skin(icon_jug) {small} {set_jug s}
 add_icon_button jug_s_edit off 610 620 100 100 $::skin(icon_edit) {show_jug jug_s}
 set_button jug_s_edit font [skin_font awesome_light [fixed_size 28]]
 set_button jug_s_edit state hidden
@@ -611,7 +611,7 @@ set_button jug_s_x_button label_fill $::skin_red
 add_icon_button jug_s_tick_button off 510 620 100 100 $::skin(icon_tick) {skin_save jug_s}
 set_button jug_s_tick_button label_fill $::skin_green
 
-add_icon_label_button wf_steam_jug_m off 710 740 280 100 $::skin(icon_jug) medium {set_jug m}
+add_icon_label_button wf_steam_jug_m off 710 740 280 100 $::skin(icon_jug) {medium} {set_jug m}
 add_icon_button jug_m_edit off 610 740 100 100 $::skin(icon_edit) {show_jug jug_m}
 
 set_button jug_m_edit font [skin_font awesome_light [fixed_size 28]]
@@ -623,7 +623,7 @@ set_button jug_m_x_button label_fill $::skin_red
 add_icon_button jug_m_tick_button off 510 740 100 100 $::skin(icon_tick) {skin_save jug_m}
 set_button jug_m_tick_button label_fill $::skin_green
 
-add_icon_label_button wf_steam_jug_l off 710 860 280 100 $::skin(icon_jug) large {set_jug l}
+add_icon_label_button wf_steam_jug_l off 710 860 280 100 $::skin(icon_jug) {large} {set_jug l}
 add_icon_button jug_l_edit off 610 860 100 100 $::skin(icon_edit) {show_jug jug_l}
 set_button jug_l_edit font [skin_font awesome_light [fixed_size 28]]
 
@@ -655,14 +655,14 @@ dui add dtext off 180 1430 -tags wf_milk_weight_text_line_1 -width 1400 -text [t
 dui add dtext off 180 1500 -tags wf_milk_weight_text_line_2 -text [translate "2: Place the jug with milk on the scale, tap the milk jug button to set the weight"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
 dui add dtext off 180 1550 -tags wf_milk_weight_text_line_3 -text [translate "3: Steam the milk to your prefered temperature, enter the time it took"] -font [skin_font font 18] -fill $::skin_text_colour -anchor w
 
-add_icon_label_button wf_steam_jug_milk off 180 1260 280 100 $::skin(icon_milk) [round_to_integer $::skin(milk_g)]g {set ::skin(milk_g) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
+add_icon_label_button wf_steam_jug_milk off 180 1260 280 100 $::skin(icon_milk) {[round_to_integer $::skin(milk_g)]g} {set ::skin(milk_g) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
 add_icon_button wf_steam_cal_time_minus off 600 1260 100 100 $::skin(icon_minus) {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) - 1]]; if {$::skin(milk_s) < 5} {set ::skin(milk_s) 5}}; set_button wf_steam_cal_time_minus font [skin_font D-font [fixed_size 34]]
-add_icon_label_button wf_steam_jug_time off 700 1260 280 100 $::skin(icon_timer) [round_to_integer $::skin(milk_s)]s {set ::skin(milk_s) [steam_pour_timer]}; set_button wf_steam_jug_time icon_font [skin_font awesome_light [fixed_size 34]]
+add_icon_label_button wf_steam_jug_time off 700 1260 280 100 $::skin(icon_timer) {[round_to_integer $::skin(milk_s)]s} {set ::skin(milk_s) [steam_pour_timer]}; set_button wf_steam_jug_time icon_font [skin_font awesome_light [fixed_size 34]]
 add_icon_button wf_steam_cal_time_plus off 975 1260 100 100 $::skin(icon_plus) {set ::skin(milk_s) [round_to_integer [expr $::skin(milk_s) + 1]]; if {$::skin(milk_s) > 120} {set ::skin(milk_s) 120}}; set_button wf_steam_cal_time_plus font [skin_font D-font [fixed_size 34]]
 
 dui add variable off 840 1240 -fill $::skin_text_colour  -font [skin_font font 16] -tags wf_last_steam_time -anchor center -textvariable {[translate "last steam"] [steam_pour_timer]s}
 
-add_icon_label_button wf_steam_jug_auto off 710 1030 280 100 $::skin(icon_jug) Auto {toggle_jug_auto}
+add_icon_label_button wf_steam_jug_auto off 710 1030 280 100 $::skin(icon_jug) {Auto} {toggle_jug_auto}
 dui add dtext off 1340 1240 -tags wf_steam_jug_auto_weight_heading -text [translate "milk per drink"] -font [skin_font font 16] -fill $::skin_text_colour -anchor center
 add_colour_button wf_steam_jug_auto_weight off 1250 1270 180 100 [round_to_integer $::skin(single_drink_milk_volume)]g {set ::skin(single_drink_milk_volume) [round_to_integer [expr $::de1(scale_sensor_weight) - $::skin(jug_g)]] }
 add_icon_button wf_steam_jug_auto_weight_minus off 1150 1260 100 100 $::skin(icon_minus) {set ::skin(single_drink_milk_volume) [round_to_integer [expr $::skin(single_drink_milk_volume) - 10]]; if {$::skin(single_drink_milk_volume) < 50} {set ::skin(single_drink_milk_volume) 50}}; set_button wf_steam_jug_auto_weight_minus font [skin_font D-font [fixed_size 34]]
@@ -757,7 +757,7 @@ dui add dbutton saver 0 0 \
 ### DYE
 proc skin_dye_button {} {
 	if {[plugins enabled DYE] && $::settings(skin) == "DSx2" && $::skin(theme) == "Damian"} {
-		add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) dye {}
+		add_icon_label_button dye_bg off $::skin(button_x_dye) $::skin(button_y_dye) 230 100 $::skin(icon_edit) {dye} {}
 		set_button dye_bg icon_font [skin_font awesome_light [fixed_size 26]]
 		dui add dbutton $::skin_home_pages $::skin(button_x_dye) $::skin(button_y_dye) \
 			-bwidth 230 -bheight 100 -tags launch_dye \

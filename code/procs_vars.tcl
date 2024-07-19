@@ -1,4 +1,4 @@
-set ::skin_version 2.06
+set ::skin_version 2.07
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -707,7 +707,7 @@ proc add_icon_label_button {button_name pages x y width height tvi tv command } 
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
     dui add dtext $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -text $tvi
-    dui add dtext $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -text $tv
+    dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
