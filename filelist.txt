@@ -36,8 +36,6 @@ fonts/PB-Icons-Regular.otf
 fonts/PD-Bold-Bold.otf
 pages/Damian/graphs.tcl
 pages/Damian/home.tcl
-pages/P&D/home.tcl
-pages/P&D/setup.tcl
 plugins/pizza.tcl
 plugins/history_viewer.tcl
 plugins/screen_saver_history_button.tcl

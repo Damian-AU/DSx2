@@ -1,4 +1,4 @@
-set ::skin_version 2.07
+set ::skin_version 1.28
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -43,6 +43,8 @@ set ::skin_button_radius $::user(button_radius)
 if {$::android != 1} {
     set ::skin_button_radius [round_to_integer [expr $::user(button_radius) * 0.66]]
 }
+
+
 
 set ::skin_background_2_colour $::user(background_2_colour)
 set ::skin_foreground_2_colour $::user(foreground_2_colour)
@@ -130,15 +132,6 @@ set ::fav_label_fav5 $::skin(fav_label_fav5)
 set ::wf_dose_x 160
 set ::skin(graph_update_delay) 10
 
-set ::graph_cache(graph_a_profile) ""
-set ::graph_cache(graph_a_time) ""
-set ::graph_cache(graph_b_profile) ""
-set ::graph_cache(graph_b_time) ""
-set ::graph_cache(graph_c_profile) ""
-set ::graph_cache(graph_c_time) ""
-set ::graph_cache(graph_d_profile) ""
-set ::graph_cache(graph_d_time) ""
-
 if {$::skin_button_radius > 50} {
     set ::skin_button_radius 50
 }
@@ -179,16 +172,9 @@ if {![info exist ::skin(show_history_button)]} {
     set ::skin(show_history_button) 1
 }
 
-if {![info exist ::skin(show_data_card_button)]} {
-    set ::skin(show_data_card_button) 0
-}
-
 proc skin_history {} {
-    history_viewer open
-}
-
-proc skin_history_2 {} {
-    history_viewer open
+    #history_viewer open
+    page_show history
 }
 
 proc create_settings_dir {} {
@@ -318,9 +304,7 @@ proc initial_icon_cal_check {} {
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
         set_button edit_flow_rate_cal_button state normal
-        if {[info exist ::skin_show_pulak_button]} {
-            set_button edit_theme_button state normal
-        }
+        set_button edit_theme_button state normal
         hide_graph
         set_button close_heading_settings state normal
         set_button exit_heading_settings state normal
@@ -465,17 +449,9 @@ proc skin_saw {} {
 proc skin_extraction_ratio {} {
     if {$::settings(grinder_dose_weight) > 1} {
         if {$::settings(settings_profile_type) == "settings_2c"} {
-            if {[info exist ::skin_er_to_one_percent]} {
-                set y [round_to_two_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
-            } else {
-                set y [round_to_one_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
-            }
+            set y [round_to_one_digits [expr $::settings(final_desired_shot_weight_advanced) / $::settings(grinder_dose_weight)]]
         } else {
-            if {[info exist ::skin_er_to_one_percent]} {
-                set y [round_to_two_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
-            } else {
-                set y [round_to_one_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
-            }
+            set y [round_to_one_digits [expr $::settings(final_desired_shot_weight) / $::settings(grinder_dose_weight)]]
         }
         set d "1:"
         return ($d$y)
@@ -677,28 +653,21 @@ proc set_button {button_name property value} {
 
 proc add_colour_button {button_name pages x y width height tv command} {
     set ::${button_name}(pages) $pages
-    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
-    dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -text $tv
-    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
-}
 
-proc add_colour_variable_button {button_name pages x y width height tv command} {
-    set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
 
-
 proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -text $tv
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_icon_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -text $tv
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
@@ -706,7 +675,7 @@ proc add_icon_label_button {button_name pages x y width height tvi tv command } 
     set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags s_${button_name}
-    dui add dtext $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -text $tvi
+    dui add variable $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags li_${button_name} -textvariable $tvi
     dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
@@ -788,6 +757,7 @@ proc hide_graph {} {
     set_favs_showing
     dui item moveto off heading_entry 450 -1001
 
+
     set ::zoom_temperature 0
     set_button auto_tare state normal
     set_button favs_number state normal
@@ -828,14 +798,13 @@ proc hide_graph {} {
         $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
-        $::home_espresso_graph element configure compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     }
     if {$::skin(show_history_button) == 1} {
-        dui item config off skin_history_button* -initial_state hidden -state hidden
+        set_button skin_history_button state hidden
     }
 }
 
@@ -882,7 +851,7 @@ proc show_graph {} {
     dui item config off main_graph_toggle_goal_label -initial_state normal -state normal
     dui item config off main_graph_toggle_goal_button* -initial_state normal -state normal
     if {$::skin(show_history_button) == 1} {
-        dui item config off skin_history_button* -initial_state normal -state normal
+        set_button skin_history_button state normal
     }
     if {$::skin(show_history_button) == 1} {
         if {[.can itemcget l_dye_bg -state] eq "hidden" || "DYE" in $::settings(enabled_plugins) == 0} {
@@ -1436,7 +1405,7 @@ proc skin_steam_time_calc {} {
                 set ::settings(steam_timeout) $::skin(steam_calc)
                 save_settings
                 de1_send_steam_hotwater_settings
-                popup [translate "Steam timer set"]
+                borg toast [translate "Steam timer set"]
             }
         }
     } else {
@@ -1453,7 +1422,7 @@ proc skin_steam_time_calc {} {
             set ::settings(steam_timeout) $::skin(steam_calc)
             save_settings
             de1_send_steam_hotwater_settings
-            popup [translate "Steam timer set"]
+            borg toast [translate "Steam timer set"]
         }
     }
 }
@@ -1537,14 +1506,14 @@ proc toggle_steam_heater {} {
 
 
 proc wf_update_profile_saw {} {
-    if {$::settings(profile_has_changed) == 1} { popup [translate "Profile Updated"]; save_profile }
+    if {$::settings(profile_has_changed) == 1} { borg toast [translate "Profile Updated"]; save_profile }
     set_button wf_save_saw_x_button state hidden
     set_button wf_save_saw_tick_button state hidden
 }
 
 proc wf_cancel_profile_saw {} {
     if {$::settings(profile_has_changed) == 1} {
-        popup [translate "Cancelled"]
+        borg toast [translate "Cancelled"]
         set ::settings(profile_has_changed) 0
         if {$::settings(settings_profile_type) == "settings_2c"} {
             set ::settings(final_desired_shot_weight_advanced) $::saw_backup
@@ -1613,7 +1582,7 @@ proc move_workflow_button {button_name} {
 
         dui item moveto off launch_dye* $::skin(button_x_${button_name}) $::skin(button_y_${button_name})
     } elseif {$button_name == "skin_history_button"} {
-        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
+        move_colour_button skin_history_button
     } else {
         set z ::${button_name}(pages)
         set pages [set $z]
@@ -1646,7 +1615,7 @@ proc move_colour_button {button_name} {
      set z ::${button_name}(pages)
      set pages [set $z]
      set offset 2
-     #if {$button_name == "skin_history_button"} {set offset 0}
+     if {$button_name == "skin_history_button"} {set offset 0}
      lassign [.can coords b_${button_name}] x0 y0 x1 y1
      set width [expr [skin_screen_height_ratio $x1] - [skin_screen_width_ratio $x0]]
      set height [expr [skin_screen_height_ratio $y1] - [skin_screen_height_ratio $y0]]
@@ -1679,7 +1648,8 @@ proc skin_start {option} {
         show_skin_set $option
     } else {
         if {$option == "water"} {
-            if {$::settings(scale_bluetooth_address) != ""} {
+            if {[start_button_ready] == [translate "READY"]} {
+                if {$::settings(scale_bluetooth_address) != ""} {
                     scale_tare
                     set_next_page water water
                     start_water
@@ -1688,6 +1658,7 @@ proc skin_start {option} {
                     start_water
                 }
                 cancel_auto_stop
+            }
         }
         if {$option == "flush"} {
             set_next_page flush flush
@@ -1710,10 +1681,10 @@ proc skin_start {option} {
                 cancel_auto_stop
             }
             if {[start_button_ready] == [translate "WAIT"]} {
-                popup [translate "Machine still heating"]
+                borg toast [translate "Machine still heating"]
             }
             if {$::settings(steam_timeout) == 0} {
-                popup [translate "Steam is turned off"]
+                borg toast [translate "Steam is turned off"]
             }
         }
     }
@@ -1832,7 +1803,7 @@ proc check_heading {} {
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
-        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
+        move_workflow_button skin_history_button
 
     } else {
         set ::skin_heading {}
@@ -1849,7 +1820,7 @@ proc check_heading {} {
         move_workflow_button steam
         move_workflow_button water
         move_workflow_button dye
-        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
+        move_workflow_button skin_history_button
     }
     if {$::skin(show_heading) == 2 || $::skin(show_heading) == 3} {
         dui item config $::skin_home_pages headerar_bg0 -fill $::skin_background_colour
@@ -1889,9 +1860,7 @@ proc header_settings {} {
         set_button edit_colour_theme_button state normal
         set_button edit_icon_size_button state normal
         set_button edit_flow_rate_cal_button state normal
-        if {[info exist ::skin_show_pulak_button]} {
-            set_button edit_theme_button state normal
-        }
+        set_button edit_theme_button state normal
         hide_graph
         set_button close_heading_settings state normal
         set_button exit_heading_settings state normal
@@ -1901,7 +1870,7 @@ proc header_settings {} {
         dui item config off fav_edit_buttons -initial_state hidden -state hidden
         dui item config off settings_toggles -initial_state normal -state normal
         if {$::skin(show_history_button) == 1} {
-            dui item config off skin_history_button* -initial_state normal -state normal
+            set_button skin_history_button state normal
         }
     } else {
         hide_header_settings
@@ -1916,9 +1885,7 @@ proc hide_header_settings {} {
     set_button edit_colour_theme_button state hidden
     set_button edit_icon_size_button state hidden
     set_button edit_flow_rate_cal_button state hidden
-    if {[info exist ::skin_show_pulak_button]} {
-        set_button edit_theme_button state hidden
-    }
+    set_button edit_theme_button state hidden
     set_button close_heading_settings state hidden
     set_button exit_heading_settings state hidden
     dui item moveto off heading_entry 450 -1001
@@ -1929,7 +1896,7 @@ proc hide_header_settings {} {
     set_button icon_size_minus_x10 state hidden
     set_button icon_size_plus_x10 state hidden
     dui item config off settings_toggles -initial_state hidden -state hidden
-    dui item config off skin_history_button* -initial_state hidden -state hidden
+    set_button skin_history_button state hidden
 }
 
 proc wifi_status {} {
@@ -1941,21 +1908,19 @@ proc wifi_status {} {
 }
 
 proc skin_battery_status {} {
-    set state [battery_state]
-    set level [battery_percent]
-    if {$state == "charging" || $state == "charged"} {
+    if {[battery_state] == "charging" || [battery_state] == "charged"} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_green
         return \uf376
-    } elseif {$level < 20} {
+    } elseif {[battery_percent] < 20} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_red
         return \uf244
-    } elseif {$level < 50} {
+    } elseif {[battery_percent] < 50} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_red
         return \ue0b1
-    } elseif {$level < 70} {
+    } elseif {[battery_percent] < 70} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_orange
         return \uf242
-    } elseif {$level < 80} {
+    } elseif {[battery_percent] < 80} {
         dui item config $::skin_home_pages battery_icon -fill $::skin_green
         return \uf241
     } else {
@@ -1968,15 +1933,6 @@ set ::flush_timer_backup 0
 proc flush_extend {} {
     set ::settings(flush_seconds) [expr $::settings(flush_seconds) + 5]
     de1_send_steam_hotwater_settings
-}
-
-proc flush_extend1 {} {
-    ### working in progress
-    set flushtime $::settings(flush_seconds)
-    set remaining [expr {$::settings(flush_seconds) - [flush_pour_timer]}]
-    set ::settings(flush_seconds) [expr {$remaining + 5}]
-    de1_send_steam_hotwater_settings
-    set ::settings(flush_seconds) $flushtime
 }
 
 set ::steam_timer_backup 0
@@ -2021,11 +1977,7 @@ proc skin_graph_info {} {
     set p $::skin_graphs(live_graph_profile)
     set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
     set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
-    if {[info exist ::skin_er_to_one_percent]} {
-        set er [round_to_two_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
-    } else {
-        set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
-    }
+    set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
     set pi $::skin_graphs(live_graph_pi_time)
     set pt $::skin_graphs(live_graph_pour_time)
     set t $::skin_graphs(live_graph_shot_time)
@@ -2040,11 +1992,7 @@ proc skin_graph_live_info {} {
     set p $::settings(profile_title)
     set b $::settings(grinder_dose_weight)
     set w [round_to_one_digits $::de1(scale_weight)]
-    if {[info exist ::skin_er_to_one_percent]} {
-        set er [round_to_two_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
-    } else {
-         set er [round_to_one_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
-    }
+    set er [round_to_one_digits [expr $::de1(scale_weight) / ($::settings(grinder_dose_weight) + 0.001)]]
     set pi [espresso_preinfusion_timer]
     set pt [espresso_pour_timer]
     set t [espresso_elapsed_timer]
@@ -2191,7 +2139,7 @@ proc workflow {option} {
     move_workflow_button steam
     move_workflow_button water
     move_workflow_button dye
-    dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
+    move_workflow_button skin_history_button
     set_button wf_latte label_fill $::skin_button_label_colour
     set_button wf_long label_fill $::skin_button_label_colour
     set_button wf_americano label_fill $::skin_button_label_colour
@@ -2202,13 +2150,13 @@ proc workflow {option} {
 
 proc set_scale_weight_to_dose {} {
     if {[expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)] < 6} {
-        popup [translate "weight too low"]
+        borg toast [translate "weight too low"]
     } elseif { [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)] > 32.1} {
-        popup [translate "weight too high"]
+        borg toast [translate "weight too high"]
     } else {
         set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::de1(scale_sensor_weight) - $::skin(bean_cup_g)]]
         skin_save settings
-        popup [translate "Bean weight set"]
+        borg toast [translate "Bean weight set"]
     }
 }
 
@@ -2523,8 +2471,7 @@ proc backup_live_graph {} {
 			set ::skin_graphs(live_graph_profile) $::settings(profile_title)
 		    set ::skin_graphs(live_graph_time) $::settings(espresso_clock)
 		    set ::skin_graphs(live_graph_beans) $::settings(grinder_dose_weight)
-		    #set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
-		    set ::skin_graphs(live_graph_weight) $::settings(drink_weight)
+		    set ::skin_graphs(live_graph_weight) $::de1(scale_weight)
 		    set ::skin_graphs(live_graph_pi_water) [round_to_integer $::de1(preinfusion_volume)]
 		    set ::skin_graphs(live_graph_pour_water) [round_to_integer $::de1(pour_volume)]
 		    set ::skin_graphs(live_graph_water) [expr {[round_to_integer $::de1(preinfusion_volume)] + [round_to_integer $::de1(pour_volume)]}]
@@ -2538,13 +2485,7 @@ proc backup_live_graph {} {
 	}
 }
 
-#::register_state_change_handler Espresso Idle update_live_graph
-
-rename save_this_espresso_to_history save_this_espresso_to_history_orig
-proc save_this_espresso_to_history {unused_old_state unused_new_state} {
-    save_this_espresso_to_history_orig $unused_old_state $unused_new_state
-    update_live_graph
-}
+::register_state_change_handler Espresso Idle update_live_graph
 
 proc update_live_graph {args} {
     if {$::shift_graphs_conditions_met == 1} {
@@ -2593,7 +2534,6 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_pressure -xdata espresso_elapsed -ydata espresso_pressure
     $::home_espresso_graph element configure home_flow  -xdata espresso_elapsed -ydata espresso_flow
     $::home_espresso_graph element configure home_weight  -xdata espresso_elapsed -ydata espresso_flow_weight
-    $::home_espresso_graph element configure home_weight_chartable  -xdata espresso_elapsed -ydata espresso_weight_chartable
     $::home_espresso_graph element configure home_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket10th
     $::home_espresso_graph element configure home_zoom_temperature -xdata espresso_elapsed -ydata espresso_temperature_basket
     $::home_espresso_graph element configure home_resistance  -xdata espresso_elapsed -ydata espresso_resistance
@@ -2602,7 +2542,6 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_flow_2x  -xdata espresso_elapsed -ydata espresso_flow_2x
     $::home_espresso_graph element configure home_weight_2x  -xdata espresso_elapsed -ydata espresso_flow_weight_2x
 }
-
 
 proc restore_live_graphs {} {
     set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]
@@ -2731,10 +2670,6 @@ proc toggle_graph {curve} {
                 $::home_espresso_graph_espresso element configure home_${curve}_2x -linewidth 0
                 $::home_espresso_graph element configure home_${curve}_2x -linewidth 0
             }
-            if {$curve == "weight"} {
-                $::home_espresso_graph element configure home_weight_chartable -linewidth 0
-                $::home_espresso_graph element configure compare_weight_chartable -linewidth 0
-            }
         } else {
             set ::skin($curve) 1
             if {$::skin(goal) != 0} {
@@ -2757,10 +2692,6 @@ proc toggle_graph {curve} {
             }
             if {$curve == "pressure" || $curve == "flow" || $curve == "weight" || $curve == "temperature" || $curve == "resistance"} {
                 $::home_espresso_graph element configure compare_${curve} -linewidth [rescale_x_skin 4]
-            }
-            if {$curve == "weight"} {
-                $::home_espresso_graph element configure home_weight_chartable -linewidth [rescale_x_skin 4]
-                $::home_espresso_graph element configure compare_weight_chartable -linewidth [rescale_x_skin 4]
             }
             dui item config espresso ${curve}_data -fill $::skin_text_colour
             dui item config "off flush water" ${curve}_text -fill $::skin_text_colour
@@ -2799,12 +2730,10 @@ proc toggle_graph_compare { graph } {
         $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
         $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
         $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
-        $::home_espresso_graph element configure compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable
         $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
         $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
         $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
-
     } else {
         set ::cache_graph_compare $graph
         $::home_espresso_graph element configure compare_pressure -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_pressure
@@ -2815,11 +2744,9 @@ proc toggle_graph_compare { graph } {
         if {$::skin(show_y2_axis) == 0} {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow
             $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight
-            $::home_espresso_graph element configure compare_weight_chartable -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_weight_chartable
         } else {
             $::home_espresso_graph element configure compare_flow -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_2x
             $::home_espresso_graph element configure compare_weight -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_flow_weight_2x
-            $::home_espresso_graph element configure compare_weight_chartable -xdata ${graph}_espresso_elapsed -ydata ${graph}_espresso_weight_chartable
         }
     }
 }
@@ -2872,7 +2799,6 @@ proc toggle_cache_graphs {} {
             $::home_espresso_graph element configure compare_pressure -xdata compare_espresso_elapsed -ydata compare_espresso_pressure
             $::home_espresso_graph element configure compare_flow -xdata compare_espresso_elapsed -ydata compare_espresso_flow
             $::home_espresso_graph element configure compare_weight -xdata compare_espresso_elapsed -ydata compare_espresso_flow_weight
-            $::home_espresso_graph element configure compare_weight_chartable -xdata compare_espresso_elapsed -ydata compare_espresso_weight_chartable
             $::home_espresso_graph element configure compare_steps -xdata compare_espresso_elapsed -ydata compare_espresso_state_change
             $::home_espresso_graph element configure compare_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket10th
             $::home_espresso_graph element configure compare_zoom_temperature -xdata compare_espresso_elapsed -ydata compare_espresso_temperature_basket
@@ -3150,7 +3076,7 @@ proc check_y_resolution {} {
     }
 }
 
-proc main_graph_elements {} {
+proc main_grap_elements {} {
     return [list \
     compare_pressure \
     compare_flow \
@@ -3185,7 +3111,7 @@ proc highlight_curve { curve } {
         return
     }
     hide_zoom_temperature
-    foreach e [main_graph_elements] {
+    foreach e [main_grap_elements] {
         $::home_espresso_graph element configure $e -hide 1
     }
     if {$curve == "pressure" || $curve == "resistance"} {
@@ -3223,7 +3149,7 @@ proc highlight_curve { curve } {
 }
 
 proc exit_highlight_curve {} {
-    foreach e [main_graph_elements] {
+    foreach e [main_grap_elements] {
         $::home_espresso_graph element configure $e -hide 0
     }
     check_graph_axis
@@ -3345,7 +3271,6 @@ proc check_app_extensions {} {
     set dflow ""
     set scale ""
     set saver ""
-    set godshot ""
     if {"D_Flow_Espresso_Profile" in $::settings(enabled_plugins) == 0 } {
         append ::settings(enabled_plugins) { D_Flow_Espresso_Profile}
         save_settings
@@ -3375,24 +3300,8 @@ proc check_app_extensions {} {
         set saver {- We needed to disable "DPx_Screen_Saver" app extension, this skin already has the MySaver feature}
         set show 1
     }
-    if {[info exist ::settings(god_espresso_elapsed)] == 1} {
-        if {($::settings(god_espresso_name) != {} && $::settings(god_espresso_name) != "None") || $::settings(god_espresso_elapsed) != {}} {
-
-            set ::settings(god_espresso_name) {}
-            set ::settings(god_espresso_elapsed) {}
-            set ::settings(god_espresso_pressure) {}
-            set ::settings(god_espresso_temperature_basket) {}
-            set ::settings(god_espresso_flow) {}
-            set ::settings(god_espresso_flow_weight) {}
-            set ::settings(god_espresso_weight) {}
-            save_settings
-            god_shot_reference_reset
-            set godshot {- We unselected your Godshot, this skin does not support Godshots}
-            set show 1
-        }
-    }
     set ext {Tap on the screen to exit the app, the changes will be applied when you restart}
-    set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r$godshot\r\r\r$ext
+    set ::plugin_change_message $saver\r\r$dflow\r\r$scale\r\r\r\r$ext
     if {$show == 1} {
         set ::skin(icon_cal_check) 0
         skin_save skin
@@ -3542,21 +3451,21 @@ set {} {
 
 # programming stuff
 
-blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket graph_a_espresso_temperature_basket10th graph_a_espresso_resistance graph_a_espresso_weight_chartable
-blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket graph_b_espresso_temperature_basket10th graph_b_espresso_resistance graph_b_espresso_weight_chartable
-blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket graph_c_espresso_temperature_basket10th graph_c_espresso_resistance graph_c_espresso_weight_chartable
-blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket graph_d_espresso_temperature_basket10th graph_d_espresso_resistance graph_d_espresso_weight_chartable
+blt::vector create graph_a_espresso_elapsed graph_a_espresso_pressure graph_a_espresso_flow graph_a_espresso_flow_weight graph_a_espresso_flow_2x graph_a_espresso_flow_weight_2x graph_a_espresso_state_change graph_a_espresso_temperature_basket graph_a_espresso_temperature_basket10th graph_a_espresso_resistance
+blt::vector create graph_b_espresso_elapsed graph_b_espresso_pressure graph_b_espresso_flow graph_b_espresso_flow_weight graph_b_espresso_flow_2x graph_b_espresso_flow_weight_2x graph_b_espresso_state_change graph_b_espresso_temperature_basket graph_b_espresso_temperature_basket10th graph_b_espresso_resistance
+blt::vector create graph_c_espresso_elapsed graph_c_espresso_pressure graph_c_espresso_flow graph_c_espresso_flow_weight graph_c_espresso_flow_2x graph_c_espresso_flow_weight_2x graph_c_espresso_state_change graph_c_espresso_temperature_basket graph_c_espresso_temperature_basket10th graph_c_espresso_resistance
+blt::vector create graph_d_espresso_elapsed graph_d_espresso_pressure graph_d_espresso_flow graph_d_espresso_flow_weight graph_d_espresso_flow_2x graph_d_espresso_flow_weight_2x graph_d_espresso_state_change graph_d_espresso_temperature_basket graph_d_espresso_temperature_basket10th graph_d_espresso_resistance
 
 proc shift_graph_list {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_weight_chartable espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time beans weight water pi_water pour_water pi_time pour_time shot_time]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance profile time]
 }
 
 proc shift_graph_list_vectors {} {
-    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_weight_chartable espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance]
+    return [list espresso_elapsed espresso_pressure espresso_flow espresso_flow_weight espresso_flow_2x espresso_flow_weight_2x espresso_state_change espresso_temperature_basket espresso_temperature_basket10th espresso_resistance]
 }
 
 proc shift_graph_list_variables {} {
-    return [list profile time beans weight water pi_water pour_water pi_time pour_time shot_time]
+    return [list profile time]
 }
 
 proc shift_graphs { args } {
@@ -3614,6 +3523,11 @@ proc save_graph_cache { args } {
     }
 
     write_file "[skin_directory]/settings/graph_cache.tdb" $graph_cache_data
+}
+
+proc skin_graph_size { value } {
+    set x [expr {$::skin_graph_multiplier * $value}]
+    return $x
 }
 
 proc restore_cache_graphs {} {
@@ -3681,7 +3595,7 @@ proc skin_orig_flow_cal {} {
 
 proc skin_flow_cal_up {} {
     if {$::settings(calibration_flow_multiplier) <= 0.35} {
-        popup [translate "minimum setting reached"]
+        borg toast [translate "minimum setting reached"]
         return
     }
     set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) + 0.01]]
@@ -3697,7 +3611,7 @@ proc skin_flow_cal_up {} {
 
 proc skin_flow_cal_down {} {
     if {$::settings(calibration_flow_multiplier) >= 1.65} {
-        popup [translate "maximum setting reached"]
+        borg toast [translate "maximum setting reached"]
         return
     }
     set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) - 0.01]]
@@ -3709,19 +3623,6 @@ proc skin_flow_cal_down {} {
     foreach flow_2x $::skin_graphs(live_graph_espresso_flow_2x) {
         espresso_flow_2x append [expr $::settings(calibration_flow_multiplier) * $flow_2x / $::skin_flow_cal_backup]
     }
-}
-
-proc show_flow_cal_ui {} {
-    if {![info exist ::skin_graphs(live_graph_espresso_flow_weight)]} {
-        popup [translate "You do not have any flow weight data recorded yet"]
-        return
-    }
-    add_cal_controller
-    restore_live_graphs_default_vectors
-    hide_header_settings
-    show_graph
-    restore_live_graphs
-    skin_show_flow_cal
 }
 
 proc skin_show_flow_cal {} {
@@ -3781,222 +3682,6 @@ proc add_screen_saver_button {button} {
         dui item config saver $button* -initial_state normal -state normal
         lappend ::screen_saver_buttons $button
         dui item moveto saver $button* [next_saver_spot_x] [next_saver_spot_y]
-    }
-}
-
-if {$::skin(theme) != "Damian"} {
-    return
-}
-
-set ::info_espresso_last_data_showing 0
-
-proc info_espresso_last_data_toggle {} {
-    if {$::info_espresso_last_data_showing == 0} {
-        dui item config off info_espresso_last_data_card -state normal
-        set ::info_espresso_last_data_showing 1
-    } else {
-        dui item config off info_espresso_last_data_card -state hidden
-        set ::info_espresso_last_data_showing 0
-    }
-}
-
-proc info_espresso_last_date_time_format { time } {
-    set date [clock format $time -format {%a %d}]
-    if {$::settings(enable_ampm) == 0} {
-        set a [clock format $time -format {%H}]
-        set b [clock format $time -format {:%M}]
-        set c $a
-    } else {
-        set a [clock format $time -format {%I}]
-        set b [clock format $time -format {:%M}]
-        set c $a
-        regsub {^[0]} $c {\1} c
-    }
-    if {$::settings(enable_ampm) == 1} {
-        set pm [clock format $time -format %P]
-    } else {
-        set pm ""
-    }
-    set s {    }
-    return "$date$s$c$b$pm"
-}
-
-proc info_espresso_last_data {} {
-    set time [info_espresso_last_date_time_format $::skin_graphs(live_graph_time)]
-    set p [name_length $::skin_graphs(live_graph_profile) 24]
-    set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
-    set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
-    if {[info exist ::skin_er_to_one_percent]} {
-        set er [round_to_two_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
-    } else {
-        set er [round_to_one_digits [expr $::skin_graphs(live_graph_weight) / ($::skin_graphs(live_graph_beans) + 0.001)]]
-    }
-    set pi $::skin_graphs(live_graph_pi_time)
-    set pt $::skin_graphs(live_graph_pour_time)
-    set t $::skin_graphs(live_graph_shot_time)
-    set s { }
-    set v [skin_water_data]
-    return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
-}
-
-proc clear_info_espresso_last_data_compare {} {
-    foreach lg [shift_graph_list_variables] {
-        set ::graph_cache(graph_a_$lg) 1
-        set ::graph_cache(graph_b_$lg) 1
-        set ::graph_cache(graph_c_$lg) 1
-        set ::graph_cache(graph_d_$lg) 1
-    }
-}
-
-proc info_espresso_last_data_compare {} {
-    if {$::cache_graph_compare == 0} {
-        return ""
-    }
-    if {$::cache_graph_compare == "graph_a"} {
-        if {[info exists ::graph_cache(graph_a_shot_time)]} {
-            set time [info_espresso_last_date_time_format $::graph_cache(graph_a_time)]
-            set p [name_length $::graph_cache(graph_a_profile) 24]
-            set b [round_to_one_digits $::graph_cache(graph_a_beans)]
-            set w [round_to_one_digits $::graph_cache(graph_a_weight)]
-            if {[info exist ::skin_er_to_one_percent]} {
-                set er [round_to_two_digits [expr $::graph_cache(graph_a_weight) / ($::graph_cache(graph_a_beans) + 0.001)]]
-            } else {
-                set er [round_to_one_digits [expr $::graph_cache(graph_a_weight) / ($::graph_cache(graph_a_beans) + 0.001)]]
-            }
-            set pi $::graph_cache(graph_a_pi_time)
-            set pt $::graph_cache(graph_a_pour_time)
-            set t $::graph_cache(graph_a_shot_time)
-            set s { }
-            if {$::graph_cache(graph_a_pi_water) >= 1} {
-                set v "$::graph_cache(graph_a_pi_water) + $::graph_cache(graph_a_pour_water) = $::graph_cache(graph_a_water)"
-            } else {
-                set v "$::graph_cache(graph_a_water)"
-            }
-            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
-        } else {
-            return ""
-        }
-    }
-    if {$::cache_graph_compare == "graph_b"} {
-        if {[info exists ::graph_cache(graph_b_shot_time)]} {
-            set time [info_espresso_last_date_time_format $::graph_cache(graph_b_time)]
-            set p [name_length $::graph_cache(graph_b_profile) 24]
-            set b [round_to_one_digits $::graph_cache(graph_b_beans)]
-            set w [round_to_one_digits $::graph_cache(graph_b_weight)]
-            if {[info exist ::skin_er_to_one_percent]} {
-                set er [round_to_two_digits [expr $::graph_cache(graph_b_weight) / ($::graph_cache(graph_b_beans) + 0.001)]]
-            } else {
-                set er [round_to_one_digits [expr $::graph_cache(graph_b_weight) / ($::graph_cache(graph_b_beans) + 0.001)]]
-            }
-            set pi $::graph_cache(graph_b_pi_time)
-            set pt $::graph_cache(graph_b_pour_time)
-            set t $::graph_cache(graph_b_shot_time)
-            set s { }
-            if {$::graph_cache(graph_b_pi_water) >= 1} {
-                set v "$::graph_cache(graph_b_pi_water) + $::graph_cache(graph_b_pour_water) = $::graph_cache(graph_b_water)"
-            } else {
-                set v "$::graph_cache(graph_b_water)"
-            }
-            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
-        } else {
-            return ""
-        }
-    }
-    if {$::cache_graph_compare == "graph_c"} {
-        if {[info exists ::graph_cache(graph_c_shot_time)]} {
-            set time [info_espresso_last_date_time_format $::graph_cache(graph_c_time)]
-            set p [name_length $::graph_cache(graph_c_profile) 24]
-            set b [round_to_one_digits $::graph_cache(graph_c_beans)]
-            set w [round_to_one_digits $::graph_cache(graph_c_weight)]
-            if {[info exist ::skin_er_to_one_percent]} {
-                set er [round_to_two_digits [expr $::graph_cache(graph_c_weight) / ($::graph_cache(graph_c_beans) + 0.001)]]
-            } else {
-                set er [round_to_one_digits [expr $::graph_cache(graph_c_weight) / ($::graph_cache(graph_c_beans) + 0.001)]]
-            }
-            set pi $::graph_cache(graph_c_pi_time)
-            set pt $::graph_cache(graph_c_pour_time)
-            set t $::graph_cache(graph_c_shot_time)
-            set s { }
-            if {$::graph_cache(graph_c_pi_water) >= 1} {
-                set v "$::graph_cache(graph_c_pi_water) + $::graph_cache(graph_c_pour_water) = $::graph_cache(graph_c_water)"
-            } else {
-                set v "$::graph_cache(graph_c_water)"
-            }
-            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
-        } else {
-            return ""
-        }
-    }
-    if {$::cache_graph_compare == "graph_d"} {
-        if {[info exists ::graph_cache(graph_d_shot_time)]} {
-            set time [info_espresso_last_date_time_format $::graph_cache(graph_d_time)]
-            set p [name_length $::graph_cache(graph_d_profile) 24]
-            set b [round_to_one_digits $::graph_cache(graph_d_beans)]
-            set w [round_to_one_digits $::graph_cache(graph_d_weight)]
-            if {[info exist ::skin_er_to_one_percent]} {
-                set er [round_to_two_digits [expr $::graph_cache(graph_d_weight) / ($::graph_cache(graph_d_beans) + 0.001)]]
-            } else {
-                set er [round_to_one_digits [expr $::graph_cache(graph_d_weight) / ($::graph_cache(graph_d_beans) + 0.001)]]
-            }
-            set pi $::graph_cache(graph_d_pi_time)
-            set pt $::graph_cache(graph_d_pour_time)
-            set t $::graph_cache(graph_d_shot_time)
-            set s { }
-            if {$::graph_cache(graph_d_pi_water) >= 1} {
-                set v "$::graph_cache(graph_d_pi_water) + $::graph_cache(graph_d_pour_water) = $::graph_cache(graph_d_water)"
-            } else {
-                set v "$::graph_cache(graph_d_water)"
-            }
-            return ${time}\r${p}\r${v}ml\r${pi}s${s}+${s}${pt}s${s}=${s}${t}s\r${b}g${s}:${s}${w}g${s}${s}${s}${s}(1:${er})
-        } else {
-            return ""
-        }
-    }
-}
-
-### skin_moveby is a copy from a recent dui addition on 11 March 2024, version 1.43.8.16
-### The function is very useful but to keep DSx2 backward compatable I have written skin_moveby
-### TODO replace all "skin_moveby" with "dui item moveby" once Stable version 1.44 is released, (used in History viewer)
-
-proc skin_moveby { page_or_id_or_widget tags {x_change {}} {y_change {}} } {
-    set can [dui canvas]
-    set items [dui item get $page_or_id_or_widget $tags]
-    if { $tags eq {} } {
-        set page [lindex [pages [lindex $items 0]] 0]
-    } else {
-        set page [lindex $page_or_id_or_widget 0]
-    }
-    if { $x_change ne {} } {
-        set x_change [dui::page::calc_x $page $x_change]
-    }
-    if { $y_change ne {} } {
-        set y_change [dui::page::calc_y $page $y_change]
-    }
-    foreach id $items {
-        lassign [$can coords $id] x0 y0 x1 y1
-        if { $x_change eq {} } {
-            set nx0 $x0
-            set nx1 $x1
-        } else {
-            set nx0 [expr {$x0+$x_change}]
-            if { $x1 ne {} } {
-                set nx1 [expr {$x1+$x_change}]
-            }
-        }
-        if { $y_change eq {} } {
-            set ny0 $y0
-            set ny1 $y1
-        } else {
-            set ny0 [expr {$y0+$y_change}]
-            if { $y1 ne {} } {
-                set ny1 [expr {$y1+$y_change}]
-            }
-        }
-        if { $x1 eq {} || $y1 eq {} } {
-            $can coords $id $nx0 $ny0
-        } else {
-            $can coords $id $nx0 $ny0 $nx1 $ny1
-        }
     }
 }
 
