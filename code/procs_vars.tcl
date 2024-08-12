@@ -1,4 +1,4 @@
-set ::skin_version 2.09
+set ::skin_version 2.10
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -1506,9 +1506,8 @@ proc skin_bean_weight {} {
 }
 
 proc set_bean_cup_weight {} {
-    #set ::skin(bean_cup_g) [round_to_one_digits $::de1(scale_sensor_weight)]
-    #skin_save skin
-    set ::skin(bean_cup_g) 20
+    set ::skin(bean_cup_g) [round_to_one_digits $::de1(scale_sensor_weight)]
+    skin_save skin
 }
 
 proc setup_steam_switch_state {} {
