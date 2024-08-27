@@ -39,4 +39,5 @@ pages/Damian/home.tcl
 plugins/pizza.tcl
 plugins/history_viewer.tcl
 plugins/screen_saver_history_button.tcl
+plugins/v60.tcl
 skin.tcl
