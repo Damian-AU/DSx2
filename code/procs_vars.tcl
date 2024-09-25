@@ -1,4 +1,4 @@
-set ::skin_version 2.11
+set ::skin_version 2.13
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -2546,17 +2546,44 @@ proc save_this_espresso_to_history {unused_old_state unused_new_state} {
     update_live_graph
 }
 
+set {} {
+        ### Old proc to be deleted.
+        ### see modefied proc by Matt Bower below
+        proc update_live_graph {args} {
+            if {$::shift_graphs_conditions_met == 1} {
+                backup_live_graph
+                skin_save skin_graphs
+                set ::shift_graphs_conditions_met 0
+            } else {
+                after 3000 {
+                    foreach lg [live_graph_list] {
+                        $lg length 0
+                        if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+                            $lg append $::skin_graphs(live_graph_$lg)
+                        }
+                    }
+                }
+            }
+        }
+}
+
 proc update_live_graph {args} {
+    if {$::de1_num_state($::de1(state)) != "Idle" } {
+        return
+    }
     if {$::shift_graphs_conditions_met == 1} {
         backup_live_graph
         skin_save skin_graphs
         set ::shift_graphs_conditions_met 0
     } else {
         after 3000 {
-            foreach lg [live_graph_list] {
-                $lg length 0
-                if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
-                    $lg append $::skin_graphs(live_graph_$lg)
+            if {$::de1_num_state($::de1(state)) != "Idle" } {
+            } else {
+                foreach lg [live_graph_list] {
+                    $lg length 0
+                    if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
+                        $lg append $::skin_graphs(live_graph_$lg)
+                    }
                 }
             }
         }
@@ -2605,6 +2632,9 @@ proc restore_live_graphs_default_vectors {} {
 
 
 proc restore_live_graphs {} {
+    if {$::de1_num_state($::de1(state)) != "Idle" } {
+        return
+    }
     set last_elapsed_time_index [expr {[espresso_elapsed length] - 1}]
     if {$last_elapsed_time_index > 1} {
         return
