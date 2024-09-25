@@ -1,6 +1,6 @@
 #### V60 brew calulator - DSx2 plugin, borrowed heavily from Damian's pizza dough calculator ####
 set ::v60_brew_calulator_author bsnelson
-set ::v60_brew_calulator_version 2.0
+set ::v60_brew_calulator_version 2.1
 
 ### favourites
 proc v60_reset {} {
@@ -116,6 +116,15 @@ proc v60_calculate {} {
     v60_text_colour
 }
 
+proc time_incr { time_in incr_in } {
+    set time_parts [split $time_in ":"]
+    set seconds [expr [lindex $time_parts 0] * 60 + [lindex $time_parts 1]]
+    set seconds [expr $seconds + $incr_in]
+    set minutes [expr $seconds / 60]
+    set seconds [expr $seconds - $minutes * 60]
+    return [format "%02d:%02d" $minutes $seconds]
+}
+
 proc get_pour { ndx } {
     msg -WARN [namespace current] "gqueso $ndx"
     if { [expr $ndx > [expr $::skin(pour_remainder_pours) + 2]] } {
@@ -195,10 +204,11 @@ dui add dbutton v60_brew 1590 1140 \
     -command {scale_tare; catch {ble_connect_to_scale}}
 
 ### Recipe ###
-set text_x_offset 1360
-set grounds_x_offset 1940
-set cumu_x_offset 1720
-set pour_x_offset 1950
+set text_x_offset 1160
+set grounds_x_offset 1740
+set cumu_x_offset 1520
+set pour_x_offset 1750
+set time_x_offset 1950
 set base_y_offset 370
 set base_y_incr 100
 set table_font 28
@@ -207,12 +217,15 @@ dui add dtext v60_brew $text_x_offset $base_y_offset -text [translate "coffee we
 dui add variable v60_brew $grounds_x_offset $base_y_offset -font [skin_font font 30] -fill $::skin_text_colour -anchor center -justify center -textvariable {[round_to_one_digits $::coffee_weight]g}
 
 ### Pour values ###
+set pour_time "00:00"
 for { set pour_index 1} { $pour_index <= 6} { incr pour_index } {
     set this_poured {($::pour_weight(}; append this_poured $pour_index; append this_poured {))}
     set cumu_poured {[get_pour }; append cumu_poured $pour_index; append cumu_poured {]}
     dui add dtext v60_brew $text_x_offset [expr $base_y_offset + $base_y_incr * $pour_index] -text [translate "pour $pour_index"] -font [skin_font font $table_font] -fill $::skin_text_colour -anchor w -justify center
     dui add variable v60_brew $cumu_x_offset [expr $base_y_offset + $base_y_incr * $pour_index] -font [skin_font font $table_font] -fill $::skin_text_colour -anchor center -justify center -textvariable $cumu_poured
     dui add variable v60_brew $pour_x_offset [expr $base_y_offset + $base_y_incr * $pour_index] -font [skin_font font $table_font] -fill $::skin_text_colour -anchor center -justify center -textvariable $this_poured
+    dui add dtext v60_brew $time_x_offset [expr $base_y_offset + $base_y_incr * $pour_index] -text [translate $pour_time] -font [skin_font font $table_font] -fill $::skin_text_colour -anchor w -justify center
+    set pour_time [time_incr $pour_time 45]
 }
 
 dui add dbutton v60_brew 1460 1400 \
