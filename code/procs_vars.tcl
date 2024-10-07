@@ -1,4 +1,4 @@
-set ::skin_version 2.15
+set ::skin_version 2.16
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -2546,27 +2546,6 @@ proc save_this_espresso_to_history {unused_old_state unused_new_state} {
     update_live_graph
 }
 
-set {} {
-        ### Old proc to be deleted.
-        ### see modefied proc by Matt Bower below
-        proc update_live_graph {args} {
-            if {$::shift_graphs_conditions_met == 1} {
-                backup_live_graph
-                skin_save skin_graphs
-                set ::shift_graphs_conditions_met 0
-            } else {
-                after 3000 {
-                    foreach lg [live_graph_list] {
-                        $lg length 0
-                        if {[info exists ::skin_graphs(live_graph_$lg)] == 1} {
-                            $lg append $::skin_graphs(live_graph_$lg)
-                        }
-                    }
-                }
-            }
-        }
-}
-
 proc update_live_graph {args} {
     if {$::de1_num_state($::de1(state)) != "Idle" } {
         return
@@ -2629,7 +2608,6 @@ proc restore_live_graphs_default_vectors {} {
     $::home_espresso_graph element configure home_flow_2x  -xdata espresso_elapsed -ydata espresso_flow_2x
     $::home_espresso_graph element configure home_weight_2x  -xdata espresso_elapsed -ydata espresso_flow_weight_2x
 }
-
 
 proc restore_live_graphs {} {
     if {$::de1_num_state($::de1(state)) != "Idle" } {
@@ -3699,100 +3677,6 @@ proc load_graph_cache {} {
 
 proc skin_load_fav { args } {
     skin_load $::skin(auto_load_fav)
-}
-
-proc skin_orig_flow_cal {} {
-    if {[info exist ::skin_flow_cal_backup]} {
-        return $::skin_flow_cal_backup
-    } else {
-        return $::settings(calibration_flow_multiplier)
-    }
-}
-
-proc skin_flow_cal_up {} {
-    if {$::settings(calibration_flow_multiplier) <= 0.35} {
-        popup [translate "minimum setting reached"]
-        return
-    }
-    set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) + 0.01]]
-    espresso_flow length 0
-    foreach flow $::skin_graphs(live_graph_espresso_flow) {
-        espresso_flow append [expr $::settings(calibration_flow_multiplier) * $flow / $::skin_flow_cal_backup]
-    }
-    espresso_flow_2x length 0
-    foreach flow_2x $::skin_graphs(live_graph_espresso_flow_2x) {
-        espresso_flow_2x append [expr $::settings(calibration_flow_multiplier) * $flow_2x / $::skin_flow_cal_backup]
-    }
-}
-
-proc skin_flow_cal_down {} {
-    if {$::settings(calibration_flow_multiplier) >= 1.65} {
-        popup [translate "maximum setting reached"]
-        return
-    }
-    set ::settings(calibration_flow_multiplier) [round_to_two_digits [expr $::settings(calibration_flow_multiplier) - 0.01]]
-    espresso_flow length 0
-    foreach flow $::skin_graphs(live_graph_espresso_flow) {
-        espresso_flow append [expr $::settings(calibration_flow_multiplier) * $flow / $::skin_flow_cal_backup]
-    }
-    espresso_flow_2x length 0
-    foreach flow_2x $::skin_graphs(live_graph_espresso_flow_2x) {
-        espresso_flow_2x append [expr $::settings(calibration_flow_multiplier) * $flow_2x / $::skin_flow_cal_backup]
-    }
-}
-
-proc show_flow_cal_ui {} {
-    if {![info exist ::skin_graphs(live_graph_espresso_flow_weight)]} {
-        popup [translate "You do not have any flow weight data recorded yet"]
-        return
-    }
-    add_cal_controller
-    restore_live_graphs_default_vectors
-    hide_header_settings
-    show_graph
-    restore_live_graphs
-    skin_show_flow_cal
-}
-
-proc skin_show_flow_cal {} {
-    if {![info exist ::skin_flow_cal_up(pages)]} {
-        return
-    }
-    if {![info exist ::skin_flow_cal_backup]} {
-        set ::skin_flow_cal_backup $::settings(calibration_flow_multiplier)
-    }
-    dui item config off skin_flow_cal_dui_items -initial_state normal -state normal
-    set_button skin_flow_cal_up state normal
-    set_button skin_flow_cal_down state normal
-    set_button skin_flow_cal_cancel state normal
-    set_button skin_flow_cal_save state normal
-}
-
-proc skin_hide_flow_cal {} {
-    if {![info exist ::skin_flow_cal_up(pages)]} {
-        return
-    }
-    unset -nocomplain ::skin_flow_cal_backup
-    dui item config off skin_flow_cal_dui_items -initial_state hidden -state hidden
-    set_button skin_flow_cal_up state hidden
-    set_button skin_flow_cal_down state hidden
-    set_button skin_flow_cal_cancel state hidden
-    set_button skin_flow_cal_save state hidden
-}
-
-proc skin_cancel_flow_cal {} {
-    set ::settings(calibration_flow_multiplier) $::skin_flow_cal_backup
-    espresso_flow length 0
-    foreach flow $::skin_graphs(live_graph_espresso_flow) {
-        espresso_flow append $flow
-    }
-    skin_hide_flow_cal
-}
-
-proc skin_save_flow_cal {} {
-    skin_save settings
-    set_calibration_flow_multiplier $::settings(calibration_flow_multiplier)
-    skin_hide_flow_cal
 }
 
 set ::screen_saver_buttons {}
