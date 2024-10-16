@@ -82,68 +82,16 @@ proc skin_save {key} {
     }
 
     if {[string range $key 0 2] == "fav"} {
+        clear_fav_colour
         set ::skin(auto_load_fav) $::auto_load_fav
+        if {$::skin(theme) == "Damian"} {set ::skin(auto_load_fav_Damian) $::auto_load_fav}
+        if {$::skin(theme) == "cafe"} {set ::skin(auto_load_fav_cafe) $::auto_load_fav}
+
         set ::skin(fav_key) $key
-        if {$key == "fav1"} {
-            set ::skin(fav_label_fav1) $::fav_label_fav1
-        }
-        if {$key == "fav2"} {
-            set ::skin(fav_label_fav2) $::fav_label_fav2
-        }
-        if {$key == "fav3"} {
-            set ::skin(fav_label_fav3) $::fav_label_fav3
-        }
-        if {$key == "fav4"} {
-            set ::skin(fav_label_fav4) $::fav_label_fav4
-        }
-        if {$key == "fav5"} {
-            set ::skin(fav_label_fav5) $::fav_label_fav5
-        }
-        if {$key == "fav6"} {
-            set ::skin(fav_label_fav6) $::fav_label_fav6
-        }
-        if {$key == "fav7"} {
-            set ::skin(fav_label_fav7) $::fav_label_fav7
-        }
-        if {$key == "fav8"} {
-            set ::skin(fav_label_fav8) $::fav_label_fav8
-        }
-        if {$key == "fav9"} {
-            set ::skin(fav_label_fav9) $::fav_label_fav9
-        }
-        if {$key == "fav10"} {
-            set ::skin(fav_label_fav10) $::fav_label_fav10
-        }
-        if {$key == "fav11"} {
-            set ::skin(fav_label_fav11) $::fav_label_fav11
-        }
-        if {$key == "fav12"} {
-            set ::skin(fav_label_fav12) $::fav_label_fav12
-        }
-        if {$key == "fav13"} {
-            set ::skin(fav_label_fav13) $::fav_label_fav13
-        }
-        if {$key == "fav14"} {
-            set ::skin(fav_label_fav14) $::fav_label_fav14
-        }
-        if {$key == "fav15"} {
-            set ::skin(fav_label_fav15) $::fav_label_fav15
-        }
-        if {$key == "fav16"} {
-            set ::skin(fav_label_fav16) $::fav_label_fav16
-        }
-        if {$key == "fav17"} {
-            set ::skin(fav_label_fav17) $::fav_label_fav17
-        }
-        if {$key == "fav18"} {
-            set ::skin(fav_label_fav18) $::fav_label_fav18
-        }
-        if {$key == "fav19"} {
-            set ::skin(fav_label_fav19) $::fav_label_fav19
-        }
-        if {$key == "fav20"} {
-            set ::skin(fav_label_fav20) $::fav_label_fav20
-        }
+
+        set label [format_fav_entry $key]
+        set skin_setting [format_skin_fav_label_setting $key]
+        set $skin_setting [set $label]
 
         set data {}
         append data "app {\n"
@@ -168,17 +116,20 @@ proc skin_save {key} {
         write_file [skin_directory]/settings/$key.txt $data
         update_de1_explanation_chart
 
-        check_wf_steam_jug_auto_weight
+        if {$::skin(theme) == "Damian"} {
+            check_wf_steam_jug_auto_weight
+            rest_fav_buttons
+            show_graph
+        }
         skin_save skin
-        rest_fav_buttons
-        show_graph
         restore_graphs
     }
 }
 
 proc skin_load {key} {
-    if {$key == "fav1" || $key == "fav2" || $key == "fav3" || $key == "fav4" || $key == "fav5" || $key == "fav6"} {
+    #if {$key == "fav1" || $key == "fav2" || $key == "fav3" || $key == "fav4" || $key == "fav5" || $key == "fav6"} {
         if {[file exists [skin_directory]/settings/$key.txt]} {
+            clear_fav_colour
             set ::skin(fav_key) $key
             array unset -nocomplain fav_settings
             array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/$key.txt"]]
@@ -197,12 +148,13 @@ proc skin_load {key} {
                     set ::fav_skin_test($k) $skin($k)
                 }
             }
-            check_wf_steam_jug_auto_weight
-            check_current_jug
-            #set_fav_colour $key
-            workflow $::skin(workflow)
             set ::de1(steam_disable_toggle) [expr {!$::settings(steam_disabled)}]
-            setup_steam_switch_state
+            if {$::skin(theme) == "Damian"} {
+                check_wf_steam_jug_auto_weight
+                check_current_jug
+                workflow $::skin(workflow)
+                setup_steam_switch_state
+            }
             god_shot_clear
             select_profile $::settings(profile_filename)
             if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
@@ -218,10 +170,12 @@ proc skin_load {key} {
             fill_profiles_listbox
             skin_save skin
             restore_graphs
-            set_button wf_save_saw_x_button state hidden
-            set_button wf_save_saw_tick_button state hidden
+            if {$::skin(theme) == "Damian"} {
+                set_button wf_save_saw_x_button state hidden
+                set_button wf_save_saw_tick_button state hidden
+            }
         } else {
-            # show_manual fav_manual
+            popup [translate "Longpress to save settings to this favourite button"]
         }
-    }
+    #}
 }

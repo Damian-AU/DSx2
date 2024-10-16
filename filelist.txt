@@ -18,6 +18,7 @@ colour_themes/Eran/purple.txt
 colour_themes/Eran/retro.txt
 colour_themes/Eran/sand.txt
 colour_theme/default.txt
+colour_theme/dark_cafe.txt
 colour_theme/demo.txt
 fonts/D-font.otf
 fonts/Font Awesome 5 Pro-Light-300.otf
@@ -34,6 +35,9 @@ fonts/Inter-SemiBold.ttf
 fonts/Inter-Thin.ttf
 fonts/PB-Icons-Regular.otf
 fonts/PD-Bold-Bold.otf
+pages/cafe/cafe.tcl
+pages/cafe/graphs.tcl
+pages/cafe/workflow.tcl
 pages/Damian/graphs.tcl
 pages/Damian/home.tcl
 plugins/pizza.tcl
