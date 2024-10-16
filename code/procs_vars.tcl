@@ -1,4 +1,4 @@
-set ::skin_version 3.01
+set ::skin_version 3.02
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -4166,7 +4166,11 @@ if {$::skin(theme) == "cafe"} {
         set [format_fav_label ${::fav_bn}] { }
         set ::fav_bn_row [round_to_integer [expr ($::fav_bn - 1) / 5]]
         set ::fav_bn_column [expr ($::fav_bn_row * 5)]
-        add_icon_label_button fav${::fav_bn} off [expr $::fav_x - $::fav_spacing + ($::fav_spacing * ($::fav_bn - $::fav_bn_column)) ] [expr $::fav_y + (110 * $::fav_bn_row)] 360 100 $::fav_bn $[format_fav_label $::fav_bn] "skin_load fav${::fav_bn}" {cafe_fav_buttons} "fav_confirm fav${::fav_bn}"; set_button fav${::fav_bn} icon_font [skin_font font 26]; set_button fav${::fav_bn} font [skin_font font 18]
+        if {$::skin(number_of_favs) < 2} {
+            add_icon_label_button fav${::fav_bn} off [expr $::fav_x - $::fav_spacing + ($::fav_spacing * ($::fav_bn - $::fav_bn_column)) ] [expr $::fav_y + (110 * $::fav_bn_row)] 360 100 $::skin(icon_fav) $[format_fav_label $::fav_bn] "skin_load fav${::fav_bn}" {cafe_fav_buttons} "fav_confirm fav${::fav_bn}"; set_button fav${::fav_bn} icon_font [skin_font awesome_light 26]; set_button fav${::fav_bn} font [skin_font font 18]
+        } else {
+            add_icon_label_button fav${::fav_bn} off [expr $::fav_x - $::fav_spacing + ($::fav_spacing * ($::fav_bn - $::fav_bn_column)) ] [expr $::fav_y + (110 * $::fav_bn_row)] 360 100 $::fav_bn $[format_fav_label $::fav_bn] "skin_load fav${::fav_bn}" {cafe_fav_buttons} "fav_confirm fav${::fav_bn}"; set_button fav${::fav_bn} icon_font [skin_font font 26]; set_button fav${::fav_bn} font [skin_font font 18]
+        }
         if {[info exists [format_skin_fav_label_setting fav${::fav_bn}]]} {
             set [format_fav_label ${::fav_bn}] [set [format_skin_fav_label_setting fav${::fav_bn}]]
         }
