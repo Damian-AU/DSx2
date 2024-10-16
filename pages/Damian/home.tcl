@@ -13,7 +13,7 @@ add_colour_button edit_colour_theme_button off 100 750 340 100 {[translate "colo
 add_colour_variable_button edit_icon_size_button off 100 880 340 100 {$::icon_size_state [translate "icon"]\r[translate "calibration"]} {toggle_icon_size_settings}; set_button edit_icon_size_button state hidden
 set ::skin_flow_cal_ui_added 0
 add_colour_button edit_flow_rate_cal_button off 100 1010 340 100 {[translate "flow rate"]\r[translate "calibrator"]} {page_show GFC}; set_button edit_flow_rate_cal_button state hidden
-add_colour_button edit_theme_button off 100 1140 340 100 {[translate "switch to"]\r[translate "P&D style"]} {set ::skin(theme) "P&D"; skin_save skin; after 500 skin_exit}; set_button edit_theme_button state hidden
+add_colour_button edit_theme_button off 100 1140 340 100 {[translate "switch to"]\r[translate "cafe theme"]} {set ::skin(theme) "cafe"; skin_save skin; page_show restart_message}; set_button edit_theme_button state hidden
 add_colour_button exit_heading_settings off 100 1330 260 100 {[translate "close"]} {hide_header_settings; show_graph; skin_save skin}; set_button exit_heading_settings state hidden
 dui add variable off 200 540 -fill $::skin_selected_colour -font [skin_font font_bold 24] -anchor w -textvariable {$::skin_initial_setup}
 dui add dbutton off 470 760 -bwidth 660 -bheight 560 -tags {icon_size_outline icon_size_set} -shape outline -width 2 -outline $::skin_selected_colour -initial_state hidden -command {do_nothing}
@@ -130,7 +130,7 @@ dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 130] [expr
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 100] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 104] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_3
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 276] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 280] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_4
 
-add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
+add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare}; set_button auto_tare state hidden
 
 ### ghc buttons ###
 
@@ -716,10 +716,10 @@ dui add variable off 1390 770 -fill $::skin_text_colour  -font [skin_font font_b
 hide_water_settings
 
 ### message pages
-dui add variable "plugin_message" 360 600 -font [skin_font font_bold 20] -fill $::skin_text_colour -anchor w -width 2000 -textvariable {$::plugin_change_message}
+dui add variable "plugin_message" 360 600 -font [skin_font font 20] -fill $::skin_text_colour -anchor w -width 2000 -textvariable {$::plugin_change_message}
 add_clear_button plugin_message plugin_message 0 0 2560 1600 {} {app_exit}
 
-dui add dtext "restart_message" 1280 600 -font [skin_font font_bold 28] -fill $::skin_text_colour -anchor center -justify center -text [translate "Restart the app for your changes to take effect"]\r\r\r[translate "Tap anywhere to exit"]
+dui add dtext "restart_message" 1280 600 -font [skin_font font 28] -fill $::skin_text_colour -anchor center -justify center -text [translate "Restart the app for your changes to take effect"]\r\r\r[translate "Tap anywhere to exit"]
 add_clear_button restart_message restart_message 0 0 2560 1600 {} {skin_exit}
 
 ### screen saver page
@@ -745,7 +745,7 @@ proc skin_dye_button {} {
 
 skin_dye_button
 
-### history buttoms
+### history buttons
 dui add dbutton off [expr $::skin(button_x_history) + 230] $::skin(button_y_history) \
     -bwidth 100 -bheight 100 -tags skin_history_button -initial_state normal \
     -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
