@@ -2252,91 +2252,140 @@ proc workflow {option} {
         set_button wf_none label_fill $::skin_button_label_colour
         set_button wf_${option} label_fill $::skin_selected_colour
     } else {
-        if {$option == "latte"} {
-            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
-            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
-            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
-            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $::start_button_shift]
-            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+        set wfs 70
+        if {$::settings(beverage_type) == "cleaning"} {
+            dui item moveto off pwr_button_sleep* {} 100
+            dui item moveto "espresso flush steam water" pwr_button_stop* {} 100
+            dui item moveto off workflow_type_bg {} [expr $::start_button_pos_1 + $wfs - 38 + $::start_button_shift]
+            dui item moveto off workflow_type_text {} [expr $::start_button_pos_1 + $wfs - 30 + $::start_button_shift]
+            dui item config off workflow_type_text -fill $::skin_selected_colour
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_0 + $wfs + $::start_button_shift]
 
             dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 50 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
+            popup [translate "Workflow options not available for cleaning profiles"]
+            return
+        }
+        if {$option == "latte"} {
+            dui item moveto off pwr_button_sleep* {} 100
+            dui item moveto "espresso flush steam water" pwr_button_stop* {} 100
+            dui item moveto off workflow_type_bg {} [expr $::start_button_pos_1 + $wfs - 38 + $::start_button_shift]
+            dui item moveto off workflow_type_text {} [expr $::start_button_pos_1 + $wfs - 30 + $::start_button_shift]
+            dui item config off workflow_type_text -fill $::skin_selected_colour
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_3 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_3 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $wfs + $::start_button_shift]
 
-            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $::start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 50 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 50 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_3 + 50 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
         }
         if {$option == "long"} {
-            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
-            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
-            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $::start_button_shift]
-            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
-            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
+            dui item moveto off pwr_button_sleep* {} 100
+            dui item moveto "espresso flush steam water" pwr_button_stop* {} 100
+            dui item moveto off workflow_type_bg {} [expr $::start_button_pos_1 + $wfs - 38 + $::start_button_shift]
+            dui item moveto off workflow_type_text {} [expr $::start_button_pos_1 + $wfs - 30 + $::start_button_shift]
+            dui item config off workflow_type_text -fill $::skin_selected_colour
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_2 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_2 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_3 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_3 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_1 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_1 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $wfs + $::start_button_shift]
 
             dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_2 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_3 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
-
-            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $::start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_1 + 50 + $::wf_start_button_shift]
         }
         if {$option == "americano"} {
-            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
-            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
-            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $::start_button_shift]
-            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
-            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
+            dui item moveto off pwr_button_sleep* {} 100
+            dui item moveto "espresso flush steam water" pwr_button_stop* {} 100
+            dui item moveto off workflow_type_bg {} [expr $::start_button_pos_1 + $wfs - 38 + $::start_button_shift]
+            dui item moveto off workflow_type_text {} [expr $::start_button_pos_1 + $wfs - 30 + $::start_button_shift]
+            dui item config off workflow_type_text -fill $::skin_selected_colour
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_3 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_3 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_2 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_2 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $wfs + $::start_button_shift]
 
             dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_3 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
-
-            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $::start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_2 + 50 + $::wf_start_button_shift]
         }
         if {$option == "espresso"} {
-            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
-            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
-            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $::start_button_shift]
-            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
-            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $::start_button_shift]
-            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+            dui item moveto off pwr_button_sleep* {} 100
+            dui item moveto "espresso flush steam water" pwr_button_stop* {} 100
+            dui item moveto off workflow_type_bg {} [expr $::start_button_pos_1 + $wfs - 38 + $::start_button_shift]
+            dui item moveto off workflow_type_text {} [expr $::start_button_pos_1 + $wfs - 30 + $::start_button_shift]
+            dui item config off workflow_type_text -fill $::skin_selected_colour
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $wfs + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + $wfs + 60 + $::start_button_shift]
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_1 + $wfs + $::start_button_shift]
 
             dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
-
-            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_1 + $::start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 50 + $::wf_start_button_shift]
         }
         if {$option == "none"} {
+            dui item moveto off pwr_button_sleep* {} 70
+            dui item moveto "espresso flush steam water" pwr_button_stop* {} 70
+            dui item moveto off workflow_type_bg {} [expr $::start_button_pos_1 - 38 + $::start_button_shift]
+            dui item moveto off workflow_type_text {} [expr $::start_button_pos_1 - 30 + $::start_button_shift]
+            dui item config off workflow_type_text -fill $::skin_button_label_colour
             dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
             dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
             dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
@@ -2345,18 +2394,18 @@ proc workflow {option} {
             dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
             dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_4 + $::start_button_shift]
             dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_4 + 60 + $::start_button_shift]
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_3 + $::start_button_shift]
 
             dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_3 + 50 + $::wf_start_button_shift]
             dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_4 + $::wf_start_button_shift]
-            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_4 + 60 + $::wf_start_button_shift]
-
-            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_3 + $::start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_4 + 50 + $::wf_start_button_shift]
         }
+
     }
 }
 
@@ -4162,6 +4211,18 @@ if {$::skin(theme) == "cafe"} {
     set ::fav_bn_row 0
     set ::c_fav_key none
     set ::skin_heading $::skin(heading)
+    set ::wf_start_button_shift 540
+    set ::wf_start_button_shift_x 0
+    set ::start_button_pos_1 340
+    set ::start_button_pos_2 470
+    set ::start_button_pos_3 600
+    set ::start_button_pos_4 730
+    set ::start_button_pos_h 2000
+    set ::auto_load_data_pos_0 490
+    set ::auto_load_data_pos_1 620
+    set ::auto_load_data_pos_2 750
+    set ::auto_load_data_pos_3 880
+
     if {[file exists "[skin_directory]/plugins/steam_elapsed_timer.tcl"] == 1} {
         file rename -force [skin_directory]/plugins/steam_elapsed_timer.tcl [skin_directory]/plugins/steam_elapsed_timer.off
     }
@@ -4453,5 +4514,21 @@ if {$::skin(theme) == "cafe"} {
         }
     }
 
+    proc workflow_type_text {} {
+        if {$::settings(beverage_type) == "cleaning"} {
+            return "cleaning"
+        }
+        if {$::skin(workflow) == "long"} {
+            return "long black"
+        } else {
+            return $::skin(workflow)
+        }
+    }
 
+    rename select_profile select_profile_c
+    proc select_profile {option} {
+        set ::skin(workflow) none
+        select_profile_c $option
+        workflow $::skin(workflow)
+    }
 }

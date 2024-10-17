@@ -1,19 +1,3 @@
-set ::wf_start_button_shift 500
-set ::wf_start_button_shift_x 0
-set ::start_button_pos_1 330
-set ::start_button_pos_2 460
-set ::start_button_pos_3 590
-set ::start_button_pos_4 720
-set ::start_button_pos_h 2000
-
-set ::auto_load_data_pos_1 620
-set ::auto_load_data_pos_2 750
-set ::auto_load_data_pos_3 880
-
-
-
-
-
 #### header
 dui add shape rect $::skin_home_pages 0 0 2560 46 -width 0 -fill $::skin_foreground_colour -tags {headerbar_bg0 headerbar}
 skin_add_cafe_header_shape $::skin_home_pages 580 -10 680 100 1880 100 1980 -10 $::skin_foreground_colour {headerbar_bg1 headerbar headerbar_heading}
@@ -363,6 +347,9 @@ add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::sk
 #################
 
 ### ghc buttons ###
+dui add shape round off 2060 [expr $::start_button_pos_1 - 38 + $::start_button_shift] -bwidth 460 -bheight 42 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {workflow_type_bg}
+dui add variable off 2280 [expr $::start_button_pos_1 - 30 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_text_colour -anchor c -textvariable {[workflow_type_text]} -tags {workflow_type_text}
+
 dui add shape round off 2060 [expr $::start_button_pos_1 + $::start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {espresso_button_bg espresso_start_buttons start_buttons_eg1}
 dui add shape round off 2060 [expr $::start_button_pos_2 + $::start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {flush_button_bg flush_start_buttons start_buttons_fg1}
 dui add shape round off 2060 [expr $::start_button_pos_3 + $::start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {steam_button_bg steam_start_buttons start_buttons_sg1}
@@ -372,11 +359,17 @@ dui add variable off 2080 [expr $::start_button_pos_1 + 60 + $::start_button_shi
 dui add variable off 2080 [expr $::start_button_pos_2 + 60 + $::start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_flush)} -tags {flush_button_icon flush_start_buttons start_buttons_fg2}
 dui add variable off 2080 [expr $::start_button_pos_3 + 60 + $::start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_steam)} -tags {steam_button_icon steam_start_buttons start_buttons_sg2}
 dui add variable off 2080 [expr $::start_button_pos_4 + 60 + $::start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_water)} -tags {water_button_icon water_start_buttons start_buttons_wg2}
-
-dui add variable off 2180 [expr $::start_button_pos_1 + 60 + $::start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -tags espresso_data_line_1 -anchor w -justify left -tags {espresso_button_variable espresso_start_buttons start_buttons_eg2} -width 340 -textvariable {[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate " : "] [skin_saw]g [skin_extraction_ratio]}
-dui add variable off 2180 [expr $::start_button_pos_2 + 60 + $::start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -tags flush_data_line_1 -anchor w -justify left -tags {flush_button_variable flush_start_buttons start_buttons_fg2} -width 340 -textvariable {[round_to_integer $::settings(flush_seconds)]s}
-dui add variable off 2180 [expr $::start_button_pos_3 + 60 + $::start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -tags steam_data_line_1 -anchor w -justify left -tags {steam_button_variable steam_start_buttons start_buttons_sg2} -width 340 -textvariable {[skin_steam_settings_info]   $::skin(jug_size)\r[skin_steam_text $::settings(steam_timeout)]}
-dui add variable off 2180 [expr $::start_button_pos_4 + 60 + $::start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -tags water_data_line_1 -anchor w -justify left -tags {water_button_variable water_start_buttons start_buttons_wg2} -width 340 -textvariable {[skin_water_settings_info]}
+proc c_espresso_button_data {} {
+    if {$::settings(beverage_type) == "cleaning"} {
+        return "[maxstring $::settings(profile_title) 28]"
+    } else {
+        return "[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate " : "] [skin_saw]g [skin_extraction_ratio]"
+    }
+}
+dui add variable off 2180 [expr $::start_button_pos_1 + 60 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_button_label_colour -tags espresso_data_line_1 -anchor w -justify left -tags {espresso_button_variable espresso_start_buttons start_buttons_eg2} -width 340 -textvariable {[c_espresso_button_data]}
+dui add variable off 2180 [expr $::start_button_pos_2 + 60 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_button_label_colour -tags flush_data_line_1 -anchor w -justify left -tags {flush_button_variable flush_start_buttons start_buttons_fg2} -width 340 -textvariable {[round_to_integer $::settings(flush_seconds)]s}
+dui add variable off 2180 [expr $::start_button_pos_3 + 60 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_button_label_colour -tags steam_data_line_1 -anchor w -justify left -tags {steam_button_variable steam_start_buttons start_buttons_sg2} -width 340 -textvariable {[skin_steam_settings_info]   $::skin(jug_size)\r[skin_steam_text $::settings(steam_timeout)]}
+dui add variable off 2180 [expr $::start_button_pos_4 + 60 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_button_label_colour -tags water_data_line_1 -anchor w -justify left -tags {water_button_variable water_start_buttons start_buttons_wg2} -width 340 -textvariable {[skin_water_settings_info]}
 
 dui add dbutton off 2040 [expr $::start_button_pos_1 + $::start_button_shift] \
     -bwidth 500 -bheight 120 -tags {espresso_button espresso_start_buttons start_buttons_eg1} -initial_state normal \
@@ -391,7 +384,8 @@ dui add dbutton off 2040 [expr $::start_button_pos_4 + $::start_button_shift] \
     -bwidth 500 -bheight 120 -tags {water_button water_start_buttons start_buttons_wg1} -initial_state normal \
     -command {skin_start water} -longpress_cmd {page_show workflow_settings}
 
-dui add variable off 2060 [expr $::auto_load_data_pos_3 + $::start_button_shift] -font [skin_font font 18] -fill $::skin_text_colour -tags {auto_load_data_home auto_load_data start_buttons} -anchor w -textvariable {[c_current_auto_load]}
+dui add shape round off 2060 [expr $::auto_load_data_pos_3 - 20 + $::start_button_shift] -bwidth 460 -bheight 40 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {auto_load_data_home_bg auto_load_data start_buttons}
+dui add variable off 2080 [expr $::auto_load_data_pos_3 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_text_colour -tags {auto_load_data_home auto_load_data start_buttons} -anchor w -textvariable {[c_current_auto_load]}
 
 ### stop buttons
 add_colour_button stop_espresso_bg espresso $::skin(button_x_espresso) [expr 100 + $::skin(button_y_espresso)] 620 100 {} {do_nothing}
@@ -432,12 +426,12 @@ dui add dbutton off 1050 1200 \
 
 ### sleep / power button
 dui add dbutton off 2200 80 \
-    -bwidth 160 -bheight 150 \
+    -bwidth 160 -bheight 150 -tags {pwr_button_sleep pwr_button} \
     -labelvariable {p} -label_font [skin_font D-font [fixed_size 80]] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {set_next_page off off; set ::current_espresso_page "off"; start_sleep} -longpress_cmd {skin_exit}
 
 dui add dbutton "espresso flush steam water" 2200 80 \
-    -bwidth 160 -bheight 150 \
+    -bwidth 160 -bheight 150 -tags {pwr_button_stop pwr_button} \
     -labelvariable {p} -label_font [skin_font D-font [fixed_size 80]] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {skin_start idle}
 

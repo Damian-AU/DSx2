@@ -82,6 +82,12 @@ proc skin_save {key} {
     }
 
     if {[string range $key 0 2] == "fav"} {
+
+        if {$::skin(theme) == "cafe"} {
+            if {$::settings(beverage_type) == "cleaning"} {
+                set ::skin(workflow) none
+            }
+        }
         clear_fav_colour
         set ::skin(auto_load_fav) $::auto_load_fav
         if {$::skin(theme) == "Damian"} {set ::skin(auto_load_fav_Damian) $::auto_load_fav}
@@ -115,7 +121,6 @@ proc skin_save {key} {
 
         write_file [skin_directory]/settings/$key.txt $data
         update_de1_explanation_chart
-
         if {$::skin(theme) == "Damian"} {
             check_wf_steam_jug_auto_weight
             rest_fav_buttons
@@ -131,6 +136,7 @@ proc skin_load {key} {
         if {[file exists [skin_directory]/settings/$key.txt]} {
             clear_fav_colour
             set ::skin(fav_key) $key
+            set ::settings(beverage_type) "espresso"
             array unset -nocomplain fav_settings
             array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/$key.txt"]]
             array set settings $fav_settings(app)
@@ -139,6 +145,7 @@ proc skin_load {key} {
                 set ::settings($k) $settings($k)
                 set ::fav_settings_test($k) $settings($k)
             }
+            select_profile $::settings(profile_filename)
             array set skin $fav_settings(skin)
             set skin_vars [fav_skin_vars]
 
@@ -154,9 +161,8 @@ proc skin_load {key} {
                 check_current_jug
                 setup_steam_switch_state
             }
-            workflow $::skin(workflow)
             god_shot_clear
-            select_profile $::settings(profile_filename)
+            #select_profile $::settings(profile_filename)
             if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
                 array set ::current_adv_step [lindex $::settings(advanced_shot) 0]
             }
@@ -168,6 +174,7 @@ proc skin_load {key} {
             set_fav_colour $key
             update_de1_explanation_chart
             fill_profiles_listbox
+            workflow $::skin(workflow)
             skin_save skin
             restore_graphs
             if {$::skin(theme) == "Damian"} {
