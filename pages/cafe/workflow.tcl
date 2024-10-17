@@ -239,7 +239,7 @@ dui add dbutton workflow_settings 2440 450 \
 
 ### message
 dui add dbutton workflow_settings 480 350 \
-    -bwidth 1600 -bheight 360 -tags {c_espresso_info_bg c_espresso_info c_cal_info} -initial_state hidden \
+    -bwidth 1600 -bheight 360 -tags {c_espresso_info_bg c_espresso_info c_cal_info c_workflow_info} -initial_state hidden \
     -shape round -width 2 -fill $::skin_foreground_colour \
     -command {do_nothing}
 dui add dtext workflow_settings 560 480 -tags {c_dose_cup_text_line_1 c_espresso_info} -width 1400 -text [translate "If you prefer to tare without the dose cup, set a dose cup weight"] -font [skin_font font 18] -fill $::skin_button_label_colour -anchor w -initial_state hidden
@@ -254,9 +254,53 @@ dui add dtext workflow_settings 560 600 -tags {c_milk_weight_text_line_3 c_cal_i
 dui add dtext workflow_settings 1280 380 -tags {c_milk_weight_text_line_4 c_cal_info} -width 1400 -text [translate "tap window to close"] -font [skin_font font 18] -fill $::skin_button_label_colour -anchor center -initial_state hidden
 dui add dbutton workflow_settings 0 0 -bwidth 2560 -bheight 1600 -initial_state hidden -tags {hide_c_milk_weight_info c_cal_info} -command {dui item config workflow_settings c_cal_info -initial_state hidden -state hidden}
 
+dui add dtext workflow_settings 560 480 -tags {c_workflow_text_line_1 c_workflow_info} -width 1400 -text [translate "Tap the machine function data below to toggle through the diffent layouts"] -font [skin_font font 18] -fill $::skin_button_label_colour -anchor w -initial_state hidden
+dui add dtext workflow_settings 560 540 -tags {c_workflow_text_line_2 c_workflow_info} -text [translate ""] -font [skin_font font 18] -fill $::skin_button_label_colour -anchor w -initial_state hidden
+dui add dtext workflow_settings 560 600 -tags {c_workflow_text_line_3 c_workflow_info} -text [translate ""] -font [skin_font font 18] -fill $::skin_button_label_colour -anchor w -initial_state hidden
+dui add dtext workflow_settings 1280 380 -tags {c_workflow_text_line_4 c_workflow_info} -width 1400 -text [translate "tap window to close"] -font [skin_font font 18] -fill $::skin_button_label_colour -anchor center -initial_state hidden
+dui add dbutton workflow_settings 0 0 -bwidth 2560 -bheight 1600 -initial_state hidden -tags {hide_c_workflow_info c_workflow_info} -command {dui item config workflow_settings c_workflow_info -initial_state hidden -state hidden}
+
+####### workflow button order
+proc workflow_type_text {} {
+    if {$::skin(workflow) == "long"} {
+        return "long black"
+    } else {
+        return $::skin(workflow)
+    }
+}
+dui add dtext workflow_settings [expr 40 + $::wf_start_button_shift_x] [expr 290 + $::wf_start_button_shift] -text $::skin(icon_info) -font [skin_font awesome 18] -fill $::skin_orange -anchor e
+dui add dbutton workflow_settings [expr 0 + $::wf_start_button_shift_x] [expr 240 + $::wf_start_button_shift] \
+    -bwidth 260 -bheight 100 \
+    -command {dui item config workflow_settings c_workflow_info -initial_state normal -state normal}
+
+dui add dtext workflow_settings [expr 60 + $::wf_start_button_shift_x] [expr 290 + $::wf_start_button_shift] -text [translate "workflow type"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add variable workflow_settings [expr 340 + $::wf_start_button_shift_x] [expr 290 + $::wf_start_button_shift] -font [skin_font font 18] -fill $::skin_text_colour -anchor w -textvariable {[workflow_type_text]}
+
+dui add shape round workflow_settings [expr 60 + $::wf_start_button_shift_x] [expr $::start_button_pos_1 + $::wf_start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {wf_espresso_button_bg espresso_start_buttons start_buttons_eg1}
+dui add shape round workflow_settings [expr 60 + $::wf_start_button_shift_x] [expr $::start_button_pos_2 + $::wf_start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {wf_flush_button_bg flush_start_buttons start_buttons_fg1}
+dui add shape round workflow_settings [expr 60 + $::wf_start_button_shift_x] [expr $::start_button_pos_3 + $::wf_start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {wf_steam_button_bg team_start_buttons start_buttons_sg1}
+dui add shape round workflow_settings [expr 60 + $::wf_start_button_shift_x] [expr $::start_button_pos_4 + $::wf_start_button_shift] -bwidth 460 -bheight 120 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {wf_water_button_bg water_start_buttons start_buttons_wg1}
+
+dui add variable workflow_settings [expr 80 + $::wf_start_button_shift_x] [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_espresso)} -tags {wf_espresso_button_icon espresso_start_buttons start_buttons_eg2}
+dui add variable workflow_settings [expr 80 + $::wf_start_button_shift_x] [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_flush)} -tags {wf_flush_button_icon flush_start_buttons start_buttons_fg2}
+dui add variable workflow_settings [expr 80 + $::wf_start_button_shift_x] [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_steam)} -tags {wf_steam_button_icon steam_start_buttons start_buttons_sg2}
+dui add variable workflow_settings [expr 80 + $::wf_start_button_shift_x] [expr $::start_button_pos_4 + 60 + $::wf_start_button_shift] -font [skin_font D-font 42] -fill $::skin_button_label_colour -anchor w -textvariable {$::skin(icon_water)} -tags {wf_water_button_icon water_start_buttons start_buttons_wg2}
+
+dui add variable workflow_settings [expr 180 + $::wf_start_button_shift_x] [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -anchor w -justify left -tags {wf_espresso_button_variable espresso_start_buttons start_buttons_eg2} -width 340 -textvariable {[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate " : "] [skin_saw]g [skin_extraction_ratio]}
+dui add variable workflow_settings [expr 180 + $::wf_start_button_shift_x] [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -anchor w -justify left -tags {wf_flush_button_variable flush_start_buttons start_buttons_fg2} -width 340 -textvariable {[round_to_integer $::settings(flush_seconds)]s}
+dui add variable workflow_settings [expr 180 + $::wf_start_button_shift_x] [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -anchor w -justify left -tags {wf_steam_button_variable steam_start_buttons start_buttons_sg2} -width 340 -textvariable {[skin_steam_settings_info]   $::skin(jug_size)\r[skin_steam_text $::settings(steam_timeout)]}
+dui add variable workflow_settings [expr 180 + $::wf_start_button_shift_x] [expr $::start_button_pos_4 + 60 + $::wf_start_button_shift] -font [skin_font font 17] -fill $::skin_button_label_colour -anchor w -justify left -tags {wf_water_button_variable water_start_buttons start_buttons_wg2} -width 340 -textvariable {[skin_water_settings_info]}
+
+dui add dbutton workflow_settings [expr 40 + $::wf_start_button_shift_x] [expr 280 + $::wf_start_button_shift] \
+    -bwidth 500 -bheight 530 -tags {wf_espresso_button start_buttons} -initial_state normal \
+    -command {toggle_c_workflow_type}
+
+
+
 
 ###########################################################
 skin_load $::skin(auto_load_fav)
+workflow $::skin(workflow)
 
 # ::register_state_change_handler Sleep Idle skin_load_fav
 #after 3000 dui item config steam bb_steam_extend* -initial_state hidden -state hidden

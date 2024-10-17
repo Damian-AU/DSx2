@@ -1,4 +1,4 @@
-set ::skin_version 3.02
+set ::skin_version 3.03
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -699,7 +699,6 @@ proc add_colour_variable_button {button_name pages x y width height tv command} 
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
 }
-
 
 proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
@@ -2117,140 +2116,248 @@ proc cancel_auto_stop {} {
 
 proc workflow {option} {
     set ::skin(workflow) $option
-    if {$option == "latte"} {
-        set ::skin(button_x_espresso) [expr $::start_button_x + 110]
-        set ::skin(button_y_espresso) $::start_button_y
-        set ::skin(button_x_flush) [expr $::start_button_x + 470]
-        set ::skin(button_y_flush) $::start_button_y
-        set ::skin(button_x_steam) [expr $::start_button_x + 830]
-        set ::skin(button_y_steam) $::start_button_y
-        set ::skin(button_x_water) [expr $::start_button_x + 3000]
-        set ::skin(button_y_water) 0
-        set ::skin(button_x_dye) [expr $::start_button_x + 1190]
-        set ::skin(button_y_dye) $::start_button_y
-        if {$::dye_button_normally_hidden == 1} {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        } else {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        }
-    }
-    if {$option == "long"} {
-        set ::skin(button_x_water) [expr $::start_button_x + 110]
-        set ::skin(button_y_water) $::start_button_y
-        set ::skin(button_x_espresso) [expr $::start_button_x + 470]
-        set ::skin(button_y_espresso) $::start_button_y
-        set ::skin(button_x_flush) [expr $::start_button_x + 830]
-        set ::skin(button_y_flush) $::start_button_y
-        set ::skin(button_x_steam) [expr $::start_button_x + 3000]
-        set ::skin(button_y_steam) $::start_button_y
-        set ::skin(button_x_dye) [expr $::start_button_x + 1190]
-        set ::skin(button_y_dye) $::start_button_y
-        if {$::dye_button_normally_hidden == 1} {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        } else {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        }
-    }
-    if {$option == "americano"} {
-        set ::skin(button_x_espresso) [expr $::start_button_x + 110]
-        set ::skin(button_y_espresso) $::start_button_y
-        set ::skin(button_x_water) [expr $::start_button_x + 470]
-        set ::skin(button_y_water) $::start_button_y
-        set ::skin(button_x_flush) [expr $::start_button_x + 830]
-        set ::skin(button_y_flush) $::start_button_y
-        set ::skin(button_x_steam) [expr $::start_button_x + 3000]
-        set ::skin(button_y_steam) $::start_button_y
-        set ::skin(button_x_dye) [expr $::start_button_x + 1190]
-        set ::skin(button_y_dye) $::start_button_y
-        if {$::dye_button_normally_hidden == 1} {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        } else {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        }
-    }
-    if {$option == "espresso"} {
-        set ::skin(button_x_espresso) [expr $::start_button_x + 110]
-        set ::skin(button_y_espresso) $::start_button_y
-        set ::skin(button_x_steam) [expr $::start_button_x + 3000]
-        set ::skin(button_y_steam) $::start_button_y
-        set ::skin(button_x_water) [expr $::start_button_x + 3000]
-        set ::skin(button_y_water) $::start_button_y
-        set ::skin(button_x_flush) [expr $::start_button_x + 470]
-        set ::skin(button_y_flush) $::start_button_y
-        set ::skin(button_x_dye) [expr $::start_button_x + 830]
-        set ::skin(button_y_dye) $::start_button_y
-        if { $::dye_button_normally_hidden == 1} {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 830]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        } else {
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 830 + 250]
-            set ::skin(button_y_skin_history_button) $::start_button_y
-        }
-    }
-    if {$option == "none"} {
-        if {"DYE" in $::settings(enabled_plugins) == 1} {
-
-            if {$::dye_button_normally_hidden == 1} {
-                set ::skin(button_x_espresso) [expr $::start_button_x + 10]
-                set ::skin(button_y_espresso) $::start_button_y
-                set ::skin(button_x_steam) [expr $::start_button_x + 370]
-                set ::skin(button_y_steam) $::start_button_y
-                set ::skin(button_x_water) [expr $::start_button_x + 730]
-                set ::skin(button_y_water) $::start_button_y
-                set ::skin(button_x_flush) [expr $::start_button_x + 1090]
-                set ::skin(button_y_flush) $::start_button_y
-                set ::skin(button_x_dye) [expr $::start_button_x + 1450]
-                set ::skin(button_y_dye) $::start_button_y
-                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1450]
-                set ::skin(button_y_skin_history_button) $::start_button_y
-            } else {
-                set ::skin(button_x_espresso) [expr $::start_button_x -20]
-                set ::skin(button_y_espresso) $::start_button_y
-                set ::skin(button_x_steam) [expr $::start_button_x + 340]
-                set ::skin(button_y_steam) $::start_button_y
-                set ::skin(button_x_water) [expr $::start_button_x + 700]
-                set ::skin(button_y_water) $::start_button_y
-                set ::skin(button_x_flush) [expr $::start_button_x + 1060]
-                set ::skin(button_y_flush) $::start_button_y
-                set ::skin(button_x_dye) [expr $::start_button_x + 1420]
-                set ::skin(button_y_dye) $::start_button_y
-                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1420 + 250]
-                set ::skin(button_y_skin_history_button) $::start_button_y
-            }
-        } else {
+    if {$::skin(theme) == "Damian"} {
+        if {$option == "latte"} {
             set ::skin(button_x_espresso) [expr $::start_button_x + 110]
             set ::skin(button_y_espresso) $::start_button_y
-            set ::skin(button_x_steam) [expr $::start_button_x + 470]
-            set ::skin(button_y_steam) $::start_button_y
-            set ::skin(button_x_water) [expr $::start_button_x + 830]
-            set ::skin(button_y_water) $::start_button_y
-            set ::skin(button_x_flush) [expr $::start_button_x + 1190]
+            set ::skin(button_x_flush) [expr $::start_button_x + 470]
             set ::skin(button_y_flush) $::start_button_y
-            set ::skin(button_x_dye) [expr $::start_button_x + 1550]
+            set ::skin(button_x_steam) [expr $::start_button_x + 830]
+            set ::skin(button_y_steam) $::start_button_y
+            set ::skin(button_x_water) [expr $::start_button_x + 3000]
+            set ::skin(button_y_water) 0
+            set ::skin(button_x_dye) [expr $::start_button_x + 1190]
             set ::skin(button_y_dye) $::start_button_y
-            set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1550]
-            set ::skin(button_y_skin_history_button) $::start_button_y
+            if {$::dye_button_normally_hidden == 1} {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            } else {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            }
+        }
+        if {$option == "long"} {
+            set ::skin(button_x_water) [expr $::start_button_x + 110]
+            set ::skin(button_y_water) $::start_button_y
+            set ::skin(button_x_espresso) [expr $::start_button_x + 470]
+            set ::skin(button_y_espresso) $::start_button_y
+            set ::skin(button_x_flush) [expr $::start_button_x + 830]
+            set ::skin(button_y_flush) $::start_button_y
+            set ::skin(button_x_steam) [expr $::start_button_x + 3000]
+            set ::skin(button_y_steam) $::start_button_y
+            set ::skin(button_x_dye) [expr $::start_button_x + 1190]
+            set ::skin(button_y_dye) $::start_button_y
+            if {$::dye_button_normally_hidden == 1} {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            } else {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            }
+        }
+        if {$option == "americano"} {
+            set ::skin(button_x_espresso) [expr $::start_button_x + 110]
+            set ::skin(button_y_espresso) $::start_button_y
+            set ::skin(button_x_water) [expr $::start_button_x + 470]
+            set ::skin(button_y_water) $::start_button_y
+            set ::skin(button_x_flush) [expr $::start_button_x + 830]
+            set ::skin(button_y_flush) $::start_button_y
+            set ::skin(button_x_steam) [expr $::start_button_x + 3000]
+            set ::skin(button_y_steam) $::start_button_y
+            set ::skin(button_x_dye) [expr $::start_button_x + 1190]
+            set ::skin(button_y_dye) $::start_button_y
+            if {$::dye_button_normally_hidden == 1} {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            } else {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1190 + 250]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            }
+        }
+        if {$option == "espresso"} {
+            set ::skin(button_x_espresso) [expr $::start_button_x + 110]
+            set ::skin(button_y_espresso) $::start_button_y
+            set ::skin(button_x_steam) [expr $::start_button_x + 3000]
+            set ::skin(button_y_steam) $::start_button_y
+            set ::skin(button_x_water) [expr $::start_button_x + 3000]
+            set ::skin(button_y_water) $::start_button_y
+            set ::skin(button_x_flush) [expr $::start_button_x + 470]
+            set ::skin(button_y_flush) $::start_button_y
+            set ::skin(button_x_dye) [expr $::start_button_x + 830]
+            set ::skin(button_y_dye) $::start_button_y
+            if { $::dye_button_normally_hidden == 1} {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 830]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            } else {
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 830 + 250]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            }
+        }
+        if {$option == "none"} {
+            if {"DYE" in $::settings(enabled_plugins) == 1} {
+
+                if {$::dye_button_normally_hidden == 1} {
+                    set ::skin(button_x_espresso) [expr $::start_button_x + 10]
+                    set ::skin(button_y_espresso) $::start_button_y
+                    set ::skin(button_x_steam) [expr $::start_button_x + 370]
+                    set ::skin(button_y_steam) $::start_button_y
+                    set ::skin(button_x_water) [expr $::start_button_x + 730]
+                    set ::skin(button_y_water) $::start_button_y
+                    set ::skin(button_x_flush) [expr $::start_button_x + 1090]
+                    set ::skin(button_y_flush) $::start_button_y
+                    set ::skin(button_x_dye) [expr $::start_button_x + 1450]
+                    set ::skin(button_y_dye) $::start_button_y
+                    set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1450]
+                    set ::skin(button_y_skin_history_button) $::start_button_y
+                } else {
+                    set ::skin(button_x_espresso) [expr $::start_button_x -20]
+                    set ::skin(button_y_espresso) $::start_button_y
+                    set ::skin(button_x_steam) [expr $::start_button_x + 340]
+                    set ::skin(button_y_steam) $::start_button_y
+                    set ::skin(button_x_water) [expr $::start_button_x + 700]
+                    set ::skin(button_y_water) $::start_button_y
+                    set ::skin(button_x_flush) [expr $::start_button_x + 1060]
+                    set ::skin(button_y_flush) $::start_button_y
+                    set ::skin(button_x_dye) [expr $::start_button_x + 1420]
+                    set ::skin(button_y_dye) $::start_button_y
+                    set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1420 + 250]
+                    set ::skin(button_y_skin_history_button) $::start_button_y
+                }
+            } else {
+                set ::skin(button_x_espresso) [expr $::start_button_x + 110]
+                set ::skin(button_y_espresso) $::start_button_y
+                set ::skin(button_x_steam) [expr $::start_button_x + 470]
+                set ::skin(button_y_steam) $::start_button_y
+                set ::skin(button_x_water) [expr $::start_button_x + 830]
+                set ::skin(button_y_water) $::start_button_y
+                set ::skin(button_x_flush) [expr $::start_button_x + 1190]
+                set ::skin(button_y_flush) $::start_button_y
+                set ::skin(button_x_dye) [expr $::start_button_x + 1550]
+                set ::skin(button_y_dye) $::start_button_y
+                set ::skin(button_x_skin_history_button) [expr $::start_button_x + 1550]
+                set ::skin(button_y_skin_history_button) $::start_button_y
+            }
+        }
+        set ::settings(DSx2_workflow) $::skin(workflow)
+        move_workflow_button espresso
+        move_workflow_button flush
+        move_workflow_button steam
+        move_workflow_button water
+        move_workflow_button dye
+        dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
+        set_button wf_latte label_fill $::skin_button_label_colour
+        set_button wf_long label_fill $::skin_button_label_colour
+        set_button wf_americano label_fill $::skin_button_label_colour
+        set_button wf_espresso label_fill $::skin_button_label_colour
+        set_button wf_none label_fill $::skin_button_label_colour
+        set_button wf_${option} label_fill $::skin_selected_colour
+    } else {
+        if {$option == "latte"} {
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+
+            dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $::start_button_shift]
+        }
+        if {$option == "long"} {
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
+
+            dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $::start_button_shift]
+        }
+        if {$option == "americano"} {
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
+
+            dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_2 + $::start_button_shift]
+        }
+        if {$option == "espresso"} {
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_h + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_h + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::start_button_shift]
+
+            dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_h + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_h + 60 + $::wf_start_button_shift]
+
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_1 + $::start_button_shift]
+        }
+        if {$option == "none"} {
+            dui item moveto off start_buttons_eg1 {} [expr $::start_button_pos_1 + $::start_button_shift]
+            dui item moveto off start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_fg1 {} [expr $::start_button_pos_2 + $::start_button_shift]
+            dui item moveto off start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_sg1 {} [expr $::start_button_pos_3 + $::start_button_shift]
+            dui item moveto off start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::start_button_shift]
+            dui item moveto off start_buttons_wg1 {} [expr $::start_button_pos_4 + $::start_button_shift]
+            dui item moveto off start_buttons_wg2 {} [expr $::start_button_pos_4 + 60 + $::start_button_shift]
+
+            dui item moveto workflow_settings start_buttons_eg1 {} [expr $::start_button_pos_1 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_eg2 {} [expr $::start_button_pos_1 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg1 {} [expr $::start_button_pos_2 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_fg2 {} [expr $::start_button_pos_2 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg1 {} [expr $::start_button_pos_3 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_sg2 {} [expr $::start_button_pos_3 + 60 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg1 {} [expr $::start_button_pos_4 + $::wf_start_button_shift]
+            dui item moveto workflow_settings start_buttons_wg2 {} [expr $::start_button_pos_4 + 60 + $::wf_start_button_shift]
+
+            dui item moveto off auto_load_data {} [expr $::auto_load_data_pos_3 + $::start_button_shift]
         }
     }
-    set ::settings(DSx2_workflow) $::skin(workflow)
-    move_workflow_button espresso
-    move_workflow_button flush
-    move_workflow_button steam
-    move_workflow_button water
-    move_workflow_button dye
-    dui item moveto off skin_history_button* $::skin(button_x_skin_history_button) $::skin(button_y_skin_history_button)
-    set_button wf_latte label_fill $::skin_button_label_colour
-    set_button wf_long label_fill $::skin_button_label_colour
-    set_button wf_americano label_fill $::skin_button_label_colour
-    set_button wf_espresso label_fill $::skin_button_label_colour
-    set_button wf_none label_fill $::skin_button_label_colour
-    set_button wf_${option} label_fill $::skin_selected_colour
 }
 
 proc set_scale_weight_to_dose {} {
@@ -4330,6 +4437,20 @@ if {$::skin(theme) == "cafe"} {
         }
         check_c_heading
         skin_save skin
+    }
+
+    proc toggle_c_workflow_type {} {
+        if {$::skin(workflow) == "none"} {
+            workflow latte
+        } elseif {$::skin(workflow) == "latte"} {
+            workflow long
+        } elseif {$::skin(workflow) == "long"} {
+            workflow americano
+        } elseif {$::skin(workflow) == "americano"} {
+            workflow espresso
+        } else {
+            workflow none
+        }
     }
 
 

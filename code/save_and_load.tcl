@@ -152,9 +152,9 @@ proc skin_load {key} {
             if {$::skin(theme) == "Damian"} {
                 check_wf_steam_jug_auto_weight
                 check_current_jug
-                workflow $::skin(workflow)
                 setup_steam_switch_state
             }
+            workflow $::skin(workflow)
             god_shot_clear
             select_profile $::settings(profile_filename)
             if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
