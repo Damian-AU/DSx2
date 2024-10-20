@@ -1,4 +1,4 @@
-set ::skin_version 3.04
+set ::skin_version 3.05
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -4556,7 +4556,7 @@ proc skin_lock {args} {
 }
 proc skin_exit_lock {} {
     if {$::skin_pass_code == $::skin(pass_code)} {
-        {*}$::skin_temp_args
+        after 200 {{*}$::skin_temp_args}
         hide_android_keyboard
         skin_reset_handle_keypress
         set ::skin_unlocked_time [clock seconds]
@@ -4650,3 +4650,9 @@ add_de1_widget "skin_lock" entry 1020 522 {
 	bind $widget <Return> {skin_exit_lock}
 	bind $widget <Leave>  {skin_exit_lock}
     } -show * -width 32 -font [skin_font font [fixed_size 16]] -borderwidth 1 -bg $::skin_foreground_colour -foreground $::skin_button_label_colour -textvariable ::skin_pass_code
+
+dui add dbutton skin_lock 1180 1440 \
+    -bwidth 200 -bheight 100 \
+    -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
+    -labelvariable {EXIT} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -command {page_show off; skin_reset_handle_keypress}
