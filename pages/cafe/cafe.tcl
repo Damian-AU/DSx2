@@ -6,7 +6,7 @@ dui add dtext $::skin_home_pages 1280 90 -font [skin_font awesome_light 26] -fil
 dui add variable $::skin_home_pages 2540 4 -font [skin_font font [fixed_size 15]] -fill $::skin_button_label_colour -anchor ne -tags {headerbar_clock headerbar} -textvariable {[skin_clock]}
 dui add variable $::skin_home_pages 2100 6 -font [skin_font awesome [fixed_size 14]] -fill $::skin_button_label_colour -anchor ne -tags {wifi_icon headerbar} -textvariable {\uf1eb [wifi_status]}
 dui add variable $::skin_home_pages 2190 4 -font [skin_font awesome_light [fixed_size 18]] -fill $::skin_button_label_colour -anchor ne -tags {battery_icon headerbar} -textvariable {[skin_battery_status]}
-add_clear_button heading_button off 0 10 2560 100 {} header_settings headerbar
+add_clear_button heading_button off 0 10 2560 100 {} {skin_lock header_settings} headerbar
 add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settings; show_graph; skin_save skin}; set_button close_heading_settings state hidden
 
 ## settings
@@ -65,6 +65,9 @@ dui add dbutton off 1060 926 \
     -bwidth 100 -bheight 100 -tags {c_set_fav_button_plus settings_toggles} \
     -label $::skin(icon_plus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {increase_fav_buttons}
+
+add_colour_button edit_pass_code_button off 1200 620 340 100 {[translate "pass code"]} {skin_delete_handle_keypress; page_show pass_code_settings} {settings_toggles}; set_button edit_pass_code_button state hidden
+
 
 ### Favs
 #set ::skin_button_radius 30
@@ -322,7 +325,7 @@ dui add variable $::skin_home_pages 2184 [expr $::skin(button_y_machine) + 40] -
 dui add variable $::skin_home_pages 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font awesome_light [fixed_size 60]] -fill $::skin_red -tags machine_state -anchor center -textvariable {[skin_machine_state]}
 dui add variable "steam" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font 40] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_steam_timer]}
 dui add variable "flush" 2184 [expr $::skin(button_y_machine) + 40] -font [skin_font font 40] -fill $::skin_button_label_colour -anchor center -textvariable {[skin_flush_timer]}
-add_clear_button settings_button off 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {set ::settings(active_settings_tab) settings_3; show_settings}
+add_clear_button settings_button off 2060 [expr $::skin(button_y_machine) - 90] 400 300 {} {skin_lock skin_show_settings} {}
 
 # extend timers
 add_colour_button flush_extend flush [expr $::skin(button_x_machine) - 20] [expr $::skin(button_y_machine) - 220] 100 100 {+5s} {flush_extend}
@@ -373,16 +376,16 @@ dui add variable off 2180 [expr $::start_button_pos_4 + 60 + $::start_button_shi
 
 dui add dbutton off 2040 [expr $::start_button_pos_1 + $::start_button_shift] \
     -bwidth 500 -bheight 120 -tags {espresso_button espresso_start_buttons start_buttons_eg1} -initial_state normal \
-    -command {skin_start espresso} -longpress_cmd {page_show workflow_settings}
+    -command {skin_start espresso} -longpress_cmd {skin_lock page_show workflow_settings}
 dui add dbutton off 2040 [expr $::start_button_pos_2 + $::start_button_shift] \
     -bwidth 500 -bheight 120 -tags {flush_button flush_start_buttons start_buttons_fg1} -initial_state normal \
-    -command {skin_start flush} -longpress_cmd {page_show workflow_settings}
+    -command {skin_start flush} -longpress_cmd {skin_lock page_show workflow_settings}
 dui add dbutton off 2040 [expr $::start_button_pos_3 + $::start_button_shift] \
     -bwidth 500 -bheight 120 -tags {steam_button steam_start_buttons start_buttons_sg1} -initial_state normal \
-    -command {skin_start steam} -longpress_cmd {page_show workflow_settings}
+    -command {skin_start steam} -longpress_cmd {skin_lock page_show workflow_settings}
 dui add dbutton off 2040 [expr $::start_button_pos_4 + $::start_button_shift] \
     -bwidth 500 -bheight 120 -tags {water_button water_start_buttons start_buttons_wg1} -initial_state normal \
-    -command {skin_start water} -longpress_cmd {page_show workflow_settings}
+    -command {skin_start water} -longpress_cmd {skin_lock page_show workflow_settings}
 
 dui add shape round off 2060 [expr $::auto_load_data_pos_3 - 20 + $::start_button_shift] -bwidth 460 -bheight 40 -width 0 -radius $::skin_button_radius -fill $::skin_foreground_colour -tags {auto_load_data_home_bg auto_load_data start_buttons}
 dui add variable off 2080 [expr $::auto_load_data_pos_3 + $::start_button_shift] -font [skin_font font 16] -fill $::skin_text_colour -tags {auto_load_data_home auto_load_data start_buttons} -anchor w -textvariable {[c_current_auto_load]}
@@ -434,6 +437,41 @@ dui add dbutton "espresso flush steam water" 2200 80 \
     -bwidth 160 -bheight 150 -tags {pwr_button_stop pwr_button} \
     -labelvariable {p} -label_font [skin_font D-font [fixed_size 80]] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {skin_start idle}
+
+### pass code page
+dui add dtext pass_code_settings 1280 300 -text [translate "Pass code settings"] -font [skin_font font_bold 22] -fill $::skin_text_colour -anchor c
+
+dui add dtext pass_code_settings 810 450 -text [translate "on/off"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtoggle pass_code_settings 1020 450 -anchor w \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(pass_code_on) \
+    -command {do_nothing}
+
+dui add dtext pass_code_settings 810 550 -text [translate "Pass code"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+add_de1_widget pass_code_settings entry 1020 522 {
+	set ::globals(skin_lock_set_pass) $widget
+	bind $widget <Return> {hide_android_keyboard}
+	bind $widget <Leave>  {hide_android_keyboard}
+    } -width 32 -font [skin_font font [fixed_size 16]] -borderwidth 1 -bg $::skin_foreground_colour -foreground $::skin_button_label_colour -textvariable ::skin(pass_code)
+
+dui add dtext pass_code_settings 810 650 -text [translate "Auto lock"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add variable pass_code_settings 1190 650 -fill $::skin_text_colour -font [skin_font font 18] -anchor center -textvariable {$::skin(unlock_time)s}
+
+dui add dbutton pass_code_settings 1020 600 \
+    -bwidth 100 -bheight 100 \
+    -label $::skin(icon_minus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {adjust unlock_time -5} -longpress_cmd {adjust unlock_time -60}
+dui add dbutton pass_code_settings 1260 600 \
+    -bwidth 100 -bheight 100 \
+    -label $::skin(icon_plus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {adjust unlock_time 5} -longpress_cmd {adjust unlock_time 60}
+
+
+dui add dbutton pass_code_settings 1180 1440 \
+    -bwidth 200 -bheight 100 \
+    -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
+    -labelvariable {EXIT} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -command {page_show off; skin_save skin; skin_reset_handle_keypress}
 
 
 ### screen saver page
@@ -500,3 +538,4 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
     }
 }
 dui add variable "off espresso" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
+

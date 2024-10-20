@@ -1,4 +1,4 @@
-set ::skin_version 3.03
+set ::skin_version 3.04
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -686,18 +686,18 @@ proc set_button {button_name property value} {
     }
 }
 
-proc add_colour_button {button_name pages x y width height tv command} {
+proc add_colour_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
-    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
+    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags [list bb_${button_name} {*}$extra_tags] -command {do_nothing}
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
-proc add_colour_variable_button {button_name pages x y width height tv command} {
+proc add_colour_variable_button {button_name pages x y width height tv command {extra_tags {}} } {
     set ::${button_name}(pages) $pages
-    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags bb_${button_name} -command {do_nothing}
-    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags l_${button_name} -textvariable $tv
-    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags b_${button_name} -command $command
+    dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags [list bb_${button_name} {*}$extra_tags] -command {do_nothing}
+    dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
@@ -1095,7 +1095,7 @@ proc show_skin_set {option} {
         set_button wf_close state normal
     }
     if {$::skin(theme) == "cafe"} {
-        page_show workflow_settings
+        skin_lock {page_show workflow_settings}
     }
 }
 
@@ -1933,6 +1933,9 @@ proc check_heading {} {
 }
 
 proc header_settings {} {
+    if {[dui page current] == "skin_lock"} {
+        page_show off
+    }
     if {[dui page current] != "off"} {
         return
     }
@@ -2524,6 +2527,10 @@ proc adjust {var value} {
         set ::settings(water_volume) [expr $::settings(water_volume) - $value]
         if {$::skin(wsaw_offset) < - 10} {set ::skin(wsaw_offset) -10; set ::settings(water_volume) [expr $::settings(water_volume) + $value]}
         if {$::skin(wsaw_offset) > 10} {set ::skin(wsaw_offset) 10; set ::settings(water_volume) [expr $::settings(water_volume) + $value]}
+    }
+    if {$var == "unlock_time"} {
+        set ::skin(unlock_time) [expr $::skin(unlock_time) + $value]
+        if {$::skin(unlock_time) < 5} {set ::skin(unlock_time) 5}
     }
 }
 
@@ -4532,3 +4539,114 @@ if {$::skin(theme) == "cafe"} {
         workflow $::skin(workflow)
     }
 }
+
+proc skin_check_proc_exists p {
+   return uplevel 1 [expr {[llength [info procs $p]] > 0}]
+}
+
+proc skin_lock {args} {
+    if {$::skin(pass_code_on) == 1 && $::skin_pass_code != $::skin(pass_code)} {
+        set ::skin_pre_lock_page [dui page current]
+        skin_delete_handle_keypress
+        page_show skin_lock
+        set ::skin_temp_args $args
+    } else {
+        {*}$args
+    }
+}
+proc skin_exit_lock {} {
+    if {$::skin_pass_code == $::skin(pass_code)} {
+        {*}$::skin_temp_args
+        hide_android_keyboard
+        skin_reset_handle_keypress
+        set ::skin_unlocked_time [clock seconds]
+        unlock_time_check
+    } else {
+        page_show $::skin_pre_lock_page
+    }
+}
+
+proc skin_delete_handle_keypress {args} {
+    if {[skin_check_proc_exists handle_keypress]} {rename handle_keypress ""}
+}
+proc skin_reset_handle_keypress {} {
+    proc handle_keypress {keycode} {
+        msg -DEBUG "Keypress detected: $keycode / $::some_droid"
+
+        if {($::some_droid != 1 && $keycode == 101) || ($::some_droid == 1 && $keycode == 8)} {
+            # e = espresso (emulate GUI button press)
+            start_espresso
+
+        } elseif {($::some_droid != 1 && $keycode == 105) || ($::some_droid != 1 && $keycode == 32) || ($::some_droid == 1 && $keycode == 12) || ($::some_droid == 1 && $keycode == 44)} {
+            # i (or space bar) = idle (emulate GUI button press)
+            start_idle
+
+        } elseif {($::some_droid != 1 && $keycode == 102) || ($::some_droid == 1 && $keycode == 9)} {
+            # f = flush (emulate GUI button press)
+            start_flush
+
+        } elseif {($::some_droid != 1 && $keycode == 115) || ($::some_droid == 1 && $keycode == 22)} {
+            # s = steam (emulate GUI button press)
+            start_steam
+
+        } elseif {($::some_droid != 1 && $keycode == 119) || ($::some_droid == 1 && $keycode == 26)} {
+            # w = water (emulate GUI button press)
+            start_water
+
+        } elseif {($::some_droid != 1 && $keycode == 112) || ($::some_droid == 1 && $keycode == 19)} {
+            # p = sleep (emulate GUI button press)
+            start_sleep
+
+        } elseif {($::some_droid != 1 && $keycode == 50) || ($::some_droid == 1 && $keycode == 31)} {
+            start_espresso
+
+        } elseif {($::some_droid != 1 && $keycode == 48) || ($::some_droid == 1 && $keycode == 39)} {
+            # 0 = idle (emulate GHC button press)
+            start_sleep
+
+        } elseif {($::some_droid != 1 && $keycode == 49) || ($::some_droid == 1 && $keycode == 30)} {
+            start_flush
+
+        } elseif {($::some_droid != 1 && $keycode == 51) || ($::some_droid == 1 && $keycode	== 32)} {
+            # 3 = steam (emulate GHC button press)
+            start_steam
+
+        } elseif {($::some_droid != 1 && $keycode == 52) || ($::some_droid == 1 && $keycode == 33)} {
+            # 4 = water (emulate GHC button press)
+            start_water
+        }
+    }
+}
+
+
+proc skin_show_settings {} {
+    set ::settings(active_settings_tab) settings_3
+    show_settings
+}
+
+proc unlock_time_check {} {
+    if {[clock seconds] > [expr $::skin_unlocked_time + $::skin(unlock_time)]} {
+        set ::skin_unlocked_time 0
+        set ::skin_pass_code {}
+    } else {
+        after 1000 unlock_time_check
+    }
+}
+set ::skin_unlocked_time 0
+set ::skin_pre_lock_page off
+set ::skin_temp_args {}
+if {![info exists ::skin(pass_code_on)]} {
+    set ::skin(pass_code_on) 0
+}
+if {![info exists ::skin(unlock_time)]} {
+    set ::skin(unlock_time) 5
+}
+
+set ::skin_pass_code {}
+set ::skin(pass_code) 123
+dui add dtext skin_lock 810 550 -text [translate "Pass code"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+add_de1_widget "skin_lock" entry 1020 522 {
+	set ::globals(skin_lock) $widget
+	bind $widget <Return> {skin_exit_lock}
+	bind $widget <Leave>  {skin_exit_lock}
+    } -show * -width 32 -font [skin_font font [fixed_size 16]] -borderwidth 1 -bg $::skin_foreground_colour -foreground $::skin_button_label_colour -textvariable ::skin_pass_code
