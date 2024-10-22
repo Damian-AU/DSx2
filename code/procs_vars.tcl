@@ -1,7 +1,7 @@
-set ::skin_version 3.05
+set ::skin_version 3.06
 
-set ::user(background_colour) #e4e4e4
-set ::user(foreground_colour) #2b6084
+set ::user(background_colour) #18191e
+set ::user(foreground_colour) #5f7ba8
 set ::user(button_label_colour) #fff
 set ::user(text_colour) #2b6084
 set ::user(selected_colour) #fe7e00
@@ -20,7 +20,6 @@ set ::user(y2_axis) #2b6084
 set ::user(graph_grid_colour) $::user(foreground_colour)
 set ::user(mini_graph_grid_colour) #bbb
 set ::user(disabled_colour) #c1c1c1
-
 set ::user(background_2_colour) #e4e4e4
 set ::user(foreground_2_colour) #2b6084
 set ::user(button_label_2_colour) #fff
