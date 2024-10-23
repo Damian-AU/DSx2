@@ -1,4 +1,4 @@
-set ::skin_version 3.06
+set ::skin_version 3.07
 
 set ::user(background_colour) #18191e
 set ::user(foreground_colour) #5f7ba8
@@ -1094,7 +1094,7 @@ proc show_skin_set {option} {
         set_button wf_close state normal
     }
     if {$::skin(theme) == "cafe"} {
-        skin_lock {page_show workflow_settings}
+        skin_lock page_show workflow_settings
     }
 }
 
