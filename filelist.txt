@@ -19,7 +19,7 @@ colour_themes/Eran/sand.txt
 colour_themes/Karim/soft_darkmode.txt
 colour_themes/cafe_dark.txt
 colour_themes/default.txt
-colour_themes/demo)code.txt
+colour_themes/demo.txt
 fonts/D-font.otf
 fonts/Font Awesome 5 Pro-Light-300.otf
 fonts/Font Awesome 5 Pro-Regular-400.otf
@@ -37,8 +37,9 @@ fonts/PB-Icons-Regular.otf
 fonts/PD-Bold-Bold.otf
 pages/Damian/graphs.tcl
 pages/Damian/home.tcl
-pages/P&D/home.tcl
-pages/P&D/setup.tcl
+pages/cafe/cafe.tcl
+pages/cafe/graphs.tcl
+pages/cafe/workflow.tcl
 plugins/pizza.tcl
 plugins/history_viewer.tcl
 plugins/screen_saver_history_button.tcl

@@ -1,7 +1,7 @@
-set ::skin_version 3.08
+set ::skin_version 3.09
 
-set ::user(background_colour) #18191e
-set ::user(foreground_colour) #5f7ba8
+set ::user(background_colour) #e4e4e4
+set ::user(foreground_colour) #2b6084
 set ::user(button_label_colour) #fff
 set ::user(text_colour) #2b6084
 set ::user(selected_colour) #fe7e00
