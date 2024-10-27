@@ -427,6 +427,13 @@ dui add dbutton off 1050 1200 \
     -labelvariable {SAVE} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
     -command {c_save_fav}
 
+dui add dbutton off 1350 740 \
+    -bwidth 260 -bheight 100 -tags {c_fav_copy_profile_title c_fav_confirm} -initial_state hidden \
+    -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
+    -label [translate "paste"]\r[translate "profile title"] -label_width 240 -label_font [skin_font font 16] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -command {set [format_fav_entry $::temp_fave_key] [name_length $::settings(profile_title) 24]}
+
+
 ### sleep / power button
 dui add dbutton off 2200 80 \
     -bwidth 160 -bheight 150 -tags {pwr_button_sleep pwr_button} \

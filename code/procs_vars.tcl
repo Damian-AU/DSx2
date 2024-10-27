@@ -1,4 +1,4 @@
-set ::skin_version 3.07
+set ::skin_version 3.08
 
 set ::user(background_colour) #18191e
 set ::user(foreground_colour) #5f7ba8
@@ -185,9 +185,15 @@ if {![info exist ::skin(show_data_card_button)]} {
 if {![info exist ::skin(auto_load_fav_Damian)]} {
     set ::skin(auto_load_fav_Damian) none
 }
+
 if {![info exist ::skin(auto_load_fav_cafe)]} {
     set ::skin(auto_load_fav_cafe) none
 }
+
+if {![info exist ::skin(fav_key)]} {
+    set ::skin(fav_key) fav1
+}
+
 if {$::skin(theme) == "Damian"} {
     set ::skin(auto_load_fav) $::skin(auto_load_fav_Damian)
 }
@@ -716,7 +722,7 @@ proc add_icon_label_button {button_name pages x y width height tvi tv command {e
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags [list bb_${button_name} {*}$extra_tags] -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags [list s_${button_name} {*}$extra_tags]
     dui add dtext $pages [expr $x + 50] [expr $y + $height/2 - 2] -font [skin_font D-font [fixed_size 40]] -fill $::skin_button_label_colour -anchor center -tags [list li_${button_name} {*}$extra_tags] -text $tvi
-    dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
+    dui add variable $pages [expr ($x + 44) + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 110] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command -longpress_cmd $long_press
 }
 
@@ -4305,7 +4311,8 @@ if {$::skin(theme) == "cafe"} {
             set ::c_fav_entry $widget
             bind $widget <Return> {hide_android_keyboard}
             bind $widget <Leave>  {hide_android_keyboard}
-            } -width 10 -font [skin_font font 20] -borderwidth 1 -bg $::skin_foreground_colour -foreground $::skin_button_label_colour -tags c_fav_entry -validate all -validatecommand {expr {[string length %P] <= 12}} -textvariable [format_fav_entry $key]
+            } -width 10 -font [skin_font font 20] -borderwidth 1 -bg $::skin_foreground_colour -foreground $::skin_button_label_colour -tags c_fav_entry -validate all -validatecommand {expr {[string length %P] <= 24}} -textvariable [format_fav_entry $key]
+        set ::temp_fave_key $key
     }
 
     proc c_current_auto_load {} {
