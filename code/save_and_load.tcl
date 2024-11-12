@@ -132,57 +132,58 @@ proc skin_save {key} {
 }
 
 proc skin_load {key} {
-    #if {$key == "fav1" || $key == "fav2" || $key == "fav3" || $key == "fav4" || $key == "fav5" || $key == "fav6"} {
-        if {[file exists [skin_directory]/settings/$key.txt]} {
-            clear_fav_colour
-            set ::skin(fav_key) $key
-            set ::settings(beverage_type) "espresso"
-            array unset -nocomplain fav_settings
-            array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/$key.txt"]]
-            array set settings $fav_settings(app)
-            set settings_vars [fav_settings_vars]
-            foreach k $settings_vars {
-                set ::settings($k) $settings($k)
-                set ::fav_settings_test($k) $settings($k)
-            }
-            select_profile $::settings(profile_filename)
-            array set skin $fav_settings(skin)
-            set skin_vars [fav_skin_vars]
-
-            foreach k $skin_vars {
-                if {[info exists skin($k)] == 1} {
-                    set ::skin($k) $skin($k)
-                    set ::fav_skin_test($k) $skin($k)
-                }
-            }
-            set ::de1(steam_disable_toggle) [expr {!$::settings(steam_disabled)}]
-            if {$::skin(theme) == "Damian"} {
-                check_wf_steam_jug_auto_weight
-                check_current_jug
-                setup_steam_switch_state
-            }
-            god_shot_clear
-            #select_profile $::settings(profile_filename)
-            if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
-                array set ::current_adv_step [lindex $::settings(advanced_shot) 0]
-            }
-            save_settings_to_de1
-            save_settings
-            de1_send_steam_hotwater_settings
-            set ::settings(profile_has_changed) 0
-            profile_has_changed_set_colors
-            set_fav_colour $key
-            update_de1_explanation_chart
-            fill_profiles_listbox
-            workflow $::skin(workflow)
-            skin_save skin
-            restore_graphs
-            if {$::skin(theme) == "Damian"} {
-                set_button wf_save_saw_x_button state hidden
-                set_button wf_save_saw_tick_button state hidden
-            }
-        } else {
-            popup [translate "Longpress to save settings to this favourite button"]
+    if {$key == "none"} {
+        return
+    }
+    if {[file exists [skin_directory]/settings/$key.txt]} {
+        clear_fav_colour
+        set ::skin(fav_key) $key
+        set ::settings(beverage_type) "espresso"
+        array unset -nocomplain fav_settings
+        array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/$key.txt"]]
+        array set settings $fav_settings(app)
+        set settings_vars [fav_settings_vars]
+        foreach k $settings_vars {
+            set ::settings($k) $settings($k)
+            set ::fav_settings_test($k) $settings($k)
         }
-    #}
+        select_profile $::settings(profile_filename)
+        array set skin $fav_settings(skin)
+        set skin_vars [fav_skin_vars]
+
+        foreach k $skin_vars {
+            if {[info exists skin($k)] == 1} {
+                set ::skin($k) $skin($k)
+                set ::fav_skin_test($k) $skin($k)
+            }
+        }
+        set ::de1(steam_disable_toggle) [expr {!$::settings(steam_disabled)}]
+        if {$::skin(theme) == "Damian"} {
+            check_wf_steam_jug_auto_weight
+            check_current_jug
+            setup_steam_switch_state
+        }
+        god_shot_clear
+        #select_profile $::settings(profile_filename)
+        if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
+            array set ::current_adv_step [lindex $::settings(advanced_shot) 0]
+        }
+        save_settings_to_de1
+        save_settings
+        de1_send_steam_hotwater_settings
+        set ::settings(profile_has_changed) 0
+        profile_has_changed_set_colors
+        set_fav_colour $key
+        update_de1_explanation_chart
+        fill_profiles_listbox
+        workflow $::skin(workflow)
+        skin_save skin
+        restore_graphs
+        if {$::skin(theme) == "Damian"} {
+            set_button wf_save_saw_x_button state hidden
+            set_button wf_save_saw_tick_button state hidden
+        }
+    } else {
+        popup [translate "Longpress to save settings to this favourite button"]
+    }
 }
