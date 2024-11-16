@@ -1,4 +1,4 @@
-set ::skin_version 3.10
+set ::skin_version 3.11
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -2079,8 +2079,6 @@ proc skin_water_data {} {
 proc skin_graph_info {} {
     set time [cache_date_time_format $::skin_graphs(live_graph_time)]
     set p $::skin_graphs(live_graph_profile)
-    set p {D-Flow / Luca's Italian Style}
-
     set b [round_to_one_digits $::skin_graphs(live_graph_beans)]
     set w [round_to_one_digits $::skin_graphs(live_graph_weight)]
     if {[info exist ::skin_er_to_one_percent]} {
