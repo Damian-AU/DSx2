@@ -515,6 +515,11 @@ proc goto_profile_wizard {} {
         ::plugins::D_Flow_Espresso_Profile::prep
         ::plugins::D_Flow_Espresso_Profile::demo_graph
         set_next_page off Dflowset; page_show Dflowset
+    } elseif {$title_test == "A-Flow /" && [file exists "[homedir]/plugins/A_Flow/plugin.tcl"] == 1} {
+        after 500 update_de1_explanation_chart
+        ::plugins::A_Flow::prep
+        ::plugins::A_Flow::demo_graph
+        dui page load Aflowset
     } else {
         after 500 update_de1_explanation_chart
         set_next_page off $::settings(settings_profile_type)
