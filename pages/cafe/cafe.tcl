@@ -544,5 +544,19 @@ proc skins_page_change_due_to_de1_state_change { textstate } {
         page_show flush
     }
 }
-dui add variable "off espresso" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}
 
+proc load_dye_setup {} {
+    if {"DYE" in $::settings(enabled_plugins) != 1} {
+        return
+    }
+    if {[info exists ::plugins::DYE::shots::src_shot]} {
+        if { [file exists "[skin_directory]/dye/setup.tcl"] } {
+		    source "[skin_directory]/dye/setup.tcl"
+	    }
+    } else {
+       after 100 load_dye_setup
+    }
+}
+load_dye_setup
+
+dui add variable "off espresso" 2540 1580 -tags skin_version -font [skin_font font 13] -fill $::skin_text_colour -anchor e -textvariable {$::settings(skin) v${::skin_version}}

@@ -20,6 +20,7 @@ colour_themes/Karim/soft_darkmode.txt
 colour_themes/cafe_dark.txt
 colour_themes/default.txt
 colour_themes/demo.txt
+dye/setup.tcl
 fonts/D-font.otf
 fonts/Font Awesome 5 Pro-Light-300.otf
 fonts/Font Awesome 5 Pro-Regular-400.otf

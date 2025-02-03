@@ -1,4 +1,4 @@
-set ::skin_version 3.12
+set ::skin_version 3.13
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -680,6 +680,7 @@ proc skin_water_offset {} {
 }
 
 proc set_button {button_name property value} {
+    catch {
     set z ::${button_name}(pages)
     set pages [set $z]
     if {$property == "fill"} {dui item config $pages bb_${button_name}* -fill $value}
@@ -693,6 +694,7 @@ proc set_button {button_name property value} {
         dui item config $pages l_${button_name} -initial_state $value -state $value
         dui item config $pages li_${button_name} -initial_state $value -state $value
         dui item config $pages b_${button_name}* -initial_state $value -state $value
+    }
     }
 }
 
