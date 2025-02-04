@@ -39,7 +39,6 @@ fonts/PD-Bold-Bold.otf
 pages/Damian/graphs.tcl
 pages/Damian/home.tcl
 pages/cafe/cafe.tcl
-pages/cafe/graphs.tcl
 pages/cafe/workflow.tcl
 plugins/pizza.tcl
 plugins/history_viewer.tcl

@@ -107,9 +107,10 @@ favs_to_show 3
 workflow none
 legend_font_size 16
 
-theme Damian
-colour_theme default
+theme cafe
+colour_theme cafe_dark
 colour_theme_folder default
 
 bean_cup_g 0.0
 wsaw_offset 0.0
+

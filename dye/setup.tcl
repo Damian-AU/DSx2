@@ -599,8 +599,12 @@ proc ::toggle_cache_graphs_cafe {args} {
     }
 }
 
-bind $::home_espresso_graph [dui::platform::button_press] ::toggle_cache_graphs_cafe
+bind $::home_espresso_graph [dui::platform::button_press] {
+    set x [translate_coordinates_finger_down_x %x]
+    if {$x < [rescale_y_skin 100]} {
+        ::toggle_y_resolution
+    } else {
+        ::toggle_cache_graphs_cafe
+    }
+}
 
-#set ::main_graph_height [rescale_y_skin 840]
-#$::home_espresso_graph configure -height [rescale_y_skin 840]
-#dui item config off live_graph_data -initial_state hidden -state hidden

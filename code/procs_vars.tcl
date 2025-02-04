@@ -1,4 +1,4 @@
-set ::skin_version 3.13
+set ::skin_version 3.14
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -34,6 +34,13 @@ set ::user(button_press_colour) #eae83d
 set ::user(button_radius) 30
 set ::settings(scale_stop_at_half_shot) 0
 
+if {[file exists [skin_directory]/pages/cafe/graphs.tcl]} {
+    file delete -force [skin_directory]/pages/cafe/graphs.tcl
+}
+if {$::skin(colour_theme_folder) == "default"} {
+    set basedir [skin_directory]/colour_themes/default.txt
+    set ::skin(colour_theme_folder) [file dirname $basedir]
+}
 if {[file exists "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"] == 1} {
     array set ::user [encoding convertfrom utf-8 [read_binary_file "${::skin(colour_theme_folder)}/${::skin(colour_theme)}.txt"]]
 }
@@ -167,7 +174,7 @@ if {![info exist ::skin(y_res)]} {
 }
 
 if {![info exist ::skin(show_y2_axis)]} {
-    set ::skin(show_y2_axis) 1
+    set ::skin(show_y2_axis) 0
 }
 
 if {![info exist ::skin(show_cache_y2_axis)]} {
