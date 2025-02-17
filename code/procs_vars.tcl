@@ -1,4 +1,4 @@
-set ::skin_version 3.14
+set ::skin_version 3.15
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -4472,10 +4472,13 @@ if {$::skin(theme) == "cafe"} {
         } else {
             if {$::skin(jug_size) == "s"} {
                 set ::skin(jug_size) m
+                set_jug m
             } elseif {$::skin(jug_size) == "m"} {
                 set ::skin(jug_size) l
+                set_jug l
             } else {
                 set ::skin(jug_size) s
+                set_jug s
             }
         }
     }
