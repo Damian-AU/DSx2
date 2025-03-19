@@ -130,7 +130,8 @@ dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 130] [expr
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 100] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 104] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_3
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 276] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 280] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_4
 
-add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare}; set_button auto_tare state hidden
+add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
+add_colour_button HDS_timer off [expr $::skin(button_x_scale) - 320] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "HDS timer"]} {toggle_HDS_timer; skin_save skin}; set_button HDS_timer state hidden
 
 ### ghc buttons ###
 

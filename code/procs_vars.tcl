@@ -1,4 +1,4 @@
-set ::skin_version 3.15
+set ::skin_version 3.16
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -199,6 +199,10 @@ if {![info exist ::skin(auto_load_fav_cafe)]} {
 
 if {![info exist ::skin(fav_key)]} {
     set ::skin(fav_key) fav1
+}
+
+if {![info exist ::skin(HDS_timer))]} {
+    set ::skin(HDS_timer) 0
 }
 
 if {$::skin(theme) == "Damian"} {
@@ -821,7 +825,9 @@ proc hide_graph {} {
 
     set ::zoom_temperature 0
     set_button auto_tare state normal
-
+    if {$::settings(scale_type) == "decentscale"} {
+        set_button HDS_timer state normal
+    }
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
         dui item config $pages ${key}_icon -initial_state hidden -state hidden
@@ -877,6 +883,7 @@ proc show_graph {} {
     check_graph_axis
 
     set_button auto_tare state hidden
+    set_button HDS_timer state hidden
     if {$::skin(theme) == "Damian"} {
         rest_fav_buttons
         set_button favs_number state hidden
@@ -3698,6 +3705,7 @@ proc skin_negative_scale_tare {} {
     if {$::de1(scale_sensor_weight) < 0 && $::skin(auto_tare_negative_reading) == 1} {
         scale_tare
     }
+    after 500 {skin_negative_scale_tare}
 }
 
 proc toggle_auto_tare {} {
@@ -3716,6 +3724,34 @@ proc auto_tare_button_colour {} {
         set_button auto_tare label_fill $::skin_button_label_colour
     }
 }
+
+rename decentscale_timer_start decentscale_timer_start_original
+proc decentscale_timer_start {} {
+    if {$::skin(HDS_timer) == 1} {
+        decentscale_timer_start_original
+    }
+}
+
+proc toggle_HDS_timer {} {
+    if {$::skin(HDS_timer) == 1} {
+        set ::skin(HDS_timer) 0
+        decentscale_timer_reset
+    } else {
+        set ::skin(HDS_timer) 1
+        decentscale_timer_start
+        after 600 decentscale_timer_stop
+    }
+    skin_save skin
+}
+
+proc HDS_timer_button_colour {} {
+    if {$::skin(HDS_timer) == 1} {
+        set_button HDS_timer label_fill $::skin_selected_colour
+    } else {
+        set_button HDS_timer label_fill $::skin_button_label_colour
+    }
+}
+
 
 set ::skin_heating_hold 0
 proc skin_machine_state_heating {} {
@@ -4207,11 +4243,11 @@ proc backup_settings {} {
 ###################################################
 proc skin_loop {} {
     auto_tare_button_colour
-    skin_negative_scale_tare
+    HDS_timer_button_colour
     restore_live_graphs
     check_fav
 }
-
+skin_negative_scale_tare
 
 ################### added for cafe theme
 
