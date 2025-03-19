@@ -1,4 +1,4 @@
-set ::skin_version 3.16
+set ::skin_version 3.17
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -825,7 +825,7 @@ proc hide_graph {} {
 
     set ::zoom_temperature 0
     set_button auto_tare state normal
-    if {$::settings(scale_type) == "decentscale"} {
+    if {$::settings(scale_type) == "decentscale" || $::android != 1} {
         set_button HDS_timer state normal
     }
     set pages {off espresso hotwaterrinse water}
