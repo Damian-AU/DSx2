@@ -131,7 +131,7 @@ dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 100] $::sk
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 276] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 280] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_4
 
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
-add_colour_button HDS_timer off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 134] 130 100 {[translate "HDS timer"]} {toggle_HDS_timer; skin_save skin}; set_button HDS_timer state hidden
+add_colour_button HDS_timer off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 134] 130 100 {[translate "HDS"]} {page_show hds_set}; set_button HDS_timer state hidden
 
 ### ghc buttons ###
 
@@ -802,7 +802,27 @@ add_clear_button close_heading_settings off 0 10 2560 100 {} {hide_header_settin
 dui add variable $::skin_home_pages [expr $::skin(button_x_power) + 54] [expr $::skin(button_y_power) + 40] -font [skin_font D-font [fixed_size 68]] -fill $::skin_button_label_colour -anchor center -justify center -textvariable {p} -tags {sleep_button powerbutton headerbar}
 add_clear_button sleep_power_button off 10 10 220 200 {} {skin_power} headerbar
 
+### HDS settings page
+dui add dtext hds_set 1280 300 -text [translate "Half Decent Scale"] -font [skin_font font_bold 22] -fill $::skin_text_colour -anchor c
 
+dui add dtext hds_set 1010 500 -text [translate "OLED brightness"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtoggle hds_set 1420 500 -anchor w \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(HDS_brightness) \
+    -command {toggle_HDS_brightness}
+
+dui add dtext hds_set 1010 620 -text [translate "Show timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtoggle hds_set 1420 620 -anchor w \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(HDS_timer) \
+    -command {toggle_HDS_timer}
+
+dui add dbutton hds_set 1180 1440 \
+    -bwidth 200 -bheight 100 \
+    -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
+    -labelvariable {EXIT} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -command {page_show off}
+###
 
 if {$::android != 1} {
     start_idle

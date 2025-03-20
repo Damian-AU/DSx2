@@ -471,7 +471,7 @@ dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 130] [expr
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 100] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 104] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_3
 dui add shape rect $::skin_home_pages [expr $::skin(button_x_scale) + 276] $::skin(button_y_scale) [expr $::skin(button_x_scale) + 280] [expr $::skin(button_y_scale) + 110] -width 0 -fill $::skin_background_colour -tags scale_line_4
 add_colour_button auto_tare off [expr $::skin(button_x_scale) - 160] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "auto tare"]} {toggle_auto_tare; skin_save skin}; set_button auto_tare state hidden
-add_colour_button HDS_timer off [expr $::skin(button_x_scale) - 320] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "HDS timer"]} {toggle_HDS_timer; skin_save skin}; set_button HDS_timer state hidden
+add_colour_button HDS_timer off [expr $::skin(button_x_scale) - 320] [expr $::skin(button_y_scale) + 4] 130 100 {[translate "HDS"]} {page_show hds_set}; set_button HDS_timer state hidden
 #################
 
 ### ghc buttons ###
@@ -598,13 +598,32 @@ dui add dbutton pass_code_settings 1260 600 \
     -label $::skin(icon_plus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {adjust unlock_time 5} -longpress_cmd {adjust unlock_time 60}
 
-
 dui add dbutton pass_code_settings 1180 1440 \
     -bwidth 200 -bheight 100 \
     -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
     -labelvariable {EXIT} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
     -command {page_show off; skin_save skin; skin_reset_handle_keypress}
 
+### HDS settings page
+dui add dtext hds_set 1280 300 -text [translate "Half Decent Scale"] -font [skin_font font_bold 22] -fill $::skin_text_colour -anchor c
+
+dui add dtext hds_set 1010 500 -text [translate "OLED brightness"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtoggle hds_set 1420 500 -anchor w \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(HDS_brightness) \
+    -command {toggle_HDS_brightness}
+
+dui add dtext hds_set 1010 620 -text [translate "Show timer"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtoggle hds_set 1420 620 -anchor w \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(HDS_timer) \
+    -command {toggle_HDS_timer}
+
+dui add dbutton hds_set 1180 1440 \
+    -bwidth 200 -bheight 100 \
+    -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
+    -labelvariable {EXIT} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
+    -command {page_show off}
 
 ### screen saver page
 dui add dbutton saver 0 0 \

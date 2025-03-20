@@ -1,4 +1,4 @@
-set ::skin_version 3.17
+set ::skin_version 3.18
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -203,6 +203,9 @@ if {![info exist ::skin(fav_key)]} {
 
 if {![info exist ::skin(HDS_timer))]} {
     set ::skin(HDS_timer) 0
+}
+if {![info exist ::skin(HDS_brightness))]} {
+    set ::skin(HDS_brightness) 1
 }
 
 if {$::skin(theme) == "Damian"} {
@@ -3732,26 +3735,35 @@ proc decentscale_timer_start {} {
     }
 }
 
+proc skin_hds {key} {
+    if {$::settings(scale_type) != "decentscale"} {return}
+    switch -exact $key {
+        oled_off {set fn [decent_scale_make_command 0A 00 00]}
+        oled_on {set fn [decent_scale_make_command 0A 01 00]}
+        oled_low {set fn [decent_scale_make_command 0A 03 01]}
+        oled_norm {set fn [decent_scale_make_command 0A 03 00]}
+    }
+	userdata_append "SCALE: decentscale : skin hds" [list ble write $::de1(scale_device_handle) $::de1(suuid_decentscale) $::sinstance($::de1(suuid_decentscale)) $::de1(cuuid_decentscale_write) $::cinstance($::de1(cuuid_decentscale_write)) $fn] 0
+}
+
 proc toggle_HDS_timer {} {
-    if {$::skin(HDS_timer) == 1} {
-        set ::skin(HDS_timer) 0
+    if {$::skin(HDS_timer) == 0} {
         decentscale_timer_reset
     } else {
-        set ::skin(HDS_timer) 1
         decentscale_timer_start
         after 600 decentscale_timer_stop
     }
     skin_save skin
 }
 
-proc HDS_timer_button_colour {} {
-    if {$::skin(HDS_timer) == 1} {
-        set_button HDS_timer label_fill $::skin_selected_colour
+proc toggle_HDS_brightness {} {
+    if {$::skin(HDS_brightness) == 0} {
+        skin_hds oled_low
     } else {
-        set_button HDS_timer label_fill $::skin_button_label_colour
+        skin_hds oled_norm
     }
+    skin_save skin
 }
-
 
 set ::skin_heating_hold 0
 proc skin_machine_state_heating {} {
@@ -4243,7 +4255,6 @@ proc backup_settings {} {
 ###################################################
 proc skin_loop {} {
     auto_tare_button_colour
-    HDS_timer_button_colour
     restore_live_graphs
     check_fav
 }
