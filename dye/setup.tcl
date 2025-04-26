@@ -598,6 +598,51 @@ proc ::toggle_cache_graphs_cafe {args} {
         $::home_espresso_graph element configure compare_resistance -xdata compare_espresso_elapsed -ydata compare_espresso_resistance
     }
 }
+set ::DSx2_cafe_dye_state 0
+rename hide_graph hide_graph_cafe_dye
+proc hide_graph {} {
+    hide_graph_cafe_dye
+    if {[.can itemcget launch_dye_last_cafe -state] eq "normal"} {
+        set ::DSx2_cafe_dye_state 1
+        dui item config off launch_dye_last_cafe* -initial_state hidden -state hidden
+        dui item config off launch_dye_next_cafe* -initial_state hidden -state hidden
+    }
+}
+
+rename show_graph show_graph_cafe_dye
+proc show_graph {} {
+    if {$::DSx2_cafe_dye_state == 1} {
+        show_graph_2
+        check_graph_axis
+
+        set_button auto_tare state hidden
+        set_button HDS_timer state hidden
+
+        dui item config off live_graph_data -initial_state normal -state normal
+        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+        set pages {off espresso hotwaterrinse water}
+        foreach key {pressure flow weight temperature resistance steps} {
+            dui item config $pages ${key}_icon -initial_state normal -state normal
+            dui item config $pages ${key}_text -initial_state normal -state normal
+            dui item config $pages ${key}_data -initial_state normal -state normal
+            dui item config $pages ${key}_key_button* -initial_state normal -state normal
+        }
+        dui item config off live_graph_data -initial_state hidden -state hidden
+        dui item config off main_graph_toggle_label -initial_state normal -state normal
+        dui item config off main_graph_toggle_button* -initial_state normal -state normal
+        dui item config off main_graph_toggle_view_label -initial_state normal -state normal
+        dui item config off main_graph_toggle_view_button* -initial_state normal -state normal
+        dui item config off main_graph_toggle_goal_label -initial_state normal -state normal
+        dui item config off main_graph_toggle_goal_button* -initial_state normal -state normal
+
+
+        set ::DSx2_cafe_dye_state 0
+        dui item config off launch_dye_last_cafe* -initial_state normal -state normal
+        dui item config off launch_dye_next_cafe* -initial_state normal -state normal
+    } else {
+        show_graph_cafe_dye
+    }
+}
 
 bind $::home_espresso_graph [dui::platform::button_press] {
     set x [translate_coordinates_finger_down_x %x]
