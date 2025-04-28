@@ -1,4 +1,4 @@
-set ::skin_version 3.21
+set ::skin_version 3.22
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -201,7 +201,7 @@ if {![info exist ::skin(fav_key)]} {
     set ::skin(fav_key) fav1
 }
 
-if {![info exist ::skin(HDS_timer))]} {
+if {![info exist ::skin(HDS_timer)]} {
     set ::skin(HDS_timer) 0
 }
 if {![info exist ::skin(HDS_brightness))]} {
