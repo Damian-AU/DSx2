@@ -517,7 +517,7 @@ foreach k {fav1 fav2 fav3 fav4 fav5} {
 
 ### Beverage type ###
 ###############################
-dui add dtext off [expr $::beverage_type_x + 120] 580 -text [translate "Workflow"]} -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
+dui add dtext off [expr $::beverage_type_x + 120] 580 -text [translate "Workflow"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 add_colour_button wf_latte off $::beverage_type_x 620 240 100 {[translate "latte/cap"]} {workflow latte}
 add_colour_button wf_long off $::beverage_type_x 740 240 100 {[translate "long black"]} {workflow long}
 add_colour_button wf_americano off $::beverage_type_x 860 240 100 {[translate "americano"]} {workflow americano}
