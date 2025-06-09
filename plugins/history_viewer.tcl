@@ -1376,7 +1376,7 @@ dui add dbutton history [expr $::skin_history_graph_key_x + 2090 + 0] [expr $::s
 dui add dbutton history [expr $::skin_history_graph_key_x + 2290 + 26] [expr $::skin_history_graph_key_y  - 30] \
     -shape round -radius $::skin_button_radius -width 2 -fill $::skin_foreground_colour \
     -label [translate "EXIT"] -label_font [skin_font font 18] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
-    -bwidth 110 -bheight 80 -initial_state normal -tags {history_exit_button history_zoom_temperature_state history_key_buttons}\
+    -bwidth 110 -bheight 80 -initial_state normal -tags {history_exit_button history_key_buttons}\
     -command {if {$::de1_num_state($::de1(state)) == "Sleep"} {page_show saver;} else {set_next_page off off; start_idle; page_show off;}}
 
 proc config_goal_label {} {
@@ -2015,7 +2015,7 @@ dui add variable skin_hv_settings 1280 160 -font [skin_font font 34] -fill $::sk
 dui add dbutton history [expr $::skin_history_graph_key_x + 2290 + 26] 150 \
     -shape round -radius $::skin_button_radius -width 2 -fill $::skin_foreground_colour \
     -label $::skin(icon_edit) -label_font [skin_font awesome_light [fixed_size 20]] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
-    -bwidth 110 -bheight 80 -initial_state normal -tags {history_settings_button history_zoom_temperature_state history_key_buttons}\
+    -bwidth 110 -bheight 80 -initial_state normal -tags {history_settings_button history_key_buttons}\
     -command {page_show skin_hv_settings}
 
 dui add dbutton skin_hv_settings [expr $::skin_history_graph_key_x + 2290 + 26] 150 \

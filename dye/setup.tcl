@@ -514,7 +514,7 @@ proc ::plugins::DYE::setup_ui_DSx {} {
 			-label1_font_size -3 -label1_fill $::skin_text_colour \
 			-label1_pos {0.0 0.0} -label1_anchor nw -label1_justify left -label1_width 850 \
 			-initial_state normal -tap_pad {20 15 0 50} \
-			-command [::list ::plugins::DYE::open -which_shot next] -tap_pad {100 0 0 0} \
+			-command [::list ::plugins::DYE::open -which_shot last] -tap_pad {100 0 0 0} \
 			#-longpress_cmd [::list ::dui::page::open_dialog dye_which_shot_dlg -coords \[list [expr {$x-375}] [expr {$y-80}]\] -anchor sw]
 
 
