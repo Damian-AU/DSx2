@@ -490,6 +490,8 @@ dui add variable off 2080 [expr $::start_button_pos_4 + 60 + $::start_button_shi
 proc c_espresso_button_data {} {
     if {$::settings(beverage_type) == "cleaning"} {
         return "[maxstring $::settings(profile_title) 28]"
+    } elseif {$::skin(wf_grind_show) == 1} {
+        return "[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate ":"] [skin_saw]g  G-[round_to_one_digits $::settings(grinder_setting)]"
     } else {
         return "[maxstring $::settings(profile_title) 28]\r[skin_dose] [translate " : "] [skin_saw]g [skin_extraction_ratio]"
     }

@@ -1,3 +1,16 @@
+if {![info exist ::skin(wf_grind_show)]} {
+    set ::skin(wf_grind_show) 0
+}
+proc config_workflow_grinder {} {
+    if {$::skin(wf_grind_show) == 0} {
+        dui item config workflow_settings grind_info -initial_state disabled -state disabled
+        dui item config workflow_settings grind_buttons -initial_state hidden -state hidden
+    } else {
+        dui item config workflow_settings grind_info -initial_state normal -state normal
+        dui item config workflow_settings grind_buttons -initial_state normal -state normal
+    }
+}
+
 dui add shape rect workflow_settings 0 150 2560 152 -width 0 -fill $::skin_foreground_colour
 dui add shape rect workflow_settings 0 1400 2560 1402 -width 0 -fill $::skin_foreground_colour
 dui add shape rect workflow_settings 620 150 622 1400 -width 0 -fill $::skin_foreground_colour
@@ -56,6 +69,19 @@ add_icon_button wf_save_saw_tick_button workflow_settings 440 670 100 100 $::ski
 set_button wf_save_saw_tick_button label_fill $::skin_green
 set_button wf_save_saw_tick_button state hidden
 
+dui add dtext workflow_settings 60 600 -text [translate "Grinder"] -font [skin_font font_bold 18] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w -tags {grinder_heading grind_info}
+dui add variable workflow_settings 430 600 -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -font [skin_font font 18] -tags {grinder_value grind_info} -anchor center -textvariable {[round_to_one_digits $::settings(grinder_setting)]}
+dui add dbutton workflow_settings 260 550 \
+    -bwidth 100 -bheight 100 -tags {grind_minus grind_buttons}\
+    -label $::skin(icon_minus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {adjust grind -0.1} -longpress_cmd {adjust grind -1}
+dui add dbutton workflow_settings 500 550 \
+    -bwidth 100 -bheight 100 -tags {grind_plus grind_buttons} \
+    -label $::skin(icon_plus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {adjust grind 0.1} -longpress_cmd {adjust grind 1}
+dui add dbutton workflow_settings 0 550 \
+    -bwidth 260 -bheight 100 \
+    -command {set ::skin(wf_grind_show) [expr !{$::skin(wf_grind_show)}]; config_workflow_grinder; skin_save skin}
 
 dui add dbutton workflow_settings 260 450 \
     -bwidth 100 -bheight 100 \
@@ -66,13 +92,18 @@ dui add dbutton workflow_settings 500 450 \
     -label $::skin(icon_plus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {adjust saw 1} -longpress_cmd {adjust saw 10}
 
-dui add dtext workflow_settings 60 600 -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
-dui add dtext workflow_settings 40 600 -text $::skin(icon_info) -font [skin_font awesome 18] -fill $::skin_orange -anchor e
-dui add dbutton workflow_settings 0 550 \
+dui add dtext workflow_settings 60 700 -text [translate "Dose cup"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtext workflow_settings 40 700 -text $::skin(icon_info) -font [skin_font awesome 18] -fill $::skin_orange -anchor e
+dui add dbutton workflow_settings 0 650 \
     -bwidth 260 -bheight 100 \
     -command {dui item config workflow_settings c_espresso_info -initial_state normal -state normal}
 
-dui add dbutton workflow_settings 260 550 \
+dui add dbutton workflow_settings 260 650 \
+    -bwidth 340 -bheight 100 \
+    -labelvariable {$::skin(bean_cup_g)g} -label_font [skin_font font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {set_bean_cup_weight}
+
+dui add dbutton workflow_settings 260 650 \
     -bwidth 340 -bheight 100 \
     -labelvariable {$::skin(bean_cup_g)g} -label_font [skin_font font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
     -command {set_bean_cup_weight}
@@ -296,6 +327,7 @@ dui add dbutton workflow_settings [expr 40 + $::wf_start_button_shift_x] [expr 2
 ###########################################################
 skin_load $::skin(auto_load_fav)
 workflow $::skin(workflow)
+config_workflow_grinder
 
 # ::register_state_change_handler Sleep Idle skin_load_fav
 #after 3000 dui item config steam bb_steam_extend* -initial_state hidden -state hidden

@@ -1,4 +1,4 @@
-set ::skin_version 3.23
+set ::skin_version 3.24
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -1554,7 +1554,7 @@ proc skin_bean_weight {} {
         }
         return $x$g
     } else {
-        return ""
+        return "18g"
     }
 }
 
@@ -1626,6 +1626,8 @@ proc clear_fav_colour {} {
     } else {
         set_button $::skin(fav_key) icon_fill $::skin_button_label_colour
         set_button $::skin(fav_key) icon_font [skin_font awesome_light [fixed_size 28]]
+        set ::skin(wf_grind_show) 0
+        config_workflow_grinder
     }
 }
 
@@ -2498,6 +2500,12 @@ proc adjust {var value} {
         set ::settings(grinder_dose_weight) [round_to_one_digits [expr $::settings(grinder_dose_weight) + $value]]
         if {$::settings(grinder_dose_weight) < 2} {set ::settings(grinder_dose_weight) 2}
         if {$::settings(grinder_dose_weight) > 40} {set ::settings(grinder_dose_weight) 40}
+        skin_save settings
+    }
+    if {$var == "grind"} {
+        set ::settings(grinder_setting) [round_to_one_digits [expr $::settings(grinder_setting) + $value]]
+        if {$::settings(grinder_setting) < 0} {set ::settings(grinder_setting) 0}
+        if {$::settings(grinder_setting) > 100} {set ::settings(grinder_setting) 100}
         skin_save settings
     }
     if {$var == "saw"} {

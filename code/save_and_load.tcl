@@ -4,6 +4,7 @@ proc fav_settings_vars {} {
         profile_title
         profile_filename
         grinder_dose_weight
+        grinder_setting
         steam_disabled
         steam_flow
         steam_temperature
@@ -17,7 +18,15 @@ proc fav_settings_vars {} {
 
 proc fav_skin_vars {} {
     return {
-        workflow jug_size jug_auto
+        workflow jug_size jug_auto wf_grind_show
+    }
+}
+
+proc wait_dye_to_load_then_update_next {} {
+    if {[info exists ::plugins::DYE::shots::src_shot]} {
+        ::plugins::DYE::shots::define_next_desc
+    } else {
+       after 100 wait_dye_to_load_then_update_next
     }
 }
 
@@ -144,8 +153,10 @@ proc skin_load {key} {
         array set settings $fav_settings(app)
         set settings_vars [fav_settings_vars]
         foreach k $settings_vars {
-            set ::settings($k) $settings($k)
-            set ::fav_settings_test($k) $settings($k)
+            if {[info exists settings($k)] == 1} {
+                set ::settings($k) $settings($k)
+                set ::fav_settings_test($k) $settings($k)
+            }
         }
         select_profile $::settings(profile_filename)
         array set skin $fav_settings(skin)
@@ -169,6 +180,7 @@ proc skin_load {key} {
             array set ::current_adv_step [lindex $::settings(advanced_shot) 0]
         }
         save_settings_to_de1
+
         save_settings
         de1_send_steam_hotwater_settings
         set ::settings(profile_has_changed) 0
@@ -182,6 +194,9 @@ proc skin_load {key} {
         if {$::skin(theme) == "Damian"} {
             set_button wf_save_saw_x_button state hidden
             set_button wf_save_saw_tick_button state hidden
+        }
+        if {"DYE" in $::settings(enabled_plugins) == 1 && $::skin(theme) == "cafe"} {
+            wait_dye_to_load_then_update_next
         }
     } else {
         popup [translate "Longpress to save settings to this favourite button"]
