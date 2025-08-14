@@ -1124,7 +1124,7 @@ proc show_skin_set {option} {
         set_button wf_close state normal
     }
     if {$::skin(theme) == "cafe"} {
-        skin_lock page_show workflow_settings
+        skin_lock config_workflow_grinder page_show workflow_settings
     }
 }
 
@@ -1626,8 +1626,6 @@ proc clear_fav_colour {} {
     } else {
         set_button $::skin(fav_key) icon_fill $::skin_button_label_colour
         set_button $::skin(fav_key) icon_font [skin_font awesome_light [fixed_size 28]]
-        set ::skin(wf_grind_show) 0
-        config_workflow_grinder
     }
 }
 
@@ -4629,6 +4627,9 @@ proc skin_lock {args} {
         page_show skin_lock
         set ::skin_temp_args $args
     } else {
+        if {$args == "page_show workflow_settings"} {
+            config_workflow_grinder
+        }
         {*}$args
     }
 }

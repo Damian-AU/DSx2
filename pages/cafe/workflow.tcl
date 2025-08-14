@@ -3,10 +3,10 @@ if {![info exist ::skin(wf_grind_show)]} {
 }
 proc config_workflow_grinder {} {
     if {$::skin(wf_grind_show) == 0} {
-        dui item config workflow_settings grind_info -initial_state disabled -state disabled
+        dui item config workflow_settings grind_info -fill $::skin_disabled_colour
         dui item config workflow_settings grind_buttons -initial_state hidden -state hidden
     } else {
-        dui item config workflow_settings grind_info -initial_state normal -state normal
+        dui item config workflow_settings grind_info -fill $::skin_text_colour
         dui item config workflow_settings grind_buttons -initial_state normal -state normal
     }
 }
@@ -327,7 +327,6 @@ dui add dbutton workflow_settings [expr 40 + $::wf_start_button_shift_x] [expr 2
 ###########################################################
 skin_load $::skin(auto_load_fav)
 workflow $::skin(workflow)
-config_workflow_grinder
 
 # ::register_state_change_handler Sleep Idle skin_load_fav
 #after 3000 dui item config steam bb_steam_extend* -initial_state hidden -state hidden
