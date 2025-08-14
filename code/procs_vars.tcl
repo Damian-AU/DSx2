@@ -1627,6 +1627,7 @@ proc clear_fav_colour {} {
         set_button $::skin(fav_key) icon_fill $::skin_button_label_colour
         set_button $::skin(fav_key) icon_font [skin_font awesome_light [fixed_size 28]]
     }
+    set ::skin(wf_grind_show) 0
 }
 
 #### cafe
