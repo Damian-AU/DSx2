@@ -1,4 +1,4 @@
-set ::skin_version 3.25
+set ::skin_version 3.26
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -1554,7 +1554,7 @@ proc skin_bean_weight {} {
         }
         return $x$g
     } else {
-        return "18g"
+        return ""
     }
 }
 
