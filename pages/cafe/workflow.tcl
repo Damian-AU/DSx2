@@ -25,7 +25,7 @@ dui add dtext workflow_settings 2240 120 -text [translate "water"] -font [skin_f
 
 
 dui add dbutton "workflow_settings" 1180 1440 \
-    -bwidth 200 -bheight 100 -tags skin_history_button -initial_state normal \
+    -bwidth 200 -bheight 100 -tags skin_wfs_exit_button -initial_state normal \
     -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
     -labelvariable {EXIT} -label_font [skin_font font 20] -label_fill $::skin_button_label_colour -label_pos {0.5 0.5} \
     -command {page_show off}
@@ -61,11 +61,11 @@ dui add variable workflow_settings 430 482 -fill $::skin_text_colour  -font [ski
 dui add variable workflow_settings 430 522 -fill $::skin_text_colour  -font [skin_font font 16] -anchor center -textvariable {[skin_extraction_ratio]}
 
 
-add_icon_button wf_save_saw_x_button workflow_settings 320 670 100 100 $::skin(icon_x) {wf_cancel_profile_saw}
+add_icon_button wf_save_saw_x_button workflow_settings 660 450 100 100 $::skin(icon_x) {wf_cancel_profile_saw}
 set_button wf_save_saw_x_button label_fill $::skin_red
 set_button wf_save_saw_x_button state hidden
 
-add_icon_button wf_save_saw_tick_button workflow_settings 440 670 100 100 $::skin(icon_tick) {wf_update_profile_saw}
+add_icon_button wf_save_saw_tick_button workflow_settings 780 450 100 100 $::skin(icon_tick) {wf_update_profile_saw}
 set_button wf_save_saw_tick_button label_fill $::skin_green
 set_button wf_save_saw_tick_button state hidden
 

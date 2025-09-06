@@ -1,4 +1,4 @@
-set ::skin_version 3.26
+set ::skin_version 3.27
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -1593,6 +1593,9 @@ proc wf_update_profile_saw {} {
     if {$::settings(profile_has_changed) == 1} { popup [translate "Profile Updated"]; save_profile }
     set_button wf_save_saw_x_button state hidden
     set_button wf_save_saw_tick_button state hidden
+    if {$::skin(theme) == "cafe"} {
+        dui item config workflow_settings skin_wfs_exit_button* -state normal
+    }
 }
 
 proc wf_cancel_profile_saw {} {
@@ -1606,6 +1609,9 @@ proc wf_cancel_profile_saw {} {
         }
         set_button wf_save_saw_x_button state hidden
         set_button wf_save_saw_tick_button state hidden
+    }
+    if {$::skin(theme) == "cafe"} {
+        dui item config workflow_settings skin_wfs_exit_button* -state normal
     }
 }
 
@@ -2537,9 +2543,15 @@ proc adjust {var value} {
         if {$::settings(profile_has_changed) == 1} {
             set_button wf_save_saw_x_button state normal
             set_button wf_save_saw_tick_button state normal
+            if {$::skin(theme) == "cafe"} {
+                dui item config workflow_settings skin_wfs_exit_button* -state hidden
+            }
         } else {
             set_button wf_save_saw_x_button state hidden
             set_button wf_save_saw_tick_button state hidden
+            if {$::skin(theme) == "cafe"} {
+                dui item config workflow_settings skin_wfs_exit_button* -state normal
+            }
         }
         clear_fav_colour
         skin_save settings
