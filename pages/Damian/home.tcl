@@ -552,7 +552,7 @@ add_clear_button wf_close off 150 450 1490 130 [translate "tap here to close"] {
 dui add dtext off 310 580 -tags wf_heading_profile -text [translate "Profile"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center
 dui add variable "off" 310 770 -tags wf_heading_profile_type -font [skin_font font_bold 16] -fill $::skin_text_colour -anchor center -textvariable {$::settings(beverage_type)}
 add_colour_button select_profile off 200 620 220 100 {[translate "select"]} {goto_profile_list}
-add_colour_button edit_profile off 200 820 220 100 {[translate "edit"]} {goto_profile_wizard}
+add_colour_button edit_profile off 200 820 220 100 {[translate "edit"]} {show_profile_editor {}}
 
 # Dose
 dui add dtext off [expr 840 + $::wf_dose_x] 580 -tags wf_heading_bean_weight -text [translate "Bean weight"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor center

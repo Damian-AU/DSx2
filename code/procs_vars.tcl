@@ -1,4 +1,4 @@
-set ::skin_version 3.27
+set ::skin_version 3.30
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -526,13 +526,13 @@ proc goto_profile_wizard {} {
     set ::settings(active_settings_tab) settings_1
     set_profiles_scrollbar_dimensions
     if {$title_test == "D-Flow /" && [file exists "[homedir]/plugins/D_Flow_Espresso_Profile/plugin.tcl"] == 1} {
-        ::plugins::D_Flow_Espresso_Profile::prep
-        ::plugins::D_Flow_Espresso_Profile::demo_graph
+        ::D_Flow::prep
+        ::D_Flow::demo_graph
         set_next_page off Dflowset; page_show Dflowset
     } elseif {$title_test == "A-Flow /" && [file exists "[homedir]/plugins/A_Flow/plugin.tcl"] == 1} {
         after 500 update_de1_explanation_chart
-        ::plugins::A_Flow::prep
-        ::plugins::A_Flow::demo_graph
+        ::A_Flow::prep
+        ::A_Flow::demo_graph
         dui page load Aflowset
     } else {
         after 500 update_de1_explanation_chart
