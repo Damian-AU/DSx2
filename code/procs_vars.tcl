@@ -3647,7 +3647,8 @@ proc skin_scale_disconnected {} {
 
     dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
     if {$::de1(scale_battery_level) < 100} {
-        return $::de1(scale_battery_level)%
+        set bat [translate "battery "]
+        return $bat$::de1(scale_battery_level)%
     } else {
         return ""
     }
