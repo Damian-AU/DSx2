@@ -1,4 +1,4 @@
-set ::skin_version 3.30
+set ::skin_version 3.31
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -3633,8 +3633,24 @@ proc skin_scale_disconnected {} {
 		    return ""
 		}
 	}
-    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
+	if {$::de1(scale_battery_level) < 20} {
+        dui item config $::skin_home_pages scale_btl_icon -fill $::skin_red
+		if {$::connect_blink == 1} {
+		    after 300 {set ::connect_blink 0}
+            return [translate "battery low"]
+		} else {
+		    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
+		    set ::connect_blink 1
+		    return ""
+		}
+    }
 
+    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
+    if {$::de1(scale_battery_level) < 100} {
+        return $::de1(scale_battery_level)%
+    } else {
+        return ""
+    }
 }
 
 set ::flush_blink 1
