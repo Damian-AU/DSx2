@@ -1,4 +1,4 @@
-set ::skin_version 3.32
+set ::skin_version 3.33
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -206,6 +206,10 @@ if {![info exist ::skin(HDS_timer)]} {
 }
 if {![info exist ::skin(HDS_brightness))]} {
     set ::skin(HDS_brightness) 1
+}
+
+if {![info exist ::skin(HDS_show_battery_level))]} {
+    set ::skin(HDS_show_battery_level) 1
 }
 
 if {$::skin(theme) == "Damian"} {
@@ -3636,6 +3640,9 @@ proc skin_scale_disconnected {} {
 	if {$::settings(scale_type) != "decentscale"} {
         return ""
     }
+    if {$::skin(HDS_show_battery_level) == 0} {
+        return ""
+    }
     if {$::de1(scale_usb_powered) == 1} {
         return ""
     }
@@ -3657,6 +3664,9 @@ proc skin_scale_disconnected {} {
 }
 
 proc skin_read_hds_battery {} {
+    if {$::skin(HDS_show_battery_level) == 0} {
+        return ""
+    }
     after cancel skin_read_hds_battery
     if {$::de1_num_state($::de1(state)) == "Idle" && $::settings(scale_type) == "decentscale"} {
         set ::de1(scale_usb_powered) 0
@@ -3667,6 +3677,9 @@ proc skin_read_hds_battery {} {
 skin_read_hds_battery
 
 proc skin_scale_battery {} {
+    if {$::skin(HDS_show_battery_level) == 0} {
+        return ""
+    }
     if {$::device::scale::_watchdog_id == "" || $::settings(scale_type) != "decentscale"} {
         return ""
     }
@@ -3686,7 +3699,6 @@ proc skin_scale_battery {} {
     }
     return $bat$s$::de1(scale_battery_level)%
 }
-
 
 set ::flush_blink 1
 proc flush_motion {} {
@@ -3836,6 +3848,15 @@ proc toggle_HDS_brightness {} {
     skin_save skin
 }
 
+proc toggle_HDS_show_battery_level {} {
+    if {$::skin(HDS_show_battery_level) == 0} {
+        set ::skin(HDS_show_battery_level) 1
+        skin_read_hds_battery
+    } else {
+        set ::skin(HDS_show_battery_level) 0
+    }
+    skin_save skin
+}
 set ::skin_heating_hold 0
 proc skin_machine_state_heating {} {
     if {$::skin_heating_hold != 1} {

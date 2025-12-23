@@ -457,7 +457,7 @@ add_colour_button steam_extend steam [expr $::skin(button_x_machine) - 20] [expr
 ################
 
 ### scale
-dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 190] [expr $::skin(button_y_scale) + 120] -font [skin_font font 14] -fill $::skin_text_colour -anchor center -textvariable {[skin_scale_disconnected]}
+dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 190] [expr $::skin(button_y_scale) + 128] -font [skin_font font 14] -fill $::skin_text_colour -anchor center -textvariable {[skin_scale_disconnected]}
 add_colour_button scale_bg_shape $::skin_home_pages $::skin(button_x_scale) $::skin(button_y_scale) 380 110 {} {do_nothing}
 dui add variable $::skin_home_pages [expr $::skin(button_x_scale) + 108] [expr $::skin(button_y_scale) + 26] -font [skin_font D-font [fixed_size 19]] -fill $::skin_button_label_colour -tags scale_btl_icon -anchor w -textvariable {$::skin(icon_bluetooth)}
 dui add variable off [expr $::skin(button_x_scale) + 112] [expr $::skin(button_y_scale) + 24] -font [skin_font font 14] -fill $::skin_button_label_colour -anchor w -textvariable {[skin_bean_weight]}
@@ -620,6 +620,13 @@ dui add dtoggle hds_set 1420 620 -anchor w \
     -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
     -variable ::skin(HDS_timer) \
     -command {toggle_HDS_timer}
+
+dui add dtext hds_set 1010 762 -text [translate "Show battery level"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtext hds_set 1010 798 -text [translate "on DSx2"] -font [skin_font font_bold 18] -fill $::skin_text_colour -anchor w
+dui add dtoggle hds_set 1420 780 -anchor w \
+    -background $::skin_forground_colour -foreground $::skin_button_label_colour -selectedbackground $::skin_forground_colour -disabledbackground $::skin_disabled_colour -selectedforeground  $::skin_selected_colour -disabledforeground $::skin_disabled_colour \
+    -variable ::skin(HDS_show_battery_level) \
+    -command {toggle_HDS_show_battery_level}
 
 dui add dbutton hds_set 1180 1440 \
     -bwidth 200 -bheight 100 \
