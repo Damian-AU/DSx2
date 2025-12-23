@@ -1,4 +1,4 @@
-set ::skin_version 3.33
+set ::skin_version 3.34
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -204,11 +204,11 @@ if {![info exist ::skin(fav_key)]} {
 if {![info exist ::skin(HDS_timer)]} {
     set ::skin(HDS_timer) 0
 }
-if {![info exist ::skin(HDS_brightness))]} {
+if {![info exist ::skin(HDS_brightness)]} {
     set ::skin(HDS_brightness) 1
 }
 
-if {![info exist ::skin(HDS_show_battery_level))]} {
+if {![info exist ::skin(HDS_show_battery_level)]} {
     set ::skin(HDS_show_battery_level) 1
 }
 
@@ -3849,14 +3849,12 @@ proc toggle_HDS_brightness {} {
 }
 
 proc toggle_HDS_show_battery_level {} {
-    if {$::skin(HDS_show_battery_level) == 0} {
-        set ::skin(HDS_show_battery_level) 1
+    if {$::skin(HDS_show_battery_level) == 1} {
         skin_read_hds_battery
-    } else {
-        set ::skin(HDS_show_battery_level) 0
     }
     skin_save skin
 }
+
 set ::skin_heating_hold 0
 proc skin_machine_state_heating {} {
     if {$::skin_heating_hold != 1} {
