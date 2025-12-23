@@ -1,4 +1,4 @@
-set ::skin_version 3.31
+set ::skin_version 3.32
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -3633,26 +3633,60 @@ proc skin_scale_disconnected {} {
 		    return ""
 		}
 	}
-	if {$::de1(scale_battery_level) < 20} {
-        dui item config $::skin_home_pages scale_btl_icon -fill $::skin_red
-		if {$::connect_blink == 1} {
+	if {$::settings(scale_type) != "decentscale"} {
+        return ""
+    }
+    if {$::de1(scale_usb_powered) == 1} {
+        return ""
+    }
+    set bat [translate "battery"]
+    set s " "
+    if {$::de1(scale_battery_level) < 20} {
+        if {$::connect_blink == 1} {
 		    after 300 {set ::connect_blink 0}
-            return [translate "battery low"]
+            return $bat$s$::de1(scale_battery_level)%
 		} else {
-		    dui item config $::skin_home_pages scale_btl_icon -fill $::skin_button_label_colour
 		    set ::connect_blink 1
 		    return ""
 		}
     }
+    return $bat$s$::de1(scale_battery_level)%
 
     dui item config $::skin_home_pages scale_btl_icon -fill $::skin_blue
-    if {$::de1(scale_battery_level) < 100} {
-        set bat [translate "battery "]
-        return $bat$::de1(scale_battery_level)%
-    } else {
+
+}
+
+proc skin_read_hds_battery {} {
+    after cancel skin_read_hds_battery
+    if {$::de1_num_state($::de1(state)) == "Idle" && $::settings(scale_type) == "decentscale"} {
+        set ::de1(scale_usb_powered) 0
+        scale_enable_lcd
+    }
+    after 10000 skin_read_hds_battery
+}
+skin_read_hds_battery
+
+proc skin_scale_battery {} {
+    if {$::device::scale::_watchdog_id == "" || $::settings(scale_type) != "decentscale"} {
         return ""
     }
+    if {$::de1(scale_usb_powered) == 1} {
+        return ""
+    }
+    set bat [translate "battery"]
+    set s " "
+    if {$::de1(scale_battery_level) < 20} {
+        if {$::connect_blink == 1} {
+		    after 300 {set ::connect_blink 0}
+            return $bat$s$::de1(scale_battery_level)%
+		} else {
+		    set ::connect_blink 1
+		    return ""
+		}
+    }
+    return $bat$s$::de1(scale_battery_level)%
 }
+
 
 set ::flush_blink 1
 proc flush_motion {} {
@@ -3778,6 +3812,7 @@ proc skin_hds {key} {
         oled_on {set fn [decent_scale_make_command 0A 01 00]}
         oled_low {set fn [decent_scale_make_command 0A 03 01]}
         oled_norm {set fn [decent_scale_make_command 0A 03 00]}
+
     }
 	userdata_append "SCALE: decentscale : skin hds" [list ble write $::de1(scale_device_handle) $::de1(suuid_decentscale) $::sinstance($::de1(suuid_decentscale)) $::de1(cuuid_decentscale_write) $::cinstance($::de1(cuuid_decentscale_write)) $fn] 0
 }
