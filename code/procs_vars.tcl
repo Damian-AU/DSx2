@@ -1,4 +1,4 @@
-set ::skin_version 3.34
+set ::skin_version 3.35
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -210,6 +210,10 @@ if {![info exist ::skin(HDS_brightness)]} {
 
 if {![info exist ::skin(HDS_show_battery_level)]} {
     set ::skin(HDS_show_battery_level) 1
+}
+
+if {![info exist ::skin(HDS_low_battery_level)]} {
+    set ::skin(HDS_low_battery_level) 20
 }
 
 if {$::skin(theme) == "Damian"} {
@@ -2584,6 +2588,12 @@ proc adjust {var value} {
         set ::skin(unlock_time) [expr $::skin(unlock_time) + $value]
         if {$::skin(unlock_time) < 5} {set ::skin(unlock_time) 5}
     }
+    if {$var == "HDS_low_level"} {
+        set ::skin(HDS_low_battery_level) [expr $::skin(HDS_low_battery_level) + $value]
+        if {$::skin(HDS_low_battery_level) < 0} {set ::skin(HDS_low_battery_level) 0}
+        if {$::skin(HDS_low_battery_level) > 80} {set ::skin(HDS_low_battery_level) 80}
+        skin_save skin
+    }
 }
 
 proc adjust_icon_size_up {} {
@@ -3648,7 +3658,7 @@ proc skin_scale_disconnected {} {
     }
     set bat [translate "battery"]
     set s " "
-    if {$::de1(scale_battery_level) < 20} {
+    if {$::de1(scale_battery_level) < $::skin(HDS_low_battery_level)} {
         if {$::connect_blink == 1} {
 		    after 300 {set ::connect_blink 0}
             return $bat$s$::de1(scale_battery_level)%

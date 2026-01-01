@@ -628,6 +628,18 @@ dui add dtoggle hds_set 1420 780 -anchor w \
     -variable ::skin(HDS_show_battery_level) \
     -command {toggle_HDS_show_battery_level}
 
+dui add dtext hds_set 1620 762 -text [translate "low level"] -font [skin_font font_bold 18] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w
+dui add dtext hds_set 1620 798 -text [translate "warning"] -font [skin_font font_bold 18] -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -anchor w
+dui add variable hds_set 1970 776 -fill $::skin_text_colour -disabledfill $::skin_disabled_colour -font [skin_font font 18] -anchor center -textvariable {[round_to_integer $::skin(HDS_low_battery_level)]%}
+dui add dbutton hds_set 1820 726 \
+    -bwidth 100 -bheight 100 \
+    -label $::skin(icon_minus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {adjust HDS_low_level -5}
+dui add dbutton hds_set 2020 726 \
+    -bwidth 100 -bheight 100  \
+    -label $::skin(icon_plus) -label_font [skin_font D-font 18] -label_fill $::skin_text_colour -label_pos {0.5 0.5} \
+    -command {adjust HDS_low_level 5}
+
 dui add dbutton hds_set 1180 1440 \
     -bwidth 200 -bheight 100 \
     -shape round -radius $::skin_button_radius -fill $::skin_foreground_colour \
