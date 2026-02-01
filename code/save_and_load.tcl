@@ -174,6 +174,7 @@ proc skin_load {key} {
             check_current_jug
             setup_steam_switch_state
         }
+        check_current_jug
         god_shot_clear
         #select_profile $::settings(profile_filename)
         if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
