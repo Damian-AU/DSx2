@@ -1,4 +1,4 @@
-set ::skin_version 3.36
+set ::skin_version 3.37
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -552,7 +552,7 @@ proc goto_profile_wizard {} {
     }
 }
 
-proc goto_profile_list {} {
+proc goto_profile_list_old {} {
     set ::settings(active_settings_tab) settings_1
     show_settings
     set title_test [string range [ifexists ::settings(profile_title)] 0 7]
@@ -563,6 +563,12 @@ proc goto_profile_list {} {
     page_show off
     set ::settings(active_settings_tab) settings_1
     set_profiles_scrollbar_dimensions
+}
+
+proc goto_profile_list {} {
+    backup_settings
+    $::advanced_shot_steps_widget selection set 0
+    after 100 {set ::settings(active_settings_tab) settings_1; show_settings}
 }
 
 proc skin_steam_temperature {} {
