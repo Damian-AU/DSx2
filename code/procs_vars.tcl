@@ -365,7 +365,7 @@ proc initial_icon_cal_check {} {
         if {$::skin(show_heading) == 1} {
             dui item moveto off heading_entry 450 640
         }
-        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+        set_fav_edit_buttons_state hidden
         dui item config off settings_toggles -initial_state hidden -state hidden
         set ::icon_size_state "hide"
         dui item config off icon_size_set -initial_state normal -state normal
@@ -717,16 +717,60 @@ proc set_button {button_name property value} {
     if {$property == "icon_font"} {dui item config $pages li_${button_name} -font $value}
     if {$property == "icon_fill"} {dui item config $pages li_${button_name} -fill $value}
     if {$property == "state"} {
-        dui item config $pages s_${button_name} -initial_state $value -state $value
-        dui item config $pages bb_${button_name}* -initial_state $value -state $value
-        dui item config $pages l_${button_name} -initial_state $value -state $value
-        dui item config $pages li_${button_name} -initial_state $value -state $value
-        dui item config $pages b_${button_name}* -initial_state $value -state $value
+        set_buttons_state [list $button_name] $value
     }
     }
 }
 
+proc skin_button_state_item_ids {button_name pages} {
+    set cache_key "$button_name,state_items"
+    if {[info exists ::skin_button_state_cache($cache_key)]} {
+        return $::skin_button_state_cache($cache_key)
+    }
+
+    set ids {}
+    foreach tag [list s_${button_name} bb_${button_name}* l_${button_name} li_${button_name} b_${button_name}*] {
+        lappend ids {*}[dui item get $pages $tag]
+    }
+    if {$ids eq {}} {
+        return {}
+    }
+    set ::skin_button_state_cache($cache_key) [lunique $ids]
+    return $::skin_button_state_cache($cache_key)
+}
+
+proc skin_button_state_cache_invalidate {button_name} {
+    unset -nocomplain ::skin_button_state_cache($button_name,state_items)
+}
+
+proc set_buttons_state {button_names value} {
+    set ids_to_configure {}
+    foreach button_name $button_names {
+        catch {
+            set z ::${button_name}(pages)
+            set pages [set $z]
+            set ids [skin_button_state_item_ids $button_name $pages]
+            if {$ids eq {}} {
+                continue
+            }
+            lappend ids_to_configure {*}$ids
+        }
+    }
+    if {$ids_to_configure ne {}} {
+        dui item config [lunique $ids_to_configure] -initial_state $value -state $value
+    }
+}
+
+proc fav_edit_button_list {} {
+    return {fav1_edit fav2_edit fav3_edit fav4_edit fav5_edit}
+}
+
+proc set_fav_edit_buttons_state {value} {
+    set_buttons_state [fav_edit_button_list] $value
+}
+
 proc add_colour_button {button_name pages x y width height tv command {extra_tags {}} } {
+    skin_button_state_cache_invalidate $button_name
     set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags [list bb_${button_name} {*}$extra_tags] -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
@@ -734,6 +778,7 @@ proc add_colour_button {button_name pages x y width height tv command {extra_tag
 }
 
 proc add_colour_variable_button {button_name pages x y width height tv command {extra_tags {}} } {
+    skin_button_state_cache_invalidate $button_name
     set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags [list bb_${button_name} {*}$extra_tags] -command {do_nothing}
     dui add variable $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 18] -fill $::skin_button_label_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -textvariable $tv
@@ -741,18 +786,21 @@ proc add_colour_variable_button {button_name pages x y width height tv command {
 }
 
 proc add_clear_button {button_name pages x y width height tv command {extra_tags {}} } {
+    skin_button_state_cache_invalidate $button_name
     set ::${button_name}(pages) $pages
     dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font font_bold 34] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -text $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_icon_button {button_name pages x y width height tv command {extra_tags {}} } {
+    skin_button_state_cache_invalidate $button_name
     set ::${button_name}(pages) $pages
     dui add dtext $pages [expr $x + $width/2] [expr $y + $height/2 - 2] -width [expr $width - 10] -font [skin_font awesome_light [fixed_size 34]] -fill $::skin_text_colour -anchor center -justify center -tags [list l_${button_name} {*}$extra_tags] -text $tv
     dui add dbutton $pages $x $y -bwidth $width -bheight $height -tags [list b_${button_name} {*}$extra_tags] -command $command
 }
 
 proc add_icon_label_button {button_name pages x y width height tvi tv command {extra_tags {}} {long_press {}} } {
+    skin_button_state_cache_invalidate $button_name
     set ::${button_name}(pages) $pages
     dui add dbutton $pages $x $y -bwidth $width -shape round -radius $::skin_button_radius -bheight $height -fill $::skin_foreground_colour -tags [list bb_${button_name} {*}$extra_tags] -command {do_nothing}
     dui add shape rect $pages [expr $x + 100] $y [expr $x + 104] [expr $y + 100] -width 0 -fill $::skin_background_colour -tags [list s_${button_name} {*}$extra_tags]
@@ -907,7 +955,7 @@ proc show_graph {} {
         hide_skin_set
     }
     dui item config off live_graph_data -initial_state normal -state normal
-    dui item config off fav_edit_buttons -initial_state hidden -state hidden
+    set_fav_edit_buttons_state hidden
     set pages {off espresso hotwaterrinse water}
     foreach key {pressure flow weight temperature resistance steps} {
         dui item config $pages ${key}_icon -initial_state normal -state normal
@@ -969,7 +1017,7 @@ proc hide_steam_graph {} {
 
 proc show_steam_graph {} {
     .can itemconfigure main_graph_steam -state normal
-    dui item config off fav_edit_buttons -initial_state hidden -state hidden
+    set_fav_edit_buttons_state hidden
     dui item config off main_graph_steam -initial_state normal
     foreach key {pressure flow temperature} {
         dui item config off steam_steam_${key}_icon_off -initial_state normal -state normal
@@ -1029,7 +1077,7 @@ proc set_favs_showing {} {
     set_button fav3 state normal
     set_button fav4 state normal
     set_button fav5 state normal
-    dui item config off fav_edit_buttons -initial_state normal -state normal
+    set_fav_edit_buttons_state normal
     if {$::skin(favs_to_show) == 2} {
         set_button fav3 state hidden
         set_button fav3_edit state hidden
@@ -1049,7 +1097,7 @@ proc set_favs_showing {} {
         set_button fav5_edit state hidden
     }
     if {$::graph_hidden == 0} {
-        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+        set_fav_edit_buttons_state hidden
     }
 }
 
@@ -1066,12 +1114,11 @@ proc rest_fav_buttons {} {
         dui item config off ${k}_auto_load_l1 -fill $::skin_text_colour
         dui item config off ${k}_auto_load_l2 -fill $::skin_text_colour
         set_button ${k}_auto_load_button state hidden
-        set_button ${k}_edit state normal
         set_button ${k}_x_button state hidden
         set_button ${k}_tick_button state hidden
         dui item moveto off ${k}_entry 2070 -1001
-        set_favs_showing
     }
+    set_favs_showing
 }
 
 proc edit {option} {
@@ -1122,11 +1169,31 @@ proc set_auto_load {key} {
     }
 }
 
+proc hide_active_skin_set {} {
+    if {![info exists ::skin(active_skin_set)] || $::skin(active_skin_set) eq ""} {
+        return
+    }
+    switch -- $::skin(active_skin_set) {
+        espresso {hide_espresso_settings}
+        flush {hide_flush_settings}
+        water {hide_water_settings}
+        steam {hide_steam_settings}
+    }
+    dui item config off ${::skin(active_skin_set)}_index -initial_state hidden -state hidden
+    set_button ${::skin(active_skin_set)}_index_button state hidden
+    set ::skin(active_skin_set) ""
+}
+
 proc show_skin_set {option} {
     if {$::skin(theme) == "Damian"} {
+        if {[info exists ::skin(active_skin_set)] && $::skin(active_skin_set) eq $option && $::graph_hidden == 1} {
+            return
+        }
         hide_header_settings
         set ::skin(icon_cal_check) 1
-        hide_skin_set
+        if {$::graph_hidden == 1} {
+            hide_active_skin_set
+        }
         if {$::graph_hidden == 0} {hide_graph}
         dui item config off index_shape -initial_state normal -state normal
         dui item config off ${option}_index -initial_state normal -state normal
@@ -1135,7 +1202,8 @@ proc show_skin_set {option} {
         if {$option == "flush"} {show_flush_settings}
         if {$option == "water"} {show_water_settings}
         if {$option == "steam"} {show_steam_settings}
-        set_button wf_close state normal
+        set_buttons_state {wf_close} normal
+        set ::skin(active_skin_set) $option
     }
     if {$::skin(theme) == "cafe"} {
         skin_lock page_show workflow_settings
@@ -1144,6 +1212,7 @@ proc show_skin_set {option} {
 
 proc hide_skin_set {} {
     set ::skin(icon_cal_check) 1
+    set ::skin(active_skin_set) ""
     dui item config off index_shape -initial_state hidden -state hidden
     hide_espresso_settings
     hide_flush_settings
@@ -1153,9 +1222,7 @@ proc hide_skin_set {} {
     foreach f {espresso steam flush water} {
         dui item config off ${f}_index -initial_state hidden -state hidden
     }
-    foreach f {espresso steam flush water} {
-        set_button ${f}_index_button state hidden
-    }
+    set_buttons_state {espresso_index_button steam_index_button flush_index_button water_index_button} hidden
 }
 
 proc wf_profile_button_list {} {
@@ -1168,11 +1235,11 @@ proc show_espresso_settings {} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_profile_button_list] {
-        set_button ${s} state normal
+        lappend buttons_to_show $s
     }
+    set_buttons_state $buttons_to_show normal
     if {$::settings(profile_has_changed) == 1} {
-        set_button wf_save_saw_tick_button state normal
-        set_button wf_save_saw_x_button state normal
+        set_buttons_state {wf_save_saw_tick_button wf_save_saw_x_button} normal
     }
 }
 
@@ -1183,11 +1250,7 @@ proc hide_espresso_settings {} {
         foreach s {wf_beans wf_espresso wf_heading_profile wf_heading_profile_type wf_heading_espresso_weight wf_heading_bean_weight wf_heading_bean_cup} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
-        foreach s [wf_profile_button_list] {
-            set_button ${s} state hidden
-        }
-        set_button wf_save_saw_tick_button state hidden
-        set_button wf_save_saw_x_button state hidden
+        set_buttons_state [concat [wf_profile_button_list] {wf_save_saw_tick_button wf_save_saw_x_button}] hidden
         hide_wf_espresso_info
     }
 }
@@ -1212,8 +1275,9 @@ proc show_flush_settings {} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_flush_button_list] {
-        set_button ${s} state normal
+        lappend buttons_to_show $s
     }
+    set_buttons_state $buttons_to_show normal
 }
 
 set ::wf_flush_set_showing 1
@@ -1224,9 +1288,7 @@ proc hide_flush_settings {} {
             wf_heading_flush_timer wf_flush_timer_setting} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
-        foreach s [wf_flush_button_list] {
-            set_button ${s} state hidden
-        }
+        set_buttons_state [wf_flush_button_list] hidden
     }
 }
 
@@ -1246,8 +1308,9 @@ proc show_water_settings {} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_water_button_list] {
-        set_button ${s} state normal
+        lappend buttons_to_show $s
     }
+    set_buttons_state $buttons_to_show normal
 }
 
 set ::wf_water_set_showing 1
@@ -1260,9 +1323,7 @@ proc hide_water_settings {} {
                    wf_heading_water_temperature wf_water_temperature_setting} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
-        foreach s [wf_water_button_list] {
-            set_button ${s} state hidden
-        }
+        set_buttons_state [wf_water_button_list] hidden
     }
 }
 
@@ -1300,24 +1361,17 @@ proc show_steam_settings {} {
     dui item config off wf_milk_weight_text_line_1 -initial_state normal -state normal
     dui item config off wf_milk_weight_text_line_2 -initial_state normal -state normal
     dui item config off wf_milk_weight_text_line_3 -initial_state normal -state normal
-    set_button wf_steam_on state normal
-    set_button wf_steam_off state normal
-    set_button wf_steam_off_bg state normal
-    set_button wf_steam_cal_time_plus state normal
-    set_button wf_steam_jug_time state normal
-    set_button wf_steam_cal_time_minus state normal
-    set_button wf_steam_jug_milk state normal
     foreach s {wf_heading_steam_timer wf_steam_timer_setting wf_last_steam_time} {
         dui item config off ${s} -initial_state normal -state normal
     }
     foreach s [wf_steam_button_list] {
-        set_button ${s} state normal
+        lappend buttons_to_show $s
     }
     foreach s [wf_steam_set_list] {
-        set_button wf_steam_${s} state normal
-        set_button ${s}_edit state normal
+        lappend buttons_to_show wf_steam_${s} ${s}_edit
     }
-    set_button wf_steam_jug_auto state normal
+    lappend buttons_to_show wf_steam_on wf_steam_off wf_steam_off_bg wf_steam_cal_time_plus wf_steam_jug_time wf_steam_cal_time_minus wf_steam_jug_milk wf_steam_jug_auto
+    set_buttons_state $buttons_to_show normal
     check_wf_steam_jug_auto_weight
 }
 
@@ -1335,31 +1389,47 @@ proc hide_steam_settings {} {
         dui item config off wf_milk_weight_text_line_1 -initial_state hidden -state hidden
         dui item config off wf_milk_weight_text_line_2 -initial_state hidden -state hidden
         dui item config off wf_milk_weight_text_line_3 -initial_state hidden -state hidden
-        set_button wf_steam_on state hidden
-        set_button wf_steam_off state hidden
-        set_button wf_steam_off_bg state hidden
-        set_button wf_steam_cal_time_plus state hidden
-        set_button wf_steam_jug_time state hidden
-        set_button wf_steam_cal_time_minus state hidden
-        set_button wf_steam_jug_milk state hidden
+        set buttons_to_hide {wf_steam_on wf_steam_off wf_steam_off_bg wf_steam_cal_time_plus wf_steam_jug_time wf_steam_cal_time_minus wf_steam_jug_milk}
         foreach s {wf_heading_steam_timer wf_steam_timer_setting wf_last_steam_time} {
             dui item config off ${s} -initial_state hidden -state hidden
         }
         foreach t [wf_steam_button_list] {
-            set_button ${t} state hidden
+            lappend buttons_to_hide $t
         }
         foreach u [wf_steam_set_list] {
-            set_button wf_steam_${u} state hidden
-            set_button ${u}_x_button state hidden
-            set_button ${u}_tick_button state hidden
-            hide_jug $u
-            set_button ${u}_edit state hidden
+            lappend buttons_to_hide wf_steam_${u} ${u}_x_button ${u}_tick_button
+            lappend buttons_to_hide ${u}_edit ${u}_weight
         }
-    set_button wf_steam_jug_auto state hidden
-    hide_wf_steam_jug_auto_weight
+        lappend buttons_to_hide wf_steam_jug_auto
+        set_buttons_state $buttons_to_hide hidden
+        hide_wf_steam_jug_auto_weight
     }
 }
 
+proc precache_workflow_button_state_items {} {
+    set buttons {
+        wf_close espresso_index_button steam_index_button flush_index_button water_index_button
+        wf_save_saw_tick_button wf_save_saw_x_button
+        wf_steam_on wf_steam_off wf_steam_off_bg wf_steam_cal_time_plus wf_steam_jug_time
+        wf_steam_cal_time_minus wf_steam_jug_milk wf_steam_jug_auto
+        wf_steam_jug_auto_weight wf_steam_jug_auto_weight_plus wf_steam_jug_auto_weight_minus
+    }
+    foreach list_proc {wf_profile_button_list wf_flush_button_list wf_water_button_list wf_steam_button_list} {
+        catch {lappend buttons {*}[uplevel #0 $list_proc]}
+    }
+    foreach jug [wf_steam_set_list] {
+        lappend buttons wf_steam_${jug} ${jug}_edit ${jug}_x_button ${jug}_tick_button ${jug}_weight
+    }
+    foreach button $buttons {
+        catch {
+            set z ::${button}(pages)
+            skin_button_state_item_ids $button [set $z]
+        }
+    }
+}
+
+after 7000 precache_workflow_button_state_items
+after 12000 precache_workflow_button_state_items
 
 proc set_jug {j} {
     set ::skin(jug_size) $j
@@ -1693,11 +1763,25 @@ proc check_fav_skin_vars {} {
 
 proc check_fav {} {
     foreach k [check_fav_settings_vars] {
+        if {![info exists ::settings($k)]} {
+            continue
+        }
+        if {![info exists ::fav_settings_test($k)]} {
+            set ::fav_settings_test($k) $::settings($k)
+            continue
+        }
         if {$::fav_settings_test($k) != $::settings($k)} {
             clear_fav_colour
         }
     }
     foreach k [check_fav_skin_vars] {
+        if {![info exists ::skin($k)]} {
+            continue
+        }
+        if {![info exists ::fav_skin_test($k)]} {
+            set ::fav_skin_test($k) $::skin($k)
+            continue
+        }
         if {$::fav_skin_test($k) != $::skin($k)} {
             clear_fav_colour
         }
@@ -2002,7 +2086,7 @@ proc header_settings {} {
         if {$::skin(show_heading) == 1} {
             dui item moveto off heading_entry 450 640
         }
-        dui item config off fav_edit_buttons -initial_state hidden -state hidden
+        set_fav_edit_buttons_state hidden
         dui item config off settings_toggles -initial_state normal -state normal
         if {$::skin(theme) == "cafe"} {
             dui item config off settings_history_button_option -initial_state disabled -state disabled
@@ -4710,6 +4794,10 @@ if {$::skin(theme) == "cafe"} {
 
     rename select_profile select_profile_c
     proc select_profile {option} {
+        if {[ifexists ::skin(select_profile_preserve_workflow)] == 1} {
+            select_profile_c $option
+            return
+        }
         set ::skin(workflow) none
         select_profile_c $option
         workflow $::skin(workflow)
