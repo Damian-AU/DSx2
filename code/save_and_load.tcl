@@ -145,36 +145,63 @@ proc skin_load {key} {
         return
     }
     if {[file exists [skin_directory]/settings/$key.txt]} {
+        set previous_profile_filename [ifexists ::settings(profile_filename)]
+        set previous_workflow [ifexists ::skin(workflow)]
+        set previous_beverage_type [ifexists ::settings(beverage_type)]
         clear_fav_colour
-        set ::skin(fav_key) $key
-        set ::settings(beverage_type) "espresso"
+        if {![info exists ::skin(fav_key)] || $::skin(fav_key) ne $key} {
+            set ::skin(fav_key) $key
+        }
         array unset -nocomplain fav_settings
         array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/$key.txt"]]
         array set settings $fav_settings(app)
+        set selected_profile_filename [ifexists settings(profile_filename)]
+        set changing_profile [expr {$selected_profile_filename ne "" && $selected_profile_filename ne $previous_profile_filename}]
+        set profile_needs_reload [expr {$changing_profile || [ifexists ::settings(profile_has_changed)] == 1 || $previous_beverage_type ne "espresso"}]
         set settings_vars [fav_settings_vars]
         foreach k $settings_vars {
             if {[info exists settings($k)] == 1} {
-                set ::settings($k) $settings($k)
+                if {$changing_profile && $k in {profile profile_title}} {
+                    set ::fav_settings_test($k) $settings($k)
+                    continue
+                }
+                if {![info exists ::settings($k)] || $::settings($k) ne $settings($k)} {
+                    set ::settings($k) $settings($k)
+                }
                 set ::fav_settings_test($k) $settings($k)
             }
         }
-        select_profile $::settings(profile_filename)
+        if {$profile_needs_reload} {
+            set ::skin(select_profile_preserve_workflow) 1
+            set select_profile_result [catch {select_profile $::settings(profile_filename)} select_profile_error select_profile_options]
+            unset -nocomplain ::skin(select_profile_preserve_workflow)
+            if {$select_profile_result != 0} {
+                return -options $select_profile_options $select_profile_error
+            }
+        }
         array set skin $fav_settings(skin)
         set skin_vars [fav_skin_vars]
 
         foreach k $skin_vars {
             if {[info exists skin($k)] == 1} {
-                set ::skin($k) $skin($k)
+                if {![info exists ::skin($k)] || $::skin($k) ne $skin($k)} {
+                    set ::skin($k) $skin($k)
+                }
                 set ::fav_skin_test($k) $skin($k)
             }
         }
         set ::de1(steam_disable_toggle) [expr {!$::settings(steam_disabled)}]
+        if {[info exists ::skin(jug_size)]} {
+            set jug_weight_key "jug_$::skin(jug_size)"
+            if {[info exists ::skin($jug_weight_key)]} {
+                set ::skin(jug_g) $::skin($jug_weight_key)
+            }
+        }
         if {$::skin(theme) == "Damian"} {
             check_wf_steam_jug_auto_weight
             check_current_jug
             setup_steam_switch_state
         }
-        check_current_jug
         god_shot_clear
         #select_profile $::settings(profile_filename)
         if {$::settings(settings_profile_type) == "settings_2c2" || $::settings(settings_profile_type) == "settings_2c"} {
@@ -183,13 +210,16 @@ proc skin_load {key} {
         save_settings_to_de1
 
         save_settings
-        de1_send_steam_hotwater_settings
         set ::settings(profile_has_changed) 0
         profile_has_changed_set_colors
         set_fav_colour $key
-        update_de1_explanation_chart
-        fill_profiles_listbox
-        workflow $::skin(workflow)
+        update_de1_explanation_chart_soon
+        if {[ifexists ::de1(current_context)] == "settings_1"} {
+            fill_profiles_listbox
+        }
+        if {[ifexists ::skin(workflow)] ne $previous_workflow || [ifexists ::settings(beverage_type)] ne $previous_beverage_type} {
+            workflow $::skin(workflow)
+        }
         skin_save skin
         restore_graphs
         if {$::skin(theme) == "Damian"} {
