@@ -51,3 +51,12 @@ set ::settings(disable_long_press) 0
 if {[file exists "[skin_directory]/Damian.end"]} {
     source  [file join "[skin_directory]/" Damian.end]
 }
+
+# Force a page bounce so the home page fully renders on first draw. DSx2 normally
+# finalizes the home page via skin_load_fav (fired on the DE1 Sleep->Idle state
+# change), but that is a no-op when no favorite is active -- e.g. a fresh data
+# dir -- which left the cafe page half-drawn (empty graphs, missing legend/icons)
+# until a manual page change. Bouncing through settings_1 forces the transition
+# that finalizes the draw. Mirrors DSx's DSx_final_prep fix.
+page_show settings_1
+after 50 { catch { page_show off } }
