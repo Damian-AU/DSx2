@@ -35,7 +35,9 @@ set ::user(button_radius) 30
 set ::settings(scale_stop_at_half_shot) 0
 
 if {[file exists [skin_directory]/pages/cafe/graphs.tcl]} {
-    file delete -force [skin_directory]/pages/cafe/graphs.tcl
+    # runs at skin load; catch so a read-only package (iOS / in-place run) can't
+    # crash at boot trying to delete from the bundle
+    catch { file delete -force [skin_directory]/pages/cafe/graphs.tcl }
 }
 if {$::skin(colour_theme_folder) == "default"} {
     set basedir [skin_directory]/colour_themes/default.txt
