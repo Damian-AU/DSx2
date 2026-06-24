@@ -232,8 +232,8 @@ proc skin_history_2 {} {
 }
 
 proc create_settings_dir {} {
-    if {[file exists [skin_directory]/settings] != 1} {
-        set path [skin_directory]/settings
+    if {[file exists [dsx2_settings_dir]] != 1} {
+        set path [dsx2_settings_dir]
         file mkdir $path
         file attributes $path
     }
@@ -4141,7 +4141,7 @@ proc save_graph_cache { args } {
         }
     }
 
-    write_file "[skin_directory]/settings/graph_cache.tdb" $graph_cache_data
+    write_file "[dsx2_settings_dir]/graph_cache.tdb" $graph_cache_data
 }
 
 proc restore_cache_graphs {} {
@@ -4192,7 +4192,7 @@ proc cache_date_time_format { time } {
 
 
 proc load_graph_cache {} {
-    array set ::graph_cache [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/graph_cache.tdb"]]
+    array set ::graph_cache [encoding convertfrom utf-8 [read_binary_file "[dsx2_settings_dir]/graph_cache.tdb"]]
 }
 
 proc skin_load_fav { args } {

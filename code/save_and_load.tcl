@@ -73,7 +73,7 @@ proc skin_save {key} {
             set v $item($k)
             append data [subst {[list $k] [list $v]\n}]
         }
-        write_file [skin_directory]/settings/${key}_settings.txt $data
+        write_file [dsx2_settings_dir]/${key}_settings.txt $data
     }
     if {$key == "skin_graphs"} {
         upvar ::skin_graphs item
@@ -82,7 +82,7 @@ proc skin_save {key} {
             set v $item($k)
             append data [subst {[list $k] [list $v]\n}]
         }
-        write_file [skin_directory]/settings/$key.txt $data
+        write_file [dsx2_settings_dir]/$key.txt $data
     }
     if {$key == "jug_s" || $key == "jug_m" || $key == "jug_l"} {
         set ::skin($key) [round_to_one_digits $::de1(scale_sensor_weight)]
@@ -128,7 +128,7 @@ proc skin_save {key} {
         }
         append data "}\n"
 
-        write_file [skin_directory]/settings/$key.txt $data
+        write_file [dsx2_settings_dir]/$key.txt $data
         update_de1_explanation_chart
         if {$::skin(theme) == "Damian"} {
             check_wf_steam_jug_auto_weight
@@ -144,7 +144,7 @@ proc skin_load {key} {
     if {$key == "none"} {
         return
     }
-    if {[file exists [skin_directory]/settings/$key.txt]} {
+    if {[file exists [dsx2_settings_dir]/$key.txt]} {
         set previous_profile_filename [ifexists ::settings(profile_filename)]
         set previous_workflow [ifexists ::skin(workflow)]
         set previous_beverage_type [ifexists ::settings(beverage_type)]
@@ -153,7 +153,7 @@ proc skin_load {key} {
             set ::skin(fav_key) $key
         }
         array unset -nocomplain fav_settings
-        array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[skin_directory]/settings/$key.txt"]]
+        array set fav_settings [encoding convertfrom utf-8 [read_binary_file "[dsx2_settings_dir]/$key.txt"]]
         array set settings $fav_settings(app)
         set selected_profile_filename [ifexists settings(profile_filename)]
         set changing_profile [expr {$selected_profile_filename ne "" && $selected_profile_filename ne $previous_profile_filename}]
