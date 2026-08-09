@@ -1,4 +1,4 @@
-set ::skin_version 3.41
+set ::skin_version 3.42
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -890,7 +890,10 @@ proc hide_graph {} {
 
     set ::zoom_temperature 0
     set_button auto_tare state normal
-    if {$::settings(scale_type) == "decentscale" || $::android != 1} {
+    #if {$::settings(scale_type) == "decentscale" || $::android != 1} {
+    #    set_button HDS_timer state normal
+    #}
+    if {$::settings(scale_type) == "decentscale"} {
         set_button HDS_timer state normal
     }
     set pages {off espresso hotwaterrinse water}
@@ -2243,11 +2246,11 @@ proc skin_graph_live_info {} {
 }
 
 proc cancel_auto_stop {} {
-    if {$::android != 1 } {
-    after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
-    after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
-    after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
-    after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
+    #if {$::android != 1 } {
+    #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
+    #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
+    #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
+    #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
     }
 }
 
