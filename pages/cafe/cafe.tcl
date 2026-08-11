@@ -665,8 +665,10 @@ dui add dtext "restart_message" 1280 600 -font [skin_font font 28] -fill $::skin
 add_clear_button restart_message restart_message 0 0 2560 1600 {} {skin_exit}
 
 #################
-if {$::android != 1} {
-    start_idle
+if {[ package vcompare [package version de1app] 1.46.1.160 ] < 0} {
+    if {$::android != 1} {
+        start_idle
+    }
 }
 initialize_fav_list
 check_c_heading

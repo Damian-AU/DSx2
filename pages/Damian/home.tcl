@@ -843,10 +843,11 @@ dui add dbutton hds_set 1180 1440 \
     -command {page_show off}
 ###
 
-if {$::android != 1} {
-    start_idle
+if {[ package vcompare [package version de1app] 1.46.1.160 ] < 0} {
+    if {$::android != 1} {
+        start_idle
+    }
 }
-
 if {$::skin(show_weight_chartable) == 0} {
     $::home_espresso_graph element configure home_weight_chartable -hide 1
     $::home_espresso_graph element configure compare_weight_chartable -hide 1

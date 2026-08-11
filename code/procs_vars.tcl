@@ -1,4 +1,4 @@
-set ::skin_version 3.42
+set ::skin_version 3.43
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -4839,6 +4839,7 @@ proc skin_exit_lock {} {
 proc skin_delete_handle_keypress {args} {
     if {[skin_check_proc_exists handle_keypress]} {rename handle_keypress ""}
 }
+set {} {
 proc skin_reset_handle_keypress {} {
     proc handle_keypress {keycode} {
         msg -DEBUG "Keypress detected: $keycode / $::some_droid"
@@ -4887,7 +4888,7 @@ proc skin_reset_handle_keypress {} {
         }
     }
 }
-
+}
 
 proc skin_show_settings {} {
     set ::settings(active_settings_tab) settings_3
