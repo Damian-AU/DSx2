@@ -339,7 +339,7 @@ set ::history_count 0
 
 proc history_list {{limit $::skin(history_sch_limit)}} {
     set result {}
-    set files [lsort -dictionary -decreasing [glob -nocomplain -tails -directory "[homedir]/history/" *.shot]]
+    set files [lsort -dictionary -decreasing [glob -nocomplain -tails -directory "[data_directory]/history/" *.shot]]
     set ::history_count [llength $files]
     if {$::history_count < $::skin(history_sch_limit)} {
         set ::skin(history_sch_limit) $::history_count
@@ -386,7 +386,7 @@ if {![info exist ::skin(history_position)]} {
 
 proc graph_number {} {
     if {$::history_count < 10} {
-        set files [lsort -dictionary -decreasing [glob -nocomplain -tails -directory "[homedir]/history/" *.shot]]
+        set files [lsort -dictionary -decreasing [glob -nocomplain -tails -directory "[data_directory]/history/" *.shot]]
         set ::history_count [llength $files]
         return [lrange {1 2 3 4 5 6 7 8 9 10} 0 [expr $::history_count - 1]]
     } else {
@@ -400,8 +400,8 @@ proc get_history_data {pos} {
         clear_history_graphs $graph
         set p [expr $pos + $graph - 1]
         set file_name [history_position $p]
-        if {[file exists "[homedir]/history/$file_name"]} {
-            array set ::selected_history_data [read_file "[homedir]/history/$file_name"]
+        if {[file exists "[data_directory]/history/$file_name"]} {
+            array set ::selected_history_data [read_file "[data_directory]/history/$file_name"]
         }
         foreach lg [history_graph_list] {
             $lg length 0
