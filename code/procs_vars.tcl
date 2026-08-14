@@ -1,4 +1,4 @@
-set ::skin_version 3.43
+set ::skin_version 3.44
 
 set ::user(background_colour) #e4e4e4
 set ::user(foreground_colour) #2b6084
@@ -2251,7 +2251,7 @@ proc cancel_auto_stop {} {
     #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
     #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
     #after cancel [list update_de1_state "$::de1_state(Idle)\x5"]
-    }
+    #}
 }
 
 proc workflow {option} {
